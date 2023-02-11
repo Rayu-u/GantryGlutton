@@ -48,7 +48,7 @@
                 {
                   "ƒ.ComponentMaterial": {
                     "sortForAlpha": false,
-                    "clrPrimary": "[0.8588235294117647, 0.3607843137254902, 0.3607843137254902, 1]",
+                    "clrPrimary": "[0.8588235294117647, 0.3607843137254902, 0.8431372549019608, 1]",
                     "clrSecondary": "[1, 1, 1, 1]",
                     "pivot": {
                       "translation": "[0, 0]",
@@ -359,10 +359,295 @@
             },
             "children": []
           }
+        },
+        {
+          "ƒ.Node": {
+            "name": "gantry",
+            "active": true,
+            "components": {
+              "ComponentMesh": [],
+              "ComponentMaterial": [],
+              "ComponentTransform": [
+                {
+                  "ƒ.ComponentTransform": {
+                    "local": {
+                      "translation": "[0, 0, 0]",
+                      "rotation": "[0, 0, 0]",
+                      "scaling": "[1, 1, 1]"
+                    },
+                    "Component": {
+                      "active": true
+                    }
+                  }
+                }
+              ]
+            },
+            "children": [
+              {
+                "ƒ.Node": {
+                  "name": "gantry__base",
+                  "active": true,
+                  "components": {
+                    "ComponentMesh": [
+                      {
+                        "ƒ.ComponentMesh": {
+                          "idMesh": "MeshObj|2023-02-11T18:59:09.588Z|34810",
+                          "pivot": {
+                            "translation": "[0, 0, 0]",
+                            "rotation": "[0, 0, 0]",
+                            "scaling": "[1, 1, 1]"
+                          },
+                          "Component": {
+                            "active": true
+                          }
+                        }
+                      }
+                    ],
+                    "ComponentMaterial": [
+                      {
+                        "ƒ.ComponentMaterial": {
+                          "sortForAlpha": false,
+                          "clrPrimary": "[1, 1, 1, 1]",
+                          "clrSecondary": "[1, 1, 1, 1]",
+                          "pivot": {
+                            "translation": "[0, 0]",
+                            "rotation": 0,
+                            "scaling": "[1, 1]"
+                          },
+                          "Component": {
+                            "active": true
+                          },
+                          "idMaterial": "Material|2023-02-11T18:46:51.960Z|66281"
+                        }
+                      }
+                    ]
+                  },
+                  "children": [
+                    {
+                      "ƒ.Node": {
+                        "name": "gantry_base-cog",
+                        "active": true,
+                        "components": {
+                          "ComponentMesh": [
+                            {
+                              "ƒ.ComponentMesh": {
+                                "idMesh": "MeshObj|2023-02-11T19:05:00.470Z|08679",
+                                "pivot": {
+                                  "translation": "[0, 0, 0]",
+                                  "rotation": "[0, 0, 0]",
+                                  "scaling": "[1, 1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                }
+                              }
+                            }
+                          ],
+                          "ComponentMaterial": [
+                            {
+                              "ƒ.ComponentMaterial": {
+                                "sortForAlpha": false,
+                                "clrPrimary": "[1, 1, 1, 1]",
+                                "clrSecondary": "[1, 1, 1, 1]",
+                                "pivot": {
+                                  "translation": "[0, 0]",
+                                  "rotation": 0,
+                                  "scaling": "[1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                },
+                                "idMaterial": "Material|2023-02-11T18:46:51.960Z|66281"
+                              }
+                            }
+                          ],
+                          "ComponentTransform": [
+                            {
+                              "ƒ.ComponentTransform": {
+                                "local": {
+                                  "translation": "[1.75, 0, -10.125000953674316]",
+                                  "rotation": "[0, 0, 0]",
+                                  "scaling": "[1, 1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "children": []
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "ƒ.Node": {
+                  "name": "gantry__bridge",
+                  "active": true,
+                  "components": {
+                    "ComponentMesh": [
+                      {
+                        "ƒ.ComponentMesh": {
+                          "idMesh": "MeshObj|2023-02-11T19:00:16.344Z|30282",
+                          "pivot": {
+                            "translation": "[0, 0, 0]",
+                            "rotation": "[0, 0, 0]",
+                            "scaling": "[1, 1, 1]"
+                          },
+                          "Component": {
+                            "active": true
+                          }
+                        }
+                      }
+                    ],
+                    "ComponentMaterial": [
+                      {
+                        "ƒ.ComponentMaterial": {
+                          "sortForAlpha": false,
+                          "clrPrimary": "[1, 1, 1, 1]",
+                          "clrSecondary": "[1, 1, 1, 1]",
+                          "pivot": {
+                            "translation": "[0, 0]",
+                            "rotation": 0,
+                            "scaling": "[1, 1]"
+                          },
+                          "Component": {
+                            "active": true
+                          },
+                          "idMaterial": "Material|2023-02-11T18:46:51.960Z|66281"
+                        }
+                      }
+                    ]
+                  },
+                  "children": [
+                    {
+                      "ƒ.Node": {
+                        "name": "gantry__bridge-cog",
+                        "active": true,
+                        "components": {
+                          "ComponentMesh": [
+                            {
+                              "ƒ.ComponentMesh": {
+                                "idMesh": "MeshObj|2023-02-11T19:05:00.470Z|08679",
+                                "pivot": {
+                                  "translation": "[0, 0, 0]",
+                                  "rotation": "[0, 90, 0]",
+                                  "scaling": "[1, 1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                }
+                              }
+                            }
+                          ],
+                          "ComponentMaterial": [
+                            {
+                              "ƒ.ComponentMaterial": {
+                                "sortForAlpha": false,
+                                "clrPrimary": "[1, 1, 1, 1]",
+                                "clrSecondary": "[1, 1, 1, 1]",
+                                "pivot": {
+                                  "translation": "[0, 0]",
+                                  "rotation": 0,
+                                  "scaling": "[1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                },
+                                "idMaterial": "Material|2023-02-11T18:46:51.960Z|66281"
+                              }
+                            }
+                          ],
+                          "ComponentTransform": [
+                            {
+                              "ƒ.ComponentTransform": {
+                                "local": {
+                                  "translation": "[2.125, 0, -8.25]",
+                                  "rotation": "[0, 0, 0]",
+                                  "scaling": "[1, 1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "children": []
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
         }
       ],
       "idResource": "Graph|2023-02-11T14:47:26.962Z|84962",
       "type": "Graph"
+    }
+  },
+  "MeshObj|2023-02-11T18:46:09.536Z|18532": {
+    "ƒ.MeshObj": {
+      "idResource": "MeshObj|2023-02-11T18:46:09.536Z|18532",
+      "name": "MeshObj",
+      "type": "MeshObj"
+    }
+  },
+  "MeshObj|2023-02-11T18:46:20.324Z|38312": {
+    "ƒ.MeshObj": {
+      "idResource": "MeshObj|2023-02-11T18:46:20.324Z|38312",
+      "name": "Assets\\Models\\gantry.obj",
+      "type": "MeshObj",
+      "url": "Assets\\Models\\gantry.obj"
+    }
+  },
+  "Material|2023-02-11T18:46:51.960Z|66281": {
+    "ƒ.Material": {
+      "name": "ShaderFlat",
+      "idResource": "Material|2023-02-11T18:46:51.960Z|66281",
+      "shader": "ShaderFlat",
+      "coat": {
+        "ƒ.CoatRemissive": {
+          "color": "[1, 1, 1, 1]",
+          "diffuse": 1,
+          "specular": 0
+        }
+      }
+    }
+  },
+  "MeshObj|2023-02-11T18:59:09.588Z|34810": {
+    "ƒ.MeshObj": {
+      "idResource": "MeshObj|2023-02-11T18:59:09.588Z|34810",
+      "name": "Assets\\Models\\gantry__base.obj",
+      "type": "MeshObj",
+      "url": "Assets\\Models\\gantry__base.obj"
+    }
+  },
+  "MeshObj|2023-02-11T19:00:16.344Z|30282": {
+    "ƒ.MeshObj": {
+      "idResource": "MeshObj|2023-02-11T19:00:16.344Z|30282",
+      "name": "Assets\\Models\\gantry__bridge.obj",
+      "type": "MeshObj",
+      "url": "Assets\\Models\\gantry__bridge.obj"
+    }
+  },
+  "MeshObj|2023-02-11T19:00:37.965Z|53293": {
+    "ƒ.MeshObj": {
+      "idResource": "MeshObj|2023-02-11T19:00:37.965Z|53293",
+      "name": "Assets\\Models\\gantry__base-cog.obj",
+      "type": "MeshObj",
+      "url": "Assets\\Models\\gantry__base-cog.obj"
+    }
+  },
+  "MeshObj|2023-02-11T19:05:00.470Z|08679": {
+    "ƒ.MeshObj": {
+      "idResource": "MeshObj|2023-02-11T19:05:00.470Z|08679",
+      "name": "Assets\\Models\\gantry__cog.obj",
+      "type": "MeshObj",
+      "url": "Assets\\Models\\gantry__cog.obj"
     }
   }
 }
