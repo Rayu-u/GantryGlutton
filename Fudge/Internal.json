@@ -420,7 +420,8 @@
                           "idMaterial": "Material|2023-02-11T18:46:51.960Z|66281"
                         }
                       }
-                    ]
+                    ],
+                    "ComponentLight": []
                   },
                   "children": [
                     {
@@ -583,17 +584,112 @@
               }
             ]
           }
+        },
+        {
+          "ƒ.Node": {
+            "name": "CameraReference",
+            "active": true,
+            "components": {
+              "ComponentMesh": [
+                {
+                  "ƒ.ComponentMesh": {
+                    "idMesh": "MeshObj|2023-02-11T19:24:45.607Z|64755",
+                    "pivot": {
+                      "translation": "[0, 0, 0]",
+                      "rotation": "[0, 0, 0]",
+                      "scaling": "[1, 1, 1]"
+                    },
+                    "Component": {
+                      "active": true
+                    }
+                  }
+                }
+              ],
+              "ComponentMaterial": [
+                {
+                  "ƒ.ComponentMaterial": {
+                    "sortForAlpha": false,
+                    "clrPrimary": "[1, 0.6823529411764706, 0.3215686274509804, 1]",
+                    "clrSecondary": "[1, 1, 1, 1]",
+                    "pivot": {
+                      "translation": "[0, 0]",
+                      "rotation": 0,
+                      "scaling": "[1, 1]"
+                    },
+                    "Component": {
+                      "active": true
+                    },
+                    "idMaterial": "Material|2023-02-11T18:46:51.960Z|66281"
+                  }
+                }
+              ],
+              "ComponentTransform": [
+                {
+                  "ƒ.ComponentTransform": {
+                    "local": {
+                      "translation": "[-15, 12, 15]",
+                      "rotation": "[30, 135, 0]",
+                      "scaling": "[1, 1, 1]"
+                    },
+                    "Component": {
+                      "active": true
+                    }
+                  }
+                }
+              ]
+            },
+            "children": []
+          }
+        },
+        {
+          "ƒ.Node": {
+            "name": "Light",
+            "active": true,
+            "components": {
+              "ComponentLight": [
+                {
+                  "ƒ.ComponentLight": {
+                    "pivot": {
+                      "translation": "[0, 0, 0]",
+                      "rotation": "[0, 0, 0]",
+                      "scaling": "[1, 1, 0]"
+                    },
+                    "light": {
+                      "ƒ.LightAmbient": {
+                        "color": "[0, 0.2, 0.4, 1]"
+                      }
+                    },
+                    "Component": {
+                      "active": true
+                    }
+                  }
+                },
+                {
+                  "ƒ.ComponentLight": {
+                    "pivot": {
+                      "translation": "[0, 5, 0]",
+                      "rotation": "[0, 0, 0]",
+                      "scaling": "[20, 20, 20]"
+                    },
+                    "light": {
+                      "ƒ.LightPoint": {
+                        "color": "[1, 1, 1, 1]"
+                      }
+                    },
+                    "Component": {
+                      "active": true
+                    }
+                  }
+                }
+              ],
+              "ComponentMaterial": []
+            },
+            "children": []
+          }
         }
       ],
       "idResource": "Graph|2023-02-11T14:47:26.962Z|84962",
       "type": "Graph"
-    }
-  },
-  "MeshObj|2023-02-11T18:46:09.536Z|18532": {
-    "ƒ.MeshObj": {
-      "idResource": "MeshObj|2023-02-11T18:46:09.536Z|18532",
-      "name": "MeshObj",
-      "type": "MeshObj"
     }
   },
   "MeshObj|2023-02-11T18:46:20.324Z|38312": {
@@ -612,7 +708,7 @@
       "coat": {
         "ƒ.CoatRemissive": {
           "color": "[1, 1, 1, 1]",
-          "diffuse": 1,
+          "diffuse": 1.0000000000000004,
           "specular": 0
         }
       }
@@ -648,6 +744,28 @@
       "name": "Assets\\Models\\gantry__cog.obj",
       "type": "MeshObj",
       "url": "Assets\\Models\\gantry__cog.obj"
+    }
+  },
+  "MeshObj|2023-02-11T19:24:45.607Z|64755": {
+    "ƒ.MeshObj": {
+      "idResource": "MeshObj|2023-02-11T19:24:45.607Z|64755",
+      "name": "Assets\\Models\\camera-prop.obj",
+      "type": "MeshObj",
+      "url": "Assets\\Models\\camera-prop.obj"
+    }
+  },
+  "Material|2023-02-11T19:55:17.723Z|82256": {
+    "ƒ.Material": {
+      "name": "ShaderPhong",
+      "idResource": "Material|2023-02-11T19:55:17.723Z|82256",
+      "shader": "ShaderPhong",
+      "coat": {
+        "ƒ.CoatRemissive": {
+          "color": "[1, 1, 1, 1]",
+          "diffuse": 1,
+          "specular": 0
+        }
+      }
     }
   }
 }

@@ -42,11 +42,16 @@ var Script;
     f.Debug.info("Main Program Template running!");
     //let cmpCamera: f.ComponentCamera;
     let viewport;
+    let graph;
     document.addEventListener("interactiveViewportStarted", start);
     function start(_event) {
         viewport = _event.detail;
-        //viewport.camera.projectOrthographic();
-        //viewport.camera.mtxPivot.translation = new f.Vector3(-15, 12, 15);
+        graph = viewport.getBranch();
+        let referenceCameraObject = graph.getChildrenByName("CameraReference")[0];
+        viewport.camera.projectOrthographic();
+        viewport.camera.mtxPivot = referenceCameraObject.getComponent(f.ComponentTransform).mtxLocal;
+        f.Debug.log(viewport.camera.mtxPivot);
+        f.Debug.log(referenceCameraObject.getComponent(f.ComponentTransform).mtxLocal);
         //viewport.camera.mtxPivot.translateX(-15);
         //viewport.camera.mtxPivot.rotation = new f.Vector3(0, 0, 0);
         //viewport.camera.mtxPivot.translateZ(+10);
