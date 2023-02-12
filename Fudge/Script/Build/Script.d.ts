@@ -56,6 +56,15 @@ declare namespace GantryGlutton {
 }
 declare namespace GantryGlutton {
     import f = FudgeCore;
+    class Fruit extends f.ComponentScript {
+        static readonly iSubclass: number;
+        message: string;
+        constructor();
+        hndEvent: (_event: Event) => void;
+    }
+}
+declare namespace GantryGlutton {
+    import f = FudgeCore;
     class Gantry extends f.ComponentScript {
         static readonly iSubclass: number;
         message: string;
