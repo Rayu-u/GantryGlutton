@@ -73,7 +73,7 @@ namespace GantryGlutton {
       this.rigidbody = this.node.getComponent(f.ComponentRigidbody);
       this.initialY = this.node.getComponent(f.ComponentTransform).mtxLocal.translation.y;
     };
-
+    
     public update = (_event: Event): void => {      
       //f.Physics.simulate();
       //this.node.dispatchEvent(new Event("SensorHit", {bubbles: true}));

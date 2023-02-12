@@ -51,34 +51,37 @@ var GantryGlutton;
     f.Project.registerScriptNamespace(GantryGlutton); // Register the namespace to FUDGE for serialization
     /**
      * Types of fruit.
-     */
+    */
     let FruitType;
     (function (FruitType) {
         FruitType[FruitType["Banana"] = 0] = "Banana";
         FruitType[FruitType["Blueberry"] = 1] = "Blueberry";
         FruitType[FruitType["Cherry"] = 2] = "Cherry";
         FruitType[FruitType["Pear"] = 3] = "Pear";
-    })(FruitType || (FruitType = {}));
+    })(FruitType = GantryGlutton.FruitType || (GantryGlutton.FruitType = {}));
     class Course extends f.ComponentScript {
         // Register the script as component for use in the editor via drag&drop
         static iSubclass = f.Component.registerSubclass(Course);
         /**
-         * The number of seconds until the first fruit spawns.
+         * The number of seconds until the first Fruit spawns.
          */
         courseDelay = 1;
         /**
-         * The number of fruits that drop per course.
+         * The inset for how far off the stage the Fruit spawns.
+         */
+        courseInset = 1;
+        /**
+         * The number of Fruits that drop per course.
          */
         fruitCourseLength = 50;
         /**
-         * The longest possible interval between fruit spawning.
+         * The longest possible interval between Fruit spawning.
          */
         maxFruitInterval = 1;
         /**
-         * The shortest possible interval between fruit spawning.
+         * The shortest possible interval between Fruit spawning.
          */
         minFruitInterval = 0;
-        fruitCourse = [];
         constructor() {
             super();
             // Don't start when running in editor
@@ -93,26 +96,39 @@ var GantryGlutton;
         hndEvent = (_event) => {
             switch (_event.type) {
                 case "componentAdd" /* f.EVENT.COMPONENT_ADD */:
-                    this.generateCourseSpecifications();
                     break;
                 case "componentRemove" /* f.EVENT.COMPONENT_REMOVE */:
                     this.removeEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
                     this.removeEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
                     break;
                 case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
-                    // if deserialized the node is now fully reconstructed and access to all its components and children is possible
                     break;
             }
         };
-        generateCourseSpecifications = () => {
+        generateCourse = () => {
+            const fruitGraphs = new Map([
+                [FruitType.Banana, f.Project.getResourcesByName("Banana")[0]],
+                [FruitType.Blueberry, f.Project.getResourcesByName("Blueberry")[0]],
+                [FruitType.Cherry, f.Project.getResourcesByName("Cherry")[0]],
+                [FruitType.Pear, f.Project.getResourcesByName("Pear")[0]],
+            ]);
+            const stageWidth = 10 - 2 * this.courseInset;
             let timeFromStart = this.courseDelay;
             for (let i = 0; i < this.fruitCourseLength; i++) {
+                const fruitFallDuration = timeFromStart;
                 const randomFruit = Math.floor(4 * Math.random());
-                this.fruitCourse.push({ time: timeFromStart, type: randomFruit });
+                const randomPosition = new f.Vector3((Math.random() * stageWidth) + this.courseInset, 0, -(Math.random() * stageWidth) - this.courseInset);
+                (async () => {
+                    let fruitInstance = await f.Project.createGraphInstance(fruitGraphs.get(randomFruit));
+                    const fruitTransform = fruitInstance.getComponent(f.ComponentTransform);
+                    fruitTransform.mtxLocal.translation = randomPosition;
+                    const fruitComponent = fruitInstance.getComponent(GantryGlutton.Fruit);
+                    fruitComponent.supplyFallDuration(fruitFallDuration);
+                    GantryGlutton.graph.addChild(fruitInstance);
+                })();
                 timeFromStart +=
                     this.maxFruitInterval * Math.random() + this.minFruitInterval;
             }
-            console.log(this.fruitCourse);
         };
     }
     GantryGlutton.Course = Course;
@@ -198,8 +214,10 @@ var GantryGlutton;
     class Fruit extends f.ComponentScript {
         // Register the script as component for use in the editor via drag&drop
         static iSubclass = f.Component.registerSubclass(Fruit);
-        // Properties may be mutated by users in the editor via the automatically created user interface
-        message = "CustomComponentScript added to ";
+        static fallSpeed = 5;
+        static fruitIndicationDuration = 15;
+        modelTransform;
+        shadowTransform;
         constructor() {
             super();
             // Don't start when running in editor
@@ -214,16 +232,26 @@ var GantryGlutton;
         hndEvent = (_event) => {
             switch (_event.type) {
                 case "componentAdd" /* f.EVENT.COMPONENT_ADD */:
-                    f.Debug.log(this.message, this.node);
+                    this.node.addEventListener("renderPrepare" /* f.EVENT.RENDER_PREPARE */, this.update);
                     break;
                 case "componentRemove" /* f.EVENT.COMPONENT_REMOVE */:
                     this.removeEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
                     this.removeEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
                     break;
                 case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
-                    // if deserialized the node is now fully reconstructed and access to all its components and children is possible
+                    this.modelTransform = this.node.getChildrenByName("Model")[0].getComponent(f.ComponentTransform);
+                    this.shadowTransform = this.node.getChildrenByName("Shadow")[0].getComponent(f.ComponentTransform);
                     break;
             }
+        };
+        supplyFallDuration = (fallDuration) => {
+            const oldModelPosition = this.modelTransform.mtxLocal.translation;
+            oldModelPosition.y = fallDuration * Fruit.fallSpeed;
+            this.modelTransform.mtxLocal.translation = oldModelPosition;
+        };
+        update = (_event) => {
+            const deltaTime = f.Loop.timeFrameGame / 1000;
+            this.modelTransform.mtxLocal.translateY(-deltaTime * Fruit.fallSpeed);
         };
     }
     GantryGlutton.Fruit = Fruit;
@@ -326,7 +354,6 @@ var GantryGlutton;
     f.Debug.info("Main Program Template running!");
     //let cmpCamera: f.ComponentCamera;
     let viewport;
-    let graph;
     document.addEventListener("interactiveViewportStarted", start);
     const afterPhysicsUpdateSubscribers = [];
     function addAfterPhysicsUpdateSubscriber(subcriber) {
@@ -335,10 +362,12 @@ var GantryGlutton;
     GantryGlutton.addAfterPhysicsUpdateSubscriber = addAfterPhysicsUpdateSubscriber;
     function start(_event) {
         viewport = _event.detail;
-        graph = viewport.getBranch();
-        let referenceCameraObject = graph.getChildrenByName("CameraReference")[0];
+        GantryGlutton.graph = viewport.getBranch();
+        let referenceCameraObject = GantryGlutton.graph.getChildrenByName("CameraReference")[0];
         viewport.camera.projectCentral(undefined, 60);
         viewport.camera.mtxPivot = referenceCameraObject.getComponent(f.ComponentTransform).mtxLocal;
+        const course = GantryGlutton.graph.getChildrenByName("Course")[0].getComponent(GantryGlutton.Course);
+        course.generateCourse();
         f.Loop.addEventListener("loopFrame" /* f.EVENT.LOOP_FRAME */, update);
         f.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
     }

@@ -1,59 +1,48 @@
 namespace GantryGlutton {
   import f = FudgeCore;
   f.Project.registerScriptNamespace(GantryGlutton); // Register the namespace to FUDGE for serialization
-
+  
   /**
    * Types of fruit.
-   */
-  export enum FruitType {
-    Banana,
-    Blueberry,
-    Cherry,
-    Pear,
-  }
-
-  /**
-   * The specifications of one fruit spawn.
-   */
-  interface FruitSpawn {
-    /**
-     * Seconds from course start to this fruit spawns.
-     */
-    time: number;
-
-    /**
-     *The type of fruit to spawn.
-     */
-    type: FruitType;
+  */
+ export enum FruitType {
+   Banana,
+   Blueberry,
+   Cherry,
+   Pear,
   }
 
   export class Course extends f.ComponentScript {
     // Register the script as component for use in the editor via drag&drop
     public static readonly iSubclass: number =
-      f.Component.registerSubclass(Course);
+    f.Component.registerSubclass(Course);
 
     /**
-     * The number of seconds until the first fruit spawns.
+     * The number of seconds until the first Fruit spawns.
      */
     public courseDelay: number = 1;
 
     /**
-     * The number of fruits that drop per course.
+     * The inset for how far off the stage the Fruit spawns.
+     */
+    public courseInset: number = 1;
+
+    /**
+     * The number of Fruits that drop per course.
      */
     public fruitCourseLength: number = 50;
 
     /**
-     * The longest possible interval between fruit spawning.
+     * The longest possible interval between Fruit spawning.
      */
     public maxFruitInterval: number = 1;
 
     /**
-     * The shortest possible interval between fruit spawning.
+     * The shortest possible interval between Fruit spawning.
      */
     public minFruitInterval: number = 0;
-
-    private fruitCourse: FruitSpawn[] = [];
-
+  
+    
     constructor() {
       super();
 
@@ -70,28 +59,52 @@ namespace GantryGlutton {
     public hndEvent = (_event: Event): void => {
       switch (_event.type) {
         case f.EVENT.COMPONENT_ADD:
-          this.generateCourseSpecifications();
           break;
         case f.EVENT.COMPONENT_REMOVE:
           this.removeEventListener(f.EVENT.COMPONENT_ADD, this.hndEvent);
           this.removeEventListener(f.EVENT.COMPONENT_REMOVE, this.hndEvent);
           break;
         case f.EVENT.NODE_DESERIALIZED:
-          // if deserialized the node is now fully reconstructed and access to all its components and children is possible
           break;
       }
     };
 
-    private generateCourseSpecifications = () => {
+    public generateCourse = () => {
+      const fruitGraphs: Map<FruitType, f.Graph> = new Map<FruitType, f.Graph>([
+        [FruitType.Banana,<f.Graph>f.Project.getResourcesByName("Banana")[0]],
+        [FruitType.Blueberry,<f.Graph>f.Project.getResourcesByName("Blueberry")[0]],
+        [FruitType.Cherry,<f.Graph>f.Project.getResourcesByName("Cherry")[0]],
+        [FruitType.Pear,<f.Graph>f.Project.getResourcesByName("Pear")[0]],
+      ]);
+
+      const stageWidth: number = 10 - 2 * this.courseInset;
       let timeFromStart = this.courseDelay;
       for (let i = 0; i < this.fruitCourseLength; i++) {
+        const fruitFallDuration = timeFromStart;
         const randomFruit = Math.floor(4 * Math.random());
-        this.fruitCourse.push({ time: timeFromStart, type: randomFruit });
+        const randomPosition: f.Vector3 = new f.Vector3(
+          (Math.random() * stageWidth) + this.courseInset,
+          0,
+          -(Math.random() * stageWidth) - this.courseInset
+        );
+
+        (async () => {        
+          let fruitInstance: f.GraphInstance = await f.Project.createGraphInstance(
+            fruitGraphs.get(randomFruit)
+          );
+          
+          const fruitTransform: f.ComponentTransform = fruitInstance.getComponent(f.ComponentTransform);
+          fruitTransform.mtxLocal.translation = randomPosition;
+          
+          const fruitComponent: Fruit = fruitInstance.getComponent(Fruit);
+          fruitComponent.supplyFallDuration(fruitFallDuration);
+
+          graph.addChild(fruitInstance);
+        })();
+
         timeFromStart +=
           this.maxFruitInterval * Math.random() + this.minFruitInterval;
       }
-
-      console.log(this.fruitCourse);
     };
   }
 }

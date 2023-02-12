@@ -12,28 +12,40 @@ declare namespace GantryGlutton {
 }
 declare namespace GantryGlutton {
     import f = FudgeCore;
+    /**
+     * Types of fruit.
+    */
+    enum FruitType {
+        Banana = 0,
+        Blueberry = 1,
+        Cherry = 2,
+        Pear = 3
+    }
     class Course extends f.ComponentScript {
         static readonly iSubclass: number;
         /**
-         * The number of seconds until the first fruit spawns.
+         * The number of seconds until the first Fruit spawns.
          */
         courseDelay: number;
         /**
-         * The number of fruits that drop per course.
+         * The inset for how far off the stage the Fruit spawns.
+         */
+        courseInset: number;
+        /**
+         * The number of Fruits that drop per course.
          */
         fruitCourseLength: number;
         /**
-         * The longest possible interval between fruit spawning.
+         * The longest possible interval between Fruit spawning.
          */
         maxFruitInterval: number;
         /**
-         * The shortest possible interval between fruit spawning.
+         * The shortest possible interval between Fruit spawning.
          */
         minFruitInterval: number;
-        private fruitCourse;
         constructor();
         hndEvent: (_event: Event) => void;
-        private generateCourseSpecifications;
+        generateCourse: () => void;
     }
 }
 declare namespace Script {
@@ -58,9 +70,14 @@ declare namespace GantryGlutton {
     import f = FudgeCore;
     class Fruit extends f.ComponentScript {
         static readonly iSubclass: number;
-        message: string;
+        private static fallSpeed;
+        private static fruitIndicationDuration;
+        private modelTransform;
+        private shadowTransform;
         constructor();
         hndEvent: (_event: Event) => void;
+        supplyFallDuration: (fallDuration: number) => void;
+        update: (_event: Event) => void;
     }
 }
 declare namespace GantryGlutton {
@@ -87,6 +104,8 @@ declare namespace GantryGlutton {
     }
 }
 declare namespace GantryGlutton {
+    import f = FudgeCore;
+    export let graph: f.Node;
     interface AfterPhysicsUpdateSubscriber {
         onAfterPhysicsUpdate: () => void;
     }

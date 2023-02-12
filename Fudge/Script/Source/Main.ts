@@ -4,7 +4,7 @@ namespace GantryGlutton {
 
   //let cmpCamera: f.ComponentCamera;
   let viewport: f.Viewport;
-  let graph: f.Node;
+  export let graph: f.Node;
   document.addEventListener("interactiveViewportStarted", <EventListener>start);
 
   interface AfterPhysicsUpdateSubscriber {
@@ -28,6 +28,9 @@ namespace GantryGlutton {
     viewport.camera.mtxPivot = referenceCameraObject.getComponent(
       f.ComponentTransform
     ).mtxLocal;
+
+    const course: Course = graph.getChildrenByName("Course")[0].getComponent(Course);
+    course.generateCourse();
 
     f.Loop.addEventListener(f.EVENT.LOOP_FRAME, update);
     f.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
