@@ -534,11 +534,23 @@
                               "ƒ.ComponentTransform": {
                                 "local": {
                                   "translation": "[1.75, 0, -10.125000953674316]",
-                                  "rotation": "[0, 0, 0]",
+                                  "rotation": "[0, -90, 0]",
                                   "scaling": "[1, 1, 1]"
                                 },
                                 "Component": {
                                   "active": true
+                                }
+                              }
+                            }
+                          ],
+                          "Cog": [
+                            {
+                              "GantryGlutton.Cog": {
+                                "active": true,
+                                "platformVelocityDimensionSelector": {
+                                  "x": 1,
+                                  "y": 0,
+                                  "z": 0
                                 }
                               }
                             }
@@ -623,7 +635,7 @@
                                 "idMesh": "MeshObj|2023-02-11T19:05:00.470Z|08679",
                                 "pivot": {
                                   "translation": "[0, 0, 0]",
-                                  "rotation": "[0, 90, 0]",
+                                  "rotation": "[0, 0, 0]",
                                   "scaling": "[1, 1, 1]"
                                 },
                                 "Component": {
@@ -660,6 +672,18 @@
                                 },
                                 "Component": {
                                   "active": true
+                                }
+                              }
+                            }
+                          ],
+                          "Cog": [
+                            {
+                              "GantryGlutton.Cog": {
+                                "active": true,
+                                "platformVelocityDimensionSelector": {
+                                  "x": 0,
+                                  "y": 0,
+                                  "z": -1
                                 }
                               }
                             }

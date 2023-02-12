@@ -1,3 +1,15 @@
+declare namespace GantryGlutton {
+    import f = FudgeCore;
+    class Cog extends f.ComponentScript {
+        static readonly iSubclass: number;
+        platformRigidbody: f.ComponentRigidbody;
+        private transform;
+        platformVelocityDimensionSelector: f.Vector3;
+        constructor();
+        hndEvent: (_event: Event) => void;
+        onAfterPhysicsUpdate: () => void;
+    }
+}
 declare namespace Script {
     import ƒ = FudgeCore;
     class CustomComponentScript extends ƒ.ComponentScript {

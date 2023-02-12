@@ -1,4 +1,50 @@
 "use strict";
+var GantryGlutton;
+(function (GantryGlutton) {
+    var f = FudgeCore;
+    f.Project.registerScriptNamespace(GantryGlutton); // Register the namespace to FUDGE for serialization
+    class Cog extends f.ComponentScript {
+        // Register the script as component for use in the editor via drag&drop
+        static iSubclass = f.Component.registerSubclass(Cog);
+        // Properties may be mutated by users in the editor via the automatically created user interface
+        platformRigidbody;
+        transform;
+        platformVelocityDimensionSelector = f.Vector3.ZERO();
+        constructor() {
+            super();
+            // Don't start when running in editor
+            if (f.Project.mode == f.MODE.EDITOR)
+                return;
+            // Listen to this component being added to or removed from a node
+            this.addEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
+            this.addEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
+            this.addEventListener("nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */, this.hndEvent);
+        }
+        // Activate the functions of this component as response to events
+        hndEvent = (_event) => {
+            switch (_event.type) {
+                case "componentAdd" /* f.EVENT.COMPONENT_ADD */:
+                    break;
+                case "componentRemove" /* f.EVENT.COMPONENT_REMOVE */:
+                    this.removeEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
+                    this.removeEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
+                    break;
+                case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
+                    // if deserialized the node is now fully reconstructed and access to all its components and children is possible
+                    GantryGlutton.addAfterPhysicsUpdateSubscriber(this);
+                    this.transform = this.node.getComponent(f.ComponentTransform);
+                    break;
+            }
+        };
+        onAfterPhysicsUpdate = () => {
+            const relevantSpeed = f.Vector3.DOT(this.platformRigidbody.getVelocity(), this.platformVelocityDimensionSelector);
+            const deltaTime = f.Loop.timeFrameGame / 1000;
+            const angle = deltaTime * relevantSpeed * 360 / Math.PI;
+            this.transform.mtxLocal.rotateX(angle);
+        };
+    }
+    GantryGlutton.Cog = Cog;
+})(GantryGlutton || (GantryGlutton = {}));
 var Script;
 (function (Script) {
     var ƒ = FudgeCore;
@@ -72,8 +118,10 @@ var GantryGlutton;
             }
         };
         start = (_event) => {
-            let platformTransform = this.node.getChildrenByName("Platform")[0].getComponent(f.ComponentRigidbody);
-            this.node.getChildrenByName("Bridge")[0].getComponent(GantryGlutton.GantryBridge).platformRigidbody = platformTransform;
+            let platformRigidbody = this.node.getChildrenByName("Platform")[0].getComponent(f.ComponentRigidbody);
+            this.node.getChildrenByName("Bridge")[0].getComponent(GantryGlutton.GantryBridge).platformRigidbody = platformRigidbody;
+            this.node.getChildrenByName("Base")[0].getChildrenByName("Cog")[0].getComponent(GantryGlutton.Cog).platformRigidbody = platformRigidbody;
+            this.node.getChildrenByName("Bridge")[0].getChildrenByName("Cog")[0].getComponent(GantryGlutton.Cog).platformRigidbody = platformRigidbody;
         };
     }
     GantryGlutton.Gantry = Gantry;
@@ -217,7 +265,6 @@ var GantryGlutton;
             this.initialY = this.node.getComponent(f.ComponentTransform).mtxLocal.translation.y;
         };
         update = (_event) => {
-            console.log(this.rigidbody.getPosition().y);
             //f.Physics.simulate();
             //this.node.dispatchEvent(new Event("SensorHit", {bubbles: true}));
             const inputDirection = this.getInputAsCardinalDirection();
