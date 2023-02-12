@@ -84,35 +84,56 @@ var Script;
 })(Script || (Script = {}));
 var GantryGlutton;
 (function (GantryGlutton) {
-    var ƒ = FudgeCore;
-    ƒ.Project.registerScriptNamespace(GantryGlutton); // Register the namespace to FUDGE for serialization
-    class CustomerManager extends ƒ.ComponentScript {
+    var f = FudgeCore;
+    f.Project.registerScriptNamespace(GantryGlutton); // Register the namespace to FUDGE for serialization
+    class CustomerQueue {
+        /**
+         * How many groups should there be in each queue.
+         */
+        static queueLength = 3;
+        /**
+         * The groups in this queue.
+         */
+        groups = [];
+        /**
+         * The offset between each group in the queue.
+         */
+        groupOffset;
+        /**
+         * The position of the head of the queue, where the first group stands.
+         */
+        queueHeadPosition;
+        constructor(groupOffset, queueHeadPosition) {
+            this.groupOffset = groupOffset;
+            this.queueHeadPosition = queueHeadPosition;
+        }
+        ensureEnoughGroups = () => { };
+        generateGroup = () => { };
+        removeFirstGroup = () => { };
+    }
+    class CustomerManager extends f.ComponentScript {
         // Register the script as component for use in the editor via drag&drop
-        static iSubclass = ƒ.Component.registerSubclass(CustomerManager);
-        // Properties may be mutated by users in the editor via the automatically created user interface
-        message = "CustomComponentScript added to ";
+        static iSubclass = f.Component.registerSubclass(CustomerManager);
         constructor() {
             super();
             // Don't start when running in editor
-            if (ƒ.Project.mode == ƒ.MODE.EDITOR)
+            if (f.Project.mode == f.MODE.EDITOR)
                 return;
             // Listen to this component being added to or removed from a node
-            this.addEventListener("componentAdd" /* ƒ.EVENT.COMPONENT_ADD */, this.hndEvent);
-            this.addEventListener("componentRemove" /* ƒ.EVENT.COMPONENT_REMOVE */, this.hndEvent);
-            this.addEventListener("nodeDeserialized" /* ƒ.EVENT.NODE_DESERIALIZED */, this.hndEvent);
+            this.addEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
+            this.addEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
+            this.addEventListener("nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */, this.hndEvent);
         }
         // Activate the functions of this component as response to events
         hndEvent = (_event) => {
             switch (_event.type) {
-                case "componentAdd" /* ƒ.EVENT.COMPONENT_ADD */:
-                    ƒ.Debug.log(this.message, this.node);
+                case "componentAdd" /* f.EVENT.COMPONENT_ADD */:
                     break;
-                case "componentRemove" /* ƒ.EVENT.COMPONENT_REMOVE */:
-                    this.removeEventListener("componentAdd" /* ƒ.EVENT.COMPONENT_ADD */, this.hndEvent);
-                    this.removeEventListener("componentRemove" /* ƒ.EVENT.COMPONENT_REMOVE */, this.hndEvent);
+                case "componentRemove" /* f.EVENT.COMPONENT_REMOVE */:
+                    this.removeEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
+                    this.removeEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
                     break;
-                case "nodeDeserialized" /* ƒ.EVENT.NODE_DESERIALIZED */:
-                    // if deserialized the node is now fully reconstructed and access to all its components and children is possible
+                case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
                     break;
             }
         };

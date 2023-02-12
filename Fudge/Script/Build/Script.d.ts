@@ -20,10 +20,9 @@ declare namespace Script {
     }
 }
 declare namespace GantryGlutton {
-    import ƒ = FudgeCore;
-    class CustomerManager extends ƒ.ComponentScript {
+    import f = FudgeCore;
+    class CustomerManager extends f.ComponentScript {
         static readonly iSubclass: number;
-        message: string;
         constructor();
         hndEvent: (_event: Event) => void;
     }
