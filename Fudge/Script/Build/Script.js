@@ -215,7 +215,7 @@ var GantryGlutton;
         // Register the script as component for use in the editor via drag&drop
         static iSubclass = f.Component.registerSubclass(Fruit);
         static fallSpeed = 5;
-        static fruitIndicationDuration = 15;
+        static fruitIndicationDuration = 10;
         modelTransform;
         shadowTransform;
         constructor() {
@@ -241,6 +241,7 @@ var GantryGlutton;
                 case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
                     this.modelTransform = this.node.getChildrenByName("Model")[0].getComponent(f.ComponentTransform);
                     this.shadowTransform = this.node.getChildrenByName("Shadow")[0].getComponent(f.ComponentTransform);
+                    this.shadowTransform.mtxLocal.scaling = f.Vector3.ZERO();
                     break;
             }
         };
@@ -252,6 +253,13 @@ var GantryGlutton;
         update = (_event) => {
             const deltaTime = f.Loop.timeFrameGame / 1000;
             this.modelTransform.mtxLocal.translateY(-deltaTime * Fruit.fallSpeed);
+            const remainingFallDuration = this.modelTransform.mtxLocal.translation.y / Fruit.fallSpeed;
+            if (0 < remainingFallDuration && remainingFallDuration < Fruit.fruitIndicationDuration) {
+                this.shadowTransform.mtxLocal = f.Matrix4x4.SCALING(f.Vector3.ONE(1 - remainingFallDuration / Fruit.fruitIndicationDuration));
+            }
+            else {
+                this.shadowTransform.mtxLocal.scaling = f.Vector3.ZERO();
+            }
         };
     }
     GantryGlutton.Fruit = Fruit;

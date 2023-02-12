@@ -932,10 +932,10 @@
                 {
                   "GantryGlutton.Course": {
                     "active": true,
-                    "courseDelay": 0,
+                    "courseDelay": 10,
                     "courseInset": 1,
                     "fruitCourseLength": 50,
-                    "maxFruitInterval": 0.1,
+                    "maxFruitInterval": 4,
                     "minFruitInterval": 0
                   }
                 }
