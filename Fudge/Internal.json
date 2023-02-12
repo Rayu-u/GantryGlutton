@@ -440,6 +440,14 @@
                     }
                   }
                 }
+              ],
+              "Gantry": [
+                {
+                  "GantryGlutton.Gantry": {
+                    "active": true,
+                    "message": "CustomComponentScript added to "
+                  }
+                }
               ]
             },
             "children": [
@@ -544,7 +552,7 @@
               },
               {
                 "ƒ.Node": {
-                  "name": "gantry__bridge",
+                  "name": "Bridge",
                   "active": true,
                   "components": {
                     "ComponentMesh": [
@@ -591,6 +599,14 @@
                           "Component": {
                             "active": true
                           }
+                        }
+                      }
+                    ],
+                    "GantryBridge": [
+                      {
+                        "GantryGlutton.GantryBridge": {
+                          "active": true,
+                          "platformOffset": -1
                         }
                       }
                     ]
@@ -678,10 +694,10 @@
                       {
                         "ƒ.ComponentRigidbody": {
                           "initialization": "TO_PIVOT",
-                          "friction": 0.2,
+                          "friction": 0,
                           "restitution": 0.2,
                           "mass": 1,
-                          "dampTranslation": 0.1,
+                          "dampTranslation": 5,
                           "dampRotation": 0.1,
                           "effectGravity": 0,
                           "typeBody": "DYNAMIC",
@@ -696,6 +712,16 @@
                           "Component": {
                             "active": true
                           }
+                        }
+                      }
+                    ],
+                    "Platform": [
+                      {
+                        "GantryGlutton.Platform": {
+                          "active": true,
+                          "message": "CustomComponentScript added to ",
+                          "motorForce": 20,
+                          "rigidbody": ""
                         }
                       }
                     ]
@@ -743,7 +769,7 @@
                             {
                               "ƒ.ComponentTransform": {
                                 "local": {
-                                  "translation": "[1, -0.10000000149011612, -1.899999976158142]",
+                                  "translation": "[1, -0.20000000298023224, -1.899999976158142]",
                                   "rotation": "[0, 0, 0]",
                                   "scaling": "[1, 1, 1]"
                                 },
@@ -799,7 +825,7 @@
                             {
                               "ƒ.ComponentTransform": {
                                 "local": {
-                                  "translation": "[1, -0.10000000149011612, -0.10000000149011612]",
+                                  "translation": "[1, -0.20000000298023224, -0.10000000149011612]",
                                   "rotation": "[0, 0, 0]",
                                   "scaling": "[1, 1, 1]"
                                 },
