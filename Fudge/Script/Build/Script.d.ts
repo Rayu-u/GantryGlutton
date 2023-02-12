@@ -19,6 +19,10 @@ declare namespace GantryGlutton {
          */
         courseDelay: number;
         /**
+         * The number of fruits that drop per course.
+         */
+        fruitCourseLength: number;
+        /**
          * The longest possible interval between fruit spawning.
          */
         maxFruitInterval: number;
@@ -26,10 +30,6 @@ declare namespace GantryGlutton {
          * The shortest possible interval between fruit spawning.
          */
         minFruitInterval: number;
-        /**
-         * The number of fruits that drop per course.
-         */
-        fruitCourseLength: number;
         private fruitCourse;
         constructor();
         hndEvent: (_event: Event) => void;

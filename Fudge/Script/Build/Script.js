@@ -67,6 +67,10 @@ var GantryGlutton;
          */
         courseDelay = 1;
         /**
+         * The number of fruits that drop per course.
+         */
+        fruitCourseLength = 50;
+        /**
          * The longest possible interval between fruit spawning.
          */
         maxFruitInterval = 1;
@@ -74,10 +78,6 @@ var GantryGlutton;
          * The shortest possible interval between fruit spawning.
          */
         minFruitInterval = 0;
-        /**
-         * The number of fruits that drop per course.
-         */
-        fruitCourseLength = 50;
         fruitCourse = [];
         constructor() {
             super();

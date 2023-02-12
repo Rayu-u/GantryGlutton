@@ -38,6 +38,11 @@ namespace GantryGlutton {
     public courseDelay: number = 1;
 
     /**
+     * The number of fruits that drop per course.
+     */
+    public fruitCourseLength: number = 50;
+
+    /**
      * The longest possible interval between fruit spawning.
      */
     public maxFruitInterval: number = 1;
@@ -46,11 +51,6 @@ namespace GantryGlutton {
      * The shortest possible interval between fruit spawning.
      */
     public minFruitInterval: number = 0;
-
-    /**
-     * The number of fruits that drop per course.
-     */
-    public fruitCourseLength: number = 50;
 
     private fruitCourse: FruitSpawn[] = [];
 
