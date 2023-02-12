@@ -5,7 +5,7 @@ namespace GantryGlutton {
   /**
    * Types of fruit.
    */
-  enum FruitType {
+  export enum FruitType {
     Banana,
     Blueberry,
     Cherry,
