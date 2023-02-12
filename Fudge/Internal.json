@@ -64,6 +64,22 @@
       "url": "Assets\\Models\\camera-prop.obj"
     }
   },
+  "MeshObj|2023-02-12T08:57:48.308Z|09044": {
+    "ƒ.MeshObj": {
+      "idResource": "MeshObj|2023-02-12T08:57:48.308Z|09044",
+      "name": "Assets\\Models\\platform.obj",
+      "type": "MeshObj",
+      "url": "Assets\\Models\\platform.obj"
+    }
+  },
+  "MeshObj|2023-02-12T09:13:41.355Z|00195": {
+    "ƒ.MeshObj": {
+      "idResource": "MeshObj|2023-02-12T09:13:41.355Z|00195",
+      "name": "Assets\\Models\\stage.obj",
+      "type": "MeshObj",
+      "url": "Assets\\Models\\stage.obj"
+    }
+  },
   "Graph|2023-02-11T14:47:26.962Z|84962": {
     "ƒ.Graph": {
       "name": "Level",
@@ -577,8 +593,7 @@
                           }
                         }
                       }
-                    ],
-                    "ComponentRigidbody": []
+                    ]
                   },
                   "children": [
                     {
@@ -683,8 +698,7 @@
                           }
                         }
                       }
-                    ],
-                    "ComponentMaterial": []
+                    ]
                   },
                   "children": [
                     {
@@ -847,8 +861,8 @@
                 {
                   "ƒ.ComponentTransform": {
                     "local": {
-                      "translation": "[-15, 12, 15]",
-                      "rotation": "[30, 135, 0]",
+                      "translation": "[-2.5, 10, 2.5]",
+                      "rotation": "[50, 135, 0]",
                       "scaling": "[1, 1, 1]"
                     },
                     "Component": {
@@ -951,8 +965,6 @@
                   "name": "Wall-SW",
                   "active": true,
                   "components": {
-                    "ComponentMesh": [],
-                    "ComponentMaterial": [],
                     "ComponentTransform": [
                       {
                         "ƒ.ComponentTransform": {
@@ -1176,22 +1188,6 @@
           "specular": 0
         }
       }
-    }
-  },
-  "MeshObj|2023-02-12T08:57:48.308Z|09044": {
-    "ƒ.MeshObj": {
-      "idResource": "MeshObj|2023-02-12T08:57:48.308Z|09044",
-      "name": "Assets\\Models\\platform.obj",
-      "type": "MeshObj",
-      "url": "Assets\\Models\\platform.obj"
-    }
-  },
-  "MeshObj|2023-02-12T09:13:41.355Z|00195": {
-    "ƒ.MeshObj": {
-      "idResource": "MeshObj|2023-02-12T09:13:41.355Z|00195",
-      "name": "Assets\\Models\\stage.obj",
-      "type": "MeshObj",
-      "url": "Assets\\Models\\stage.obj"
     }
   }
 }
