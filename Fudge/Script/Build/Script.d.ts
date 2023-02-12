@@ -10,6 +10,32 @@ declare namespace GantryGlutton {
         onAfterPhysicsUpdate: () => void;
     }
 }
+declare namespace GantryGlutton {
+    import f = FudgeCore;
+    class Course extends f.ComponentScript {
+        static readonly iSubclass: number;
+        /**
+         * The number of seconds until the first fruit spawns.
+         */
+        courseDelay: number;
+        /**
+         * The longest possible interval between fruit spawning.
+         */
+        maxFruitInterval: number;
+        /**
+         * The shortest possible interval between fruit spawning.
+         */
+        minFruitInterval: number;
+        /**
+         * The number of fruits that drop per course.
+         */
+        fruitCourseLength: number;
+        private fruitCourse;
+        constructor();
+        hndEvent: (_event: Event) => void;
+        private generateCourseSpecifications;
+    }
+}
 declare namespace Script {
     import ƒ = FudgeCore;
     class CustomComponentScript extends ƒ.ComponentScript {

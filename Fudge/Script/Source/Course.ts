@@ -1,19 +1,64 @@
 namespace GantryGlutton {
   import f = FudgeCore;
-  f.Project.registerScriptNamespace(GantryGlutton);  // Register the namespace to FUDGE for serialization
+  f.Project.registerScriptNamespace(GantryGlutton); // Register the namespace to FUDGE for serialization
+
+  /**
+   * Types of fruit.
+   */
+  enum FruitType {
+    Banana,
+    Blueberry,
+    Cherry,
+    Pear,
+  }
+
+  /**
+   * The specifications of one fruit spawn.
+   */
+  interface FruitSpawn {
+    /**
+     * Seconds from course start to this fruit spawns.
+     */
+    time: number;
+
+    /**
+     *The type of fruit to spawn.
+     */
+    type: FruitType;
+  }
 
   export class Course extends f.ComponentScript {
     // Register the script as component for use in the editor via drag&drop
-    public static readonly iSubclass: number = f.Component.registerSubclass(Course);
-    // Properties may be mutated by users in the editor via the automatically created user interface
-    public message: string = "CustomComponentScript added to ";
+    public static readonly iSubclass: number =
+      f.Component.registerSubclass(Course);
+
+    /**
+     * The number of seconds until the first fruit spawns.
+     */
+    public courseDelay: number = 1;
+
+    /**
+     * The longest possible interval between fruit spawning.
+     */
+    public maxFruitInterval: number = 1;
+
+    /**
+     * The shortest possible interval between fruit spawning.
+     */
+    public minFruitInterval: number = 0;
+
+    /**
+     * The number of fruits that drop per course.
+     */
+    public fruitCourseLength: number = 50;
+
+    private fruitCourse: FruitSpawn[] = [];
 
     constructor() {
       super();
 
       // Don't start when running in editor
-      if (f.Project.mode == f.MODE.EDITOR)
-        return;
+      if (f.Project.mode == f.MODE.EDITOR) return;
 
       // Listen to this component being added to or removed from a node
       this.addEventListener(f.EVENT.COMPONENT_ADD, this.hndEvent);
@@ -25,7 +70,7 @@ namespace GantryGlutton {
     public hndEvent = (_event: Event): void => {
       switch (_event.type) {
         case f.EVENT.COMPONENT_ADD:
-          f.Debug.log(this.message, this.node);
+          this.generateCourseSpecifications();
           break;
         case f.EVENT.COMPONENT_REMOVE:
           this.removeEventListener(f.EVENT.COMPONENT_ADD, this.hndEvent);
@@ -35,11 +80,18 @@ namespace GantryGlutton {
           // if deserialized the node is now fully reconstructed and access to all its components and children is possible
           break;
       }
-    }
+    };
 
-    // protected reduceMutator(_mutator: ƒ.Mutator): void {
-    //   // delete properties that should not be mutated
-    //   // undefined properties and private fields (#) will not be included by default
-    // }
+    private generateCourseSpecifications = () => {
+      let timeFromStart = this.courseDelay;
+      for (let i = 0; i < this.fruitCourseLength; i++) {
+        const randomFruit = Math.floor(4 * Math.random());
+        this.fruitCourse.push({ time: timeFromStart, type: randomFruit });
+        timeFromStart +=
+          this.maxFruitInterval * Math.random() + this.minFruitInterval;
+      }
+
+      console.log(this.fruitCourse);
+    };
   }
 }

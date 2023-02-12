@@ -884,6 +884,26 @@
               }
             ]
           }
+        },
+        {
+          "ƒ.Node": {
+            "name": "Course",
+            "active": true,
+            "components": {
+              "Course": [
+                {
+                  "GantryGlutton.Course": {
+                    "active": true,
+                    "courseDelay": 1,
+                    "maxFruitInterval": 5,
+                    "minFruitInterval": 0,
+                    "fruitCourseLength": 50
+                  }
+                }
+              ]
+            },
+            "children": []
+          }
         }
       ],
       "idResource": "Graph|2023-02-11T14:47:26.962Z|84962",

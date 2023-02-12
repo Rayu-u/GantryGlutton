@@ -45,6 +45,78 @@ var GantryGlutton;
     }
     GantryGlutton.Cog = Cog;
 })(GantryGlutton || (GantryGlutton = {}));
+var GantryGlutton;
+(function (GantryGlutton) {
+    var f = FudgeCore;
+    f.Project.registerScriptNamespace(GantryGlutton); // Register the namespace to FUDGE for serialization
+    /**
+     * Types of fruit.
+     */
+    let FruitType;
+    (function (FruitType) {
+        FruitType[FruitType["Banana"] = 0] = "Banana";
+        FruitType[FruitType["Blueberry"] = 1] = "Blueberry";
+        FruitType[FruitType["Cherry"] = 2] = "Cherry";
+        FruitType[FruitType["Pear"] = 3] = "Pear";
+    })(FruitType || (FruitType = {}));
+    class Course extends f.ComponentScript {
+        // Register the script as component for use in the editor via drag&drop
+        static iSubclass = f.Component.registerSubclass(Course);
+        /**
+         * The number of seconds until the first fruit spawns.
+         */
+        courseDelay = 1;
+        /**
+         * The longest possible interval between fruit spawning.
+         */
+        maxFruitInterval = 1;
+        /**
+         * The shortest possible interval between fruit spawning.
+         */
+        minFruitInterval = 0;
+        /**
+         * The number of fruits that drop per course.
+         */
+        fruitCourseLength = 50;
+        fruitCourse = [];
+        constructor() {
+            super();
+            // Don't start when running in editor
+            if (f.Project.mode == f.MODE.EDITOR)
+                return;
+            // Listen to this component being added to or removed from a node
+            this.addEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
+            this.addEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
+            this.addEventListener("nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */, this.hndEvent);
+        }
+        // Activate the functions of this component as response to events
+        hndEvent = (_event) => {
+            switch (_event.type) {
+                case "componentAdd" /* f.EVENT.COMPONENT_ADD */:
+                    this.generateCourseSpecifications();
+                    break;
+                case "componentRemove" /* f.EVENT.COMPONENT_REMOVE */:
+                    this.removeEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
+                    this.removeEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
+                    break;
+                case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
+                    // if deserialized the node is now fully reconstructed and access to all its components and children is possible
+                    break;
+            }
+        };
+        generateCourseSpecifications = () => {
+            let timeFromStart = this.courseDelay;
+            for (let i = 0; i < this.fruitCourseLength; i++) {
+                const randomFruit = Math.floor(4 * Math.random());
+                this.fruitCourse.push({ time: timeFromStart, type: randomFruit });
+                timeFromStart +=
+                    this.maxFruitInterval * Math.random() + this.minFruitInterval;
+            }
+            console.log(this.fruitCourse);
+        };
+    }
+    GantryGlutton.Course = Course;
+})(GantryGlutton || (GantryGlutton = {}));
 var Script;
 (function (Script) {
     var ƒ = FudgeCore;
