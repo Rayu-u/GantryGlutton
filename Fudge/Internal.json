@@ -453,7 +453,7 @@
             "children": [
               {
                 "ƒ.Node": {
-                  "name": "gantry__base",
+                  "name": "Base",
                   "active": true,
                   "components": {
                     "ComponentMesh": [
@@ -493,7 +493,7 @@
                   "children": [
                     {
                       "ƒ.Node": {
-                        "name": "gantry_base-cog",
+                        "name": "Cog",
                         "active": true,
                         "components": {
                           "ComponentMesh": [
@@ -614,7 +614,7 @@
                   "children": [
                     {
                       "ƒ.Node": {
-                        "name": "gantry__bridge-cog",
+                        "name": "Cog",
                         "active": true,
                         "components": {
                           "ComponentMesh": [
