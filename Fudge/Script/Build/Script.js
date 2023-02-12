@@ -45,94 +45,6 @@ var GantryGlutton;
     }
     GantryGlutton.Cog = Cog;
 })(GantryGlutton || (GantryGlutton = {}));
-var GantryGlutton;
-(function (GantryGlutton) {
-    var f = FudgeCore;
-    f.Project.registerScriptNamespace(GantryGlutton); // Register the namespace to FUDGE for serialization
-    /**
-     * Types of fruit.
-    */
-    let FruitType;
-    (function (FruitType) {
-        FruitType[FruitType["Banana"] = 0] = "Banana";
-        FruitType[FruitType["Blueberry"] = 1] = "Blueberry";
-        FruitType[FruitType["Cherry"] = 2] = "Cherry";
-        FruitType[FruitType["Pear"] = 3] = "Pear";
-    })(FruitType = GantryGlutton.FruitType || (GantryGlutton.FruitType = {}));
-    class Course extends f.ComponentScript {
-        // Register the script as component for use in the editor via drag&drop
-        static iSubclass = f.Component.registerSubclass(Course);
-        /**
-         * The number of seconds until the first Fruit spawns.
-         */
-        courseDelay = 1;
-        /**
-         * The inset for how far off the stage the Fruit spawns.
-         */
-        courseInset = 1;
-        /**
-         * The number of Fruits that drop per course.
-         */
-        fruitCourseLength = 50;
-        /**
-         * The longest possible interval between Fruit spawning.
-         */
-        maxFruitInterval = 1;
-        /**
-         * The shortest possible interval between Fruit spawning.
-         */
-        minFruitInterval = 0;
-        constructor() {
-            super();
-            // Don't start when running in editor
-            if (f.Project.mode == f.MODE.EDITOR)
-                return;
-            // Listen to this component being added to or removed from a node
-            this.addEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
-            this.addEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
-            this.addEventListener("nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */, this.hndEvent);
-        }
-        // Activate the functions of this component as response to events
-        hndEvent = (_event) => {
-            switch (_event.type) {
-                case "componentAdd" /* f.EVENT.COMPONENT_ADD */:
-                    break;
-                case "componentRemove" /* f.EVENT.COMPONENT_REMOVE */:
-                    this.removeEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
-                    this.removeEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
-                    break;
-                case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
-                    break;
-            }
-        };
-        generateCourse = () => {
-            const fruitGraphs = new Map([
-                [FruitType.Banana, f.Project.getResourcesByName("Banana")[0]],
-                [FruitType.Blueberry, f.Project.getResourcesByName("Blueberry")[0]],
-                [FruitType.Cherry, f.Project.getResourcesByName("Cherry")[0]],
-                [FruitType.Pear, f.Project.getResourcesByName("Pear")[0]],
-            ]);
-            const stageWidth = 10 - 2 * this.courseInset;
-            let timeFromStart = this.courseDelay;
-            for (let i = 0; i < this.fruitCourseLength; i++) {
-                const fruitFallDuration = timeFromStart;
-                const randomFruit = Math.floor(4 * Math.random());
-                const randomPosition = new f.Vector3((Math.random() * stageWidth) + this.courseInset, 0, -(Math.random() * stageWidth) - this.courseInset);
-                (async () => {
-                    let fruitInstance = await f.Project.createGraphInstance(fruitGraphs.get(randomFruit));
-                    const fruitTransform = fruitInstance.getComponent(f.ComponentTransform);
-                    fruitTransform.mtxLocal.translation = randomPosition;
-                    const fruitComponent = fruitInstance.getComponent(GantryGlutton.Fruit);
-                    fruitComponent.supplyFallDuration(fruitFallDuration);
-                    GantryGlutton.graph.addChild(fruitInstance);
-                })();
-                timeFromStart +=
-                    this.maxFruitInterval * Math.random() + this.minFruitInterval;
-            }
-        };
-    }
-    GantryGlutton.Course = Course;
-})(GantryGlutton || (GantryGlutton = {}));
 var Script;
 (function (Script) {
     var ƒ = FudgeCore;
@@ -268,6 +180,94 @@ var GantryGlutton;
 (function (GantryGlutton) {
     var f = FudgeCore;
     f.Project.registerScriptNamespace(GantryGlutton); // Register the namespace to FUDGE for serialization
+    /**
+     * Types of fruit.
+    */
+    let FruitType;
+    (function (FruitType) {
+        FruitType[FruitType["Banana"] = 0] = "Banana";
+        FruitType[FruitType["Blueberry"] = 1] = "Blueberry";
+        FruitType[FruitType["Cherry"] = 2] = "Cherry";
+        FruitType[FruitType["Pear"] = 3] = "Pear";
+    })(FruitType = GantryGlutton.FruitType || (GantryGlutton.FruitType = {}));
+    class FruitManager extends f.ComponentScript {
+        // Register the script as component for use in the editor via drag&drop
+        static iSubclass = f.Component.registerSubclass(FruitManager);
+        /**
+         * The number of seconds until the first Fruit spawns.
+         */
+        courseDelay = 1;
+        /**
+         * The inset for how far off the stage the Fruit spawns.
+         */
+        courseInset = 1;
+        /**
+         * The number of Fruits that drop per course.
+         */
+        fruitCourseLength = 50;
+        /**
+         * The longest possible interval between Fruit spawning.
+         */
+        maxFruitInterval = 1;
+        /**
+         * The shortest possible interval between Fruit spawning.
+         */
+        minFruitInterval = 0;
+        constructor() {
+            super();
+            // Don't start when running in editor
+            if (f.Project.mode == f.MODE.EDITOR)
+                return;
+            // Listen to this component being added to or removed from a node
+            this.addEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
+            this.addEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
+            this.addEventListener("nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */, this.hndEvent);
+        }
+        // Activate the functions of this component as response to events
+        hndEvent = (_event) => {
+            switch (_event.type) {
+                case "componentAdd" /* f.EVENT.COMPONENT_ADD */:
+                    break;
+                case "componentRemove" /* f.EVENT.COMPONENT_REMOVE */:
+                    this.removeEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
+                    this.removeEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
+                    break;
+                case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
+                    break;
+            }
+        };
+        generateCourse = () => {
+            const fruitGraphs = new Map([
+                [FruitType.Banana, f.Project.getResourcesByName("Banana")[0]],
+                [FruitType.Blueberry, f.Project.getResourcesByName("Blueberry")[0]],
+                [FruitType.Cherry, f.Project.getResourcesByName("Cherry")[0]],
+                [FruitType.Pear, f.Project.getResourcesByName("Pear")[0]],
+            ]);
+            const stageWidth = 10 - 2 * this.courseInset;
+            let timeFromStart = this.courseDelay;
+            for (let i = 0; i < this.fruitCourseLength; i++) {
+                const fruitFallDuration = timeFromStart;
+                const randomFruit = Math.floor(4 * Math.random());
+                const randomPosition = new f.Vector3((Math.random() * stageWidth) + this.courseInset, 0, -(Math.random() * stageWidth) - this.courseInset);
+                (async () => {
+                    let fruitInstance = await f.Project.createGraphInstance(fruitGraphs.get(randomFruit));
+                    const fruitTransform = fruitInstance.getComponent(f.ComponentTransform);
+                    fruitTransform.mtxLocal.translation = randomPosition;
+                    const fruitComponent = fruitInstance.getComponent(GantryGlutton.Fruit);
+                    fruitComponent.supplyFallDuration(fruitFallDuration);
+                    GantryGlutton.graph.addChild(fruitInstance);
+                })();
+                timeFromStart +=
+                    this.maxFruitInterval * Math.random() + this.minFruitInterval;
+            }
+        };
+    }
+    GantryGlutton.FruitManager = FruitManager;
+})(GantryGlutton || (GantryGlutton = {}));
+var GantryGlutton;
+(function (GantryGlutton) {
+    var f = FudgeCore;
+    f.Project.registerScriptNamespace(GantryGlutton); // Register the namespace to FUDGE for serialization
     class Gantry extends f.ComponentScript {
         // Register the script as component for use in the editor via drag&drop
         static iSubclass = f.Component.registerSubclass(Gantry);
@@ -374,8 +374,8 @@ var GantryGlutton;
         let referenceCameraObject = GantryGlutton.graph.getChildrenByName("CameraReference")[0];
         viewport.camera.projectCentral(undefined, 60);
         viewport.camera.mtxPivot = referenceCameraObject.getComponent(f.ComponentTransform).mtxLocal;
-        const course = GantryGlutton.graph.getChildrenByName("Course")[0].getComponent(GantryGlutton.Course);
-        course.generateCourse();
+        const fruitManager = GantryGlutton.graph.getChildrenByName("FruitManager")[0].getComponent(GantryGlutton.FruitManager);
+        fruitManager.generateCourse();
         f.Loop.addEventListener("loopFrame" /* f.EVENT.LOOP_FRAME */, update);
         f.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
     }

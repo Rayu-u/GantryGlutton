@@ -10,44 +10,6 @@ declare namespace GantryGlutton {
         onAfterPhysicsUpdate: () => void;
     }
 }
-declare namespace GantryGlutton {
-    import f = FudgeCore;
-    /**
-     * Types of fruit.
-    */
-    enum FruitType {
-        Banana = 0,
-        Blueberry = 1,
-        Cherry = 2,
-        Pear = 3
-    }
-    class Course extends f.ComponentScript {
-        static readonly iSubclass: number;
-        /**
-         * The number of seconds until the first Fruit spawns.
-         */
-        courseDelay: number;
-        /**
-         * The inset for how far off the stage the Fruit spawns.
-         */
-        courseInset: number;
-        /**
-         * The number of Fruits that drop per course.
-         */
-        fruitCourseLength: number;
-        /**
-         * The longest possible interval between Fruit spawning.
-         */
-        maxFruitInterval: number;
-        /**
-         * The shortest possible interval between Fruit spawning.
-         */
-        minFruitInterval: number;
-        constructor();
-        hndEvent: (_event: Event) => void;
-        generateCourse: () => void;
-    }
-}
 declare namespace Script {
     import ƒ = FudgeCore;
     class CustomComponentScript extends ƒ.ComponentScript {
@@ -78,6 +40,44 @@ declare namespace GantryGlutton {
         hndEvent: (_event: Event) => void;
         supplyFallDuration: (fallDuration: number) => void;
         update: (_event: Event) => void;
+    }
+}
+declare namespace GantryGlutton {
+    import f = FudgeCore;
+    /**
+     * Types of fruit.
+    */
+    enum FruitType {
+        Banana = 0,
+        Blueberry = 1,
+        Cherry = 2,
+        Pear = 3
+    }
+    class FruitManager extends f.ComponentScript {
+        static readonly iSubclass: number;
+        /**
+         * The number of seconds until the first Fruit spawns.
+         */
+        courseDelay: number;
+        /**
+         * The inset for how far off the stage the Fruit spawns.
+         */
+        courseInset: number;
+        /**
+         * The number of Fruits that drop per course.
+         */
+        fruitCourseLength: number;
+        /**
+         * The longest possible interval between Fruit spawning.
+         */
+        maxFruitInterval: number;
+        /**
+         * The shortest possible interval between Fruit spawning.
+         */
+        minFruitInterval: number;
+        constructor();
+        hndEvent: (_event: Event) => void;
+        generateCourse: () => void;
     }
 }
 declare namespace GantryGlutton {

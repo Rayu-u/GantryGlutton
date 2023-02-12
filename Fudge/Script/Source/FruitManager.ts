@@ -12,10 +12,10 @@ namespace GantryGlutton {
    Pear,
   }
 
-  export class Course extends f.ComponentScript {
+  export class FruitManager extends f.ComponentScript {
     // Register the script as component for use in the editor via drag&drop
     public static readonly iSubclass: number =
-    f.Component.registerSubclass(Course);
+    f.Component.registerSubclass(FruitManager);
 
     /**
      * The number of seconds until the first Fruit spawns.

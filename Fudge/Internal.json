@@ -925,12 +925,12 @@
         },
         {
           "ƒ.Node": {
-            "name": "Course",
+            "name": "FruitManager",
             "active": true,
             "components": {
-              "Course": [
+              "FruitManager": [
                 {
-                  "GantryGlutton.Course": {
+                  "GantryGlutton.FruitManager": {
                     "active": true,
                     "courseDelay": 10,
                     "courseInset": 1,
