@@ -31,12 +31,12 @@ var GantryGlutton;
                     break;
                 case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
                     // if deserialized the node is now fully reconstructed and access to all its components and children is possible
-                    GantryGlutton.addAfterPhysicsUpdateSubscriber(this);
+                    GantryGlutton.addAfterPhysicsBeforeDrawUpdateSubscriber(this);
                     this.transform = this.node.getComponent(f.ComponentTransform);
                     break;
             }
         };
-        onAfterPhysicsUpdate = () => {
+        onAfterPhysicsBeforeDrawUpdate = () => {
             const relevantSpeed = f.Vector3.DOT(this.platformRigidbody.getVelocity(), this.platformVelocityDimensionSelector);
             const deltaTime = f.Loop.timeFrameGame / 1000;
             const angle = deltaTime * relevantSpeed * 360 / Math.PI;
@@ -82,6 +82,56 @@ var Script;
     }
     Script.CustomComponentScript = CustomComponentScript;
 })(Script || (Script = {}));
+var GantryGlutton;
+(function (GantryGlutton) {
+    var f = FudgeCore;
+    f.Project.registerScriptNamespace(GantryGlutton); // Register the namespace to FUDGE for serialization
+    class Customer extends f.ComponentScript {
+        // Register the script as component for use in the editor via drag&drop
+        static iSubclass = f.Component.registerSubclass(Customer);
+        rigidbody;
+        modelRigidbody;
+        modelPositionBuffer = f.Vector3.ZERO();
+        test = false;
+        constructor() {
+            super();
+            // Don't start when running in editor
+            if (f.Project.mode == f.MODE.EDITOR)
+                return;
+            // Listen to this component being added to or removed from a node
+            this.addEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
+            this.addEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
+            this.addEventListener("nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */, this.hndEvent);
+        }
+        // Activate the functions of this component as response to events
+        hndEvent = (_event) => {
+            switch (_event.type) {
+                case "componentAdd" /* f.EVENT.COMPONENT_ADD */:
+                    break;
+                case "componentRemove" /* f.EVENT.COMPONENT_REMOVE */:
+                    this.removeEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
+                    this.removeEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
+                    break;
+                case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
+                    this.rigidbody = this.node.getComponent(f.ComponentRigidbody);
+                    this.modelRigidbody = this.node
+                        .getChildrenByName("Model")[0]
+                        .getComponent(f.ComponentRigidbody);
+                    GantryGlutton.addAfterDrawUpdateSubscriber(this);
+                    GantryGlutton.addAfterPhysicsBeforeDrawUpdateSubscriber(this);
+                    break;
+            }
+        };
+        onAfterPhysicsBeforeDrawUpdate = () => {
+            this.modelPositionBuffer = this.modelRigidbody.getPosition();
+            this.modelRigidbody.setPosition(this.rigidbody.getPosition());
+        };
+        onAfterDrawUpdate = () => {
+            this.modelRigidbody.setPosition(this.modelPositionBuffer);
+        };
+    }
+    GantryGlutton.Customer = Customer;
+})(GantryGlutton || (GantryGlutton = {}));
 var GantryGlutton;
 (function (GantryGlutton) {
     var f = FudgeCore;
@@ -365,14 +415,14 @@ var GantryGlutton;
                     break;
             }
         };
-        onAfterPhysicsUpdate = () => {
+        onAfterPhysicsBeforeDrawUpdate = () => {
             const oldPosition = this.transform.mtxLocal.translation;
             oldPosition.x = this.platformRigidbody.getPosition().x + this.platformOffset;
             this.transform.mtxLocal.translation = oldPosition;
         };
         start = (_event) => {
             this.transform = this.node.getComponent(f.ComponentTransform);
-            GantryGlutton.addAfterPhysicsUpdateSubscriber(this);
+            GantryGlutton.addAfterPhysicsBeforeDrawUpdateSubscriber(this);
         };
     }
     GantryGlutton.GantryBridge = GantryBridge;
@@ -384,11 +434,16 @@ var GantryGlutton;
     //let cmpCamera: f.ComponentCamera;
     let viewport;
     document.addEventListener("interactiveViewportStarted", start);
-    const afterPhysicsUpdateSubscribers = [];
-    function addAfterPhysicsUpdateSubscriber(subcriber) {
-        afterPhysicsUpdateSubscribers.push(subcriber);
+    const afterPhysicsBeforeDrawUpdateSubscribers = [];
+    function addAfterPhysicsBeforeDrawUpdateSubscriber(subcriber) {
+        afterPhysicsBeforeDrawUpdateSubscribers.push(subcriber);
     }
-    GantryGlutton.addAfterPhysicsUpdateSubscriber = addAfterPhysicsUpdateSubscriber;
+    GantryGlutton.addAfterPhysicsBeforeDrawUpdateSubscriber = addAfterPhysicsBeforeDrawUpdateSubscriber;
+    const afterDrawUpdateSubscribers = [];
+    function addAfterDrawUpdateSubscriber(subcriber) {
+        afterDrawUpdateSubscribers.push(subcriber);
+    }
+    GantryGlutton.addAfterDrawUpdateSubscriber = addAfterDrawUpdateSubscriber;
     function start(_event) {
         viewport = _event.detail;
         GantryGlutton.graph = viewport.getBranch();
@@ -402,10 +457,13 @@ var GantryGlutton;
     }
     function update(_event) {
         f.Physics.simulate(); // if physics is included and used
-        for (const subcriber of afterPhysicsUpdateSubscribers) {
-            subcriber.onAfterPhysicsUpdate();
+        for (const subscriber of afterPhysicsBeforeDrawUpdateSubscribers) {
+            subscriber.onAfterPhysicsBeforeDrawUpdate();
         }
         viewport.draw();
+        for (const subscriber of afterDrawUpdateSubscribers) {
+            subscriber.onAfterDrawUpdate();
+        }
         f.AudioManager.default.update();
     }
 })(GantryGlutton || (GantryGlutton = {}));

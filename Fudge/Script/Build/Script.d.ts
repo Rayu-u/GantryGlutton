@@ -7,7 +7,7 @@ declare namespace GantryGlutton {
         platformVelocityDimensionSelector: f.Vector3;
         constructor();
         hndEvent: (_event: Event) => void;
-        onAfterPhysicsUpdate: () => void;
+        onAfterPhysicsBeforeDrawUpdate: () => void;
     }
 }
 declare namespace Script {
@@ -17,6 +17,20 @@ declare namespace Script {
         message: string;
         constructor();
         hndEvent: (_event: Event) => void;
+    }
+}
+declare namespace GantryGlutton {
+    import f = FudgeCore;
+    class Customer extends f.ComponentScript {
+        static readonly iSubclass: number;
+        private rigidbody;
+        private modelRigidbody;
+        private modelPositionBuffer;
+        private test;
+        constructor();
+        hndEvent: (_event: Event) => void;
+        onAfterPhysicsBeforeDrawUpdate: () => void;
+        onAfterDrawUpdate: () => void;
     }
 }
 declare namespace GantryGlutton {
@@ -98,17 +112,21 @@ declare namespace GantryGlutton {
         private transform;
         constructor();
         hndEvent: (_event: Event) => void;
-        onAfterPhysicsUpdate: () => void;
+        onAfterPhysicsBeforeDrawUpdate: () => void;
         start: (_event: Event) => void;
     }
 }
 declare namespace GantryGlutton {
     import f = FudgeCore;
     export let graph: f.Node;
-    interface AfterPhysicsUpdateSubscriber {
-        onAfterPhysicsUpdate: () => void;
+    interface AfterPhysicsBeforeDrawUpdateSubscriber {
+        onAfterPhysicsBeforeDrawUpdate: () => void;
     }
-    export function addAfterPhysicsUpdateSubscriber(subcriber: AfterPhysicsUpdateSubscriber): void;
+    export function addAfterPhysicsBeforeDrawUpdateSubscriber(subcriber: AfterPhysicsBeforeDrawUpdateSubscriber): void;
+    interface AfterDrawUpdateSubscriber {
+        onAfterDrawUpdate: () => void;
+    }
+    export function addAfterDrawUpdateSubscriber(subcriber: AfterDrawUpdateSubscriber): void;
     export {};
 }
 declare namespace GantryGlutton {

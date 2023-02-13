@@ -34,13 +34,13 @@ namespace GantryGlutton {
           break;
         case f.EVENT.NODE_DESERIALIZED:
           // if deserialized the node is now fully reconstructed and access to all its components and children is possible
-          addAfterPhysicsUpdateSubscriber(this);
+          addAfterPhysicsBeforeDrawUpdateSubscriber(this);
           this.transform = this.node.getComponent(f.ComponentTransform);
           break;
       }
     }
 
-    public onAfterPhysicsUpdate = () => {
+    public onAfterPhysicsBeforeDrawUpdate = () => {
       const relevantSpeed = f.Vector3.DOT(this.platformRigidbody.getVelocity(), this.platformVelocityDimensionSelector);
       const deltaTime: number = f.Loop.timeFrameGame / 1000;
       const angle = deltaTime * relevantSpeed * 360 / Math.PI;      

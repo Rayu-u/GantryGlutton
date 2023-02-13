@@ -2,14 +2,17 @@ namespace GantryGlutton {
   import f = FudgeCore;
   f.Project.registerScriptNamespace(GantryGlutton); // Register the namespace to FUDGE for serialization
 
-  export class GantryBridge extends f.ComponentScript {
+  export class Customer extends f.ComponentScript {
     // Register the script as component for use in the editor via drag&drop
     public static readonly iSubclass: number =
-      f.Component.registerSubclass(GantryBridge);
-    // Properties may be mutated by users in the editor via the automatically created user interface
-    public platformOffset: number = 0;
-    public platformRigidbody: f.ComponentRigidbody;
-    private transform: f.ComponentTransform;
+      f.Component.registerSubclass(Customer);
+
+    private rigidbody: f.ComponentRigidbody;
+    private modelRigidbody: f.ComponentRigidbody;
+
+    private modelPositionBuffer: f.Vector3 = f.Vector3.ZERO();
+
+    private test: boolean = false;
 
     constructor() {
       super();
@@ -33,21 +36,23 @@ namespace GantryGlutton {
           this.removeEventListener(f.EVENT.COMPONENT_REMOVE, this.hndEvent);
           break;
         case f.EVENT.NODE_DESERIALIZED:
-          // if deserialized the node is now fully reconstructed and access to all its components and children is possible
-          this.start(_event);
+          this.rigidbody = this.node.getComponent(f.ComponentRigidbody);
+          this.modelRigidbody = this.node
+            .getChildrenByName("Model")[0]
+            .getComponent(f.ComponentRigidbody);
+          addAfterDrawUpdateSubscriber(this);
+          addAfterPhysicsBeforeDrawUpdateSubscriber(this);
           break;
       }
     };
 
-    public onAfterPhysicsBeforeDrawUpdate = () => {
-      const oldPosition = this.transform.mtxLocal.translation;
-      oldPosition.x = this.platformRigidbody.getPosition().x + this.platformOffset;
-      this.transform.mtxLocal.translation = oldPosition;
+    public onAfterPhysicsBeforeDrawUpdate = (): void => {
+      this.modelPositionBuffer = this.modelRigidbody.getPosition();
+      this.modelRigidbody.setPosition(this.rigidbody.getPosition());
     };
 
-    public start = (_event: Event): void => {
-      this.transform = this.node.getComponent(f.ComponentTransform);
-      addAfterPhysicsBeforeDrawUpdateSubscriber(this);
+    public onAfterDrawUpdate = (): void => {
+      this.modelRigidbody.setPosition(this.modelPositionBuffer);
     };
   }
 }

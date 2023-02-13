@@ -7,14 +7,24 @@ namespace GantryGlutton {
   export let graph: f.Node;
   document.addEventListener("interactiveViewportStarted", <EventListener>start);
 
-  interface AfterPhysicsUpdateSubscriber {
-    onAfterPhysicsUpdate: () => void;
+  interface AfterPhysicsBeforeDrawUpdateSubscriber {
+    onAfterPhysicsBeforeDrawUpdate: () => void;
   }
-  const afterPhysicsUpdateSubscribers: AfterPhysicsUpdateSubscriber[] = [];
-  export function addAfterPhysicsUpdateSubscriber(
-    subcriber: AfterPhysicsUpdateSubscriber
+  const afterPhysicsBeforeDrawUpdateSubscribers: AfterPhysicsBeforeDrawUpdateSubscriber[] = [];
+  export function addAfterPhysicsBeforeDrawUpdateSubscriber(
+    subcriber: AfterPhysicsBeforeDrawUpdateSubscriber
   ) {
-    afterPhysicsUpdateSubscribers.push(subcriber);
+    afterPhysicsBeforeDrawUpdateSubscribers.push(subcriber);
+  }
+
+  interface AfterDrawUpdateSubscriber {
+    onAfterDrawUpdate: () => void;
+  }
+  const afterDrawUpdateSubscribers: AfterDrawUpdateSubscriber[] = [];
+  export function addAfterDrawUpdateSubscriber(
+    subcriber: AfterDrawUpdateSubscriber
+  ) {
+    afterDrawUpdateSubscribers.push(subcriber);
   }
 
   function start(_event: CustomEvent): void {
@@ -37,13 +47,19 @@ namespace GantryGlutton {
   }
 
   function update(_event: Event): void {
+
     f.Physics.simulate(); // if physics is included and used
 
-    for (const subcriber of afterPhysicsUpdateSubscribers) {
-      subcriber.onAfterPhysicsUpdate();
+    for (const subscriber of afterPhysicsBeforeDrawUpdateSubscribers) {
+      subscriber.onAfterPhysicsBeforeDrawUpdate();
     }
 
     viewport.draw();
+
+    for (const subscriber of afterDrawUpdateSubscribers) {
+      subscriber.onAfterDrawUpdate();
+    }
+
     f.AudioManager.default.update();
   }
 }
