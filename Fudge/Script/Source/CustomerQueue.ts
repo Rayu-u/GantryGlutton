@@ -65,8 +65,19 @@ namespace GantryGlutton {
         return;
       }
 
-      const platform: PlatformMovement =
-        _event.cmpRigidbody.node.getComponent(PlatformMovement);
+      const group = this.#groups[0];
+
+      const platformInteractions: PlatformInteractions =
+        _event.cmpRigidbody.node.getComponent(PlatformInteractions);
+      if (platformInteractions.getEmptySpots() < group.customers.length) {
+        // Player did not have enough space for the group.
+        return;
+      }
+
+      this.#groups.shift();
+      platformInteractions.seatCustomers(group.customers);
+      group.node.removeChild(group.node);
+
       this.ensureGroupCount();
     };
 

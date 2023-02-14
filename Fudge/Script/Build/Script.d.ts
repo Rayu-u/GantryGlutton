@@ -140,6 +140,7 @@ declare namespace GantryGlutton {
     class Group extends f.ComponentScript {
         #private;
         static readonly iSubclass: number;
+        customers: Customer[];
         constructor();
         hndEvent: (_event: Event) => void;
         addCustomer: (customer: Customer) => void;
@@ -157,10 +158,13 @@ declare namespace GantryGlutton {
 declare namespace GantryGlutton {
     import f = FudgeCore;
     class PlatformInteractions extends f.ComponentScript {
+        #private;
         static readonly iSubclass: number;
         constructor();
+        getEmptySpots: () => number;
         handleHitFruit: (fruitType: FruitType) => void;
         hndEvent: (_event: Event) => void;
+        seatCustomers: (customers: Customer[]) => void;
     }
 }
 declare namespace GantryGlutton {

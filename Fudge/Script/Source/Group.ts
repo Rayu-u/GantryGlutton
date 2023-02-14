@@ -9,14 +9,14 @@ namespace GantryGlutton {
 
     static readonly #maxCustomerCount: number = 3;
 
-    #customers: Customer[] = [];
-
     static readonly #relativeCustomerPositions: f.Vector3[] = [
       new f.Vector3(0, 0, 0),
       new f.Vector3(-0.5, 0, -0.5),
       new f.Vector3(0.5, 0, -0.5),
       new f.Vector3(0, 0, -1),
     ];
+
+    public customers: Customer[] = [];
 
     constructor() {
       super();
@@ -45,7 +45,7 @@ namespace GantryGlutton {
     };
 
     public addCustomer = (customer: Customer) => {
-      if (Group.#maxCustomerCount <= this.#customers.length) {
+      if (Group.#maxCustomerCount <= this.customers.length) {
         console.warn(
           "No more customers can be added when the group already contains the max amount, which is ",
           Group.#maxCustomerCount
@@ -53,8 +53,8 @@ namespace GantryGlutton {
         return;
       }
 
-      const currentCustomerIndex = this.#customers.length;
-      this.#customers.push(customer);
+      const currentCustomerIndex = this.customers.length;
+      this.customers.push(customer);
       this.node.addChild(customer.node);
 
       const customerTransform = customer.node.getComponent(

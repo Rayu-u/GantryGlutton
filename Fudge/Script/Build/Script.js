@@ -199,7 +199,15 @@ var GantryGlutton;
             if (_event.cmpRigidbody.node.name !== "Platform") {
                 return;
             }
-            const platform = _event.cmpRigidbody.node.getComponent(GantryGlutton.PlatformMovement);
+            const group = this.#groups[0];
+            const platformInteractions = _event.cmpRigidbody.node.getComponent(GantryGlutton.PlatformInteractions);
+            if (platformInteractions.getEmptySpots() < group.customers.length) {
+                // Player did not have enough space for the group.
+                return;
+            }
+            this.#groups.shift();
+            platformInteractions.seatCustomers(group.customers);
+            group.node.removeChild(group.node);
             this.ensureGroupCount();
         };
         createGroup = async () => {
@@ -515,13 +523,13 @@ var GantryGlutton;
         // Register the script as component for use in the editor via drag&drop
         static iSubclass = f.Component.registerSubclass(Group);
         static #maxCustomerCount = 3;
-        #customers = [];
         static #relativeCustomerPositions = [
             new f.Vector3(0, 0, 0),
             new f.Vector3(-0.5, 0, -0.5),
             new f.Vector3(0.5, 0, -0.5),
             new f.Vector3(0, 0, -1),
         ];
+        customers = [];
         constructor() {
             super();
             // Don't start when running in editor
@@ -546,12 +554,12 @@ var GantryGlutton;
             }
         };
         addCustomer = (customer) => {
-            if (Group.#maxCustomerCount <= this.#customers.length) {
+            if (Group.#maxCustomerCount <= this.customers.length) {
                 console.warn("No more customers can be added when the group already contains the max amount, which is ", Group.#maxCustomerCount);
                 return;
             }
-            const currentCustomerIndex = this.#customers.length;
-            this.#customers.push(customer);
+            const currentCustomerIndex = this.customers.length;
+            this.customers.push(customer);
             this.node.addChild(customer.node);
             const customerTransform = customer.node.getComponent(f.ComponentTransform);
             customerTransform.mtxLocal = f.Matrix4x4.TRANSLATION(Group.#relativeCustomerPositions[currentCustomerIndex]);
@@ -604,6 +612,18 @@ var GantryGlutton;
     class PlatformInteractions extends f.ComponentScript {
         // Register the script as component for use in the editor via drag&drop
         static iSubclass = f.Component.registerSubclass(PlatformInteractions);
+        /**
+         * How far from the edge of the platform are the spots located.
+         */
+        static #spotInset = 0.5;
+        static #platformLength = 2;
+        static #spotPositions = [
+            new f.Vector3(PlatformInteractions.#spotInset, 0, -PlatformInteractions.#spotInset),
+            new f.Vector3(PlatformInteractions.#platformLength - PlatformInteractions.#spotInset, 0, -PlatformInteractions.#spotInset),
+            new f.Vector3(PlatformInteractions.#spotInset, 0, -(PlatformInteractions.#platformLength - PlatformInteractions.#spotInset)),
+            new f.Vector3(PlatformInteractions.#platformLength - PlatformInteractions.#spotInset, 0, -(PlatformInteractions.#platformLength - PlatformInteractions.#spotInset)),
+        ];
+        #spots = [null, null, null, null];
         constructor() {
             super();
             // Don't start when running in editor
@@ -614,6 +634,9 @@ var GantryGlutton;
             this.addEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
             this.addEventListener("nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */, this.hndEvent);
         }
+        getEmptySpots = () => {
+            return this.#spots.filter((item) => !item).length;
+        };
         handleHitFruit = (fruitType) => {
             console.log(fruitType);
         };
@@ -627,8 +650,24 @@ var GantryGlutton;
                     this.removeEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
                     break;
                 case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
-                    // if deserialized the node is now fully reconstructed and access to all its components and children is possible
                     break;
+            }
+        };
+        seatCustomers = (customers) => {
+            if (this.getEmptySpots() < customers.length) {
+                return;
+            }
+            for (const customer of customers) {
+                let randomSpotIndex;
+                do {
+                    randomSpotIndex = Math.floor(4 * Math.random());
+                } while (this.#spots[randomSpotIndex]); // Continue while the spot is occupied (not null)
+                // A spot without a customer must have been found.
+                this.#spots[randomSpotIndex] = customer;
+                this.node.addChild(customer.node);
+                const customerTransform = customer.node.getComponent(f.ComponentTransform);
+                customerTransform.mtxLocal.translation =
+                    PlatformInteractions.#spotPositions[randomSpotIndex];
             }
         };
     }
