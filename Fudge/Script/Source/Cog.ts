@@ -7,8 +7,9 @@ namespace GantryGlutton {
     public static readonly iSubclass: number = f.Component.registerSubclass(Cog);
     // Properties may be mutated by users in the editor via the automatically created user interface
     public platformRigidbody: f.ComponentRigidbody;
-    private transform: f.ComponentTransform;
     public platformVelocityDimensionSelector: f.Vector3 = f.Vector3.ZERO();
+
+    #transform: f.ComponentTransform;
 
     constructor() {
       super();
@@ -35,7 +36,7 @@ namespace GantryGlutton {
         case f.EVENT.NODE_DESERIALIZED:
           // if deserialized the node is now fully reconstructed and access to all its components and children is possible
           addAfterPhysicsBeforeDrawUpdateSubscriber(this);
-          this.transform = this.node.getComponent(f.ComponentTransform);
+          this.#transform = this.node.getComponent(f.ComponentTransform);
           break;
       }
     }
@@ -45,7 +46,7 @@ namespace GantryGlutton {
       const deltaTime: number = f.Loop.timeFrameGame / 1000;
       const angle = deltaTime * relevantSpeed * 360 / Math.PI;      
       
-      this.transform.mtxLocal.rotateX(angle);
+      this.#transform.mtxLocal.rotateX(angle);
     };
   }
 }

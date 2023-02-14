@@ -6,15 +6,17 @@ namespace GantryGlutton {
     // Register the script as component for use in the editor via drag&drop
     public static readonly iSubclass: number =
       f.Component.registerSubclass(Customer);
-    private static readonly fruitColors: Map<FruitType, f.Color> = new Map();
+    static readonly #fruitColors: Map<FruitType, f.Color> = new Map();
+    static test: Customer;
 
-    private _fruitType: FruitType;
+    #fruitType: FruitType;
 
-    private rigidbody: f.ComponentRigidbody;
-    private bodyMaterial: f.ComponentMaterial;
-    private modelRigidbody: f.ComponentRigidbody;
+    #rigidbody: f.ComponentRigidbody;
+    #bodyMaterial: f.ComponentMaterial;
+    #modelRigidbody: f.ComponentRigidbody;
 
-    private modelPositionBuffer: f.Vector3 = f.Vector3.ZERO();
+    #modelPositionBuffer: f.Vector3;
+    #modelRotationBuffer: f.Vector3;
 
     constructor() {
       super();
@@ -38,45 +40,74 @@ namespace GantryGlutton {
           this.removeEventListener(f.EVENT.COMPONENT_REMOVE, this.hndEvent);
           break;
         case f.EVENT.NODE_DESERIALIZED:
-          this.rigidbody = this.node.getComponent(f.ComponentRigidbody);
+          this.#rigidbody = this.node.getComponent(f.ComponentRigidbody);
           const model = this.node.getChildrenByName("Model")[0];
-          this.modelRigidbody = model.getComponent(f.ComponentRigidbody);
-          this.bodyMaterial = model
+          this.#modelRigidbody = model.getComponent(f.ComponentRigidbody);
+          this.#bodyMaterial = model
             .getChildrenByName("Body")[0]
             .getComponent(f.ComponentMaterial);
+
           addAfterDrawUpdateSubscriber(this);
           addAfterPhysicsBeforeDrawUpdateSubscriber(this);
           break;
       }
     };
 
-    public get fruitType(): FruitType {
-      return this._fruitType;
-    }
+    public getFruitType = (): FruitType => {
+      return this.#fruitType;
+    };
 
-    public set fruitType(fruitType: FruitType) {
-      this._fruitType = fruitType;
+    public setFruitType = (fruitType: FruitType): void => {
+      this.#fruitType = fruitType;
 
-      if (Customer.fruitColors.size === 0) {
-        Customer.fruitColors.set(FruitType.Banana, new f.Color(255, 213, 0, 1));
-        Customer.fruitColors.set(
+      if (Customer.#fruitColors.size === 0) {
+        Customer.#fruitColors.set(FruitType.Banana, new f.Color(1, 0.84, 0, 1));
+        Customer.#fruitColors.set(
           FruitType.Blueberry,
-          new f.Color(62, 60, 180, 1)
+          new f.Color(0.24, 0.24, 0.71, 1)
         );
-        Customer.fruitColors.set(FruitType.Cherry, new f.Color(215, 40, 66, 1));
-        Customer.fruitColors.set(FruitType.Pear, new f.Color(119, 215, 40, 1));
+        Customer.#fruitColors.set(
+          FruitType.Cherry,
+          new f.Color(0.84, 0.16, 0.26, 1)
+        );
+        Customer.#fruitColors.set(
+          FruitType.Pear,
+          new f.Color(0.47, 0.84, 0.16, 1)
+        );
+
+        Customer.test = this;
       }
 
-      this.bodyMaterial.clrPrimary = Customer.fruitColors.get(fruitType);
-    }
+      this.#bodyMaterial.clrPrimary = Customer.#fruitColors.get(fruitType);
+      console.log(this.#bodyMaterial.clrPrimary, fruitType);
+    };
 
     public onAfterPhysicsBeforeDrawUpdate = (): void => {
-      this.modelPositionBuffer = this.modelRigidbody.getPosition();
-      this.modelRigidbody.setPosition(this.rigidbody.getPosition());
+      // console.log(
+      //   this.node.getComponent(f.ComponentRigidbody).getPosition().x,
+      //   this.node.getComponent(f.ComponentRigidbody).getPosition().y,
+      //   this.node.getComponent(f.ComponentRigidbody).getPosition().z
+      // );
+      if (this == Customer.test) {
+        console.log(
+          "customer rigidbody rotation",
+          this.node.getComponent(f.ComponentRigidbody).getRotation().x,
+          this.node.getComponent(f.ComponentRigidbody).getRotation().y,
+          this.node.getComponent(f.ComponentRigidbody).getRotation().z
+        );
+        console.log(
+          "model rigidbody rotation",
+          this.#modelRigidbody.getRotation().x,
+          this.#modelRigidbody.getRotation().y,
+          this.#modelRigidbody.getRotation().z
+        );
+      }
+      this.#modelPositionBuffer = this.#modelRigidbody.getPosition();
+      this.#modelRigidbody.setPosition(this.#rigidbody.getPosition());
     };
 
     public onAfterDrawUpdate = (): void => {
-      this.modelRigidbody.setPosition(this.modelPositionBuffer);
+      this.#modelRigidbody.setPosition(this.#modelPositionBuffer);
     };
   }
 }

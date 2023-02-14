@@ -1,16 +1,6 @@
 namespace GantryGlutton {
   import f = FudgeCore;
   f.Project.registerScriptNamespace(GantryGlutton); // Register the namespace to FUDGE for serialization
-  
-  /**
-   * Types of fruit.
-  */
- export enum FruitType {
-   Banana,
-   Blueberry,
-   Cherry,
-   Pear,
-  }
 
   export class FruitManager extends f.ComponentScript {
     // Register the script as component for use in the editor via drag&drop
@@ -81,7 +71,7 @@ namespace GantryGlutton {
       let timeFromStart = this.courseDelay;
       for (let i = 0; i < this.fruitCourseLength; i++) {
         const fruitFallDuration = timeFromStart;
-        const randomFruit = Math.floor(4 * Math.random());
+        const randomFruitType = getRandomFruitType();
         const randomPosition: f.Vector3 = new f.Vector3(
           (Math.random() * stageWidth) + this.courseInset,
           0,
@@ -90,7 +80,7 @@ namespace GantryGlutton {
 
         (async () => {        
           let fruitInstance: f.GraphInstance = await f.Project.createGraphInstance(
-            fruitGraphs.get(randomFruit)
+            fruitGraphs.get(randomFruitType)
           );
           
           const fruitTransform: f.ComponentTransform = fruitInstance.getComponent(f.ComponentTransform);

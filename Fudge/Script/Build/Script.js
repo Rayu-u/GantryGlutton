@@ -8,8 +8,8 @@ var GantryGlutton;
         static iSubclass = f.Component.registerSubclass(Cog);
         // Properties may be mutated by users in the editor via the automatically created user interface
         platformRigidbody;
-        transform;
         platformVelocityDimensionSelector = f.Vector3.ZERO();
+        #transform;
         constructor() {
             super();
             // Don't start when running in editor
@@ -32,7 +32,7 @@ var GantryGlutton;
                 case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
                     // if deserialized the node is now fully reconstructed and access to all its components and children is possible
                     GantryGlutton.addAfterPhysicsBeforeDrawUpdateSubscriber(this);
-                    this.transform = this.node.getComponent(f.ComponentTransform);
+                    this.#transform = this.node.getComponent(f.ComponentTransform);
                     break;
             }
         };
@@ -40,7 +40,7 @@ var GantryGlutton;
             const relevantSpeed = f.Vector3.DOT(this.platformRigidbody.getVelocity(), this.platformVelocityDimensionSelector);
             const deltaTime = f.Loop.timeFrameGame / 1000;
             const angle = deltaTime * relevantSpeed * 360 / Math.PI;
-            this.transform.mtxLocal.rotateX(angle);
+            this.#transform.mtxLocal.rotateX(angle);
         };
     }
     GantryGlutton.Cog = Cog;
@@ -89,12 +89,14 @@ var GantryGlutton;
     class Customer extends f.ComponentScript {
         // Register the script as component for use in the editor via drag&drop
         static iSubclass = f.Component.registerSubclass(Customer);
-        static fruitColors = new Map();
-        _fruitType;
-        rigidbody;
-        bodyMaterial;
-        modelRigidbody;
-        modelPositionBuffer = f.Vector3.ZERO();
+        static #fruitColors = new Map();
+        static test;
+        #fruitType;
+        #rigidbody;
+        #bodyMaterial;
+        #modelRigidbody;
+        #modelPositionBuffer;
+        #modelRotationBuffer;
         constructor() {
             super();
             // Don't start when running in editor
@@ -115,10 +117,10 @@ var GantryGlutton;
                     this.removeEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
                     break;
                 case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
-                    this.rigidbody = this.node.getComponent(f.ComponentRigidbody);
+                    this.#rigidbody = this.node.getComponent(f.ComponentRigidbody);
                     const model = this.node.getChildrenByName("Model")[0];
-                    this.modelRigidbody = model.getComponent(f.ComponentRigidbody);
-                    this.bodyMaterial = model
+                    this.#modelRigidbody = model.getComponent(f.ComponentRigidbody);
+                    this.#bodyMaterial = model
                         .getChildrenByName("Body")[0]
                         .getComponent(f.ComponentMaterial);
                     GantryGlutton.addAfterDrawUpdateSubscriber(this);
@@ -126,25 +128,36 @@ var GantryGlutton;
                     break;
             }
         };
-        get fruitType() {
-            return this._fruitType;
-        }
-        set fruitType(fruitType) {
-            this._fruitType = fruitType;
-            if (Customer.fruitColors.size === 0) {
-                Customer.fruitColors.set(GantryGlutton.FruitType.Banana, new f.Color(255, 213, 0, 1));
-                Customer.fruitColors.set(GantryGlutton.FruitType.Blueberry, new f.Color(62, 60, 180, 1));
-                Customer.fruitColors.set(GantryGlutton.FruitType.Cherry, new f.Color(215, 40, 66, 1));
-                Customer.fruitColors.set(GantryGlutton.FruitType.Pear, new f.Color(119, 215, 40, 1));
+        getFruitType = () => {
+            return this.#fruitType;
+        };
+        setFruitType = (fruitType) => {
+            this.#fruitType = fruitType;
+            if (Customer.#fruitColors.size === 0) {
+                Customer.#fruitColors.set(GantryGlutton.FruitType.Banana, new f.Color(1, 0.84, 0, 1));
+                Customer.#fruitColors.set(GantryGlutton.FruitType.Blueberry, new f.Color(0.24, 0.24, 0.71, 1));
+                Customer.#fruitColors.set(GantryGlutton.FruitType.Cherry, new f.Color(0.84, 0.16, 0.26, 1));
+                Customer.#fruitColors.set(GantryGlutton.FruitType.Pear, new f.Color(0.47, 0.84, 0.16, 1));
+                Customer.test = this;
             }
-            this.bodyMaterial.clrPrimary = Customer.fruitColors.get(fruitType);
-        }
+            this.#bodyMaterial.clrPrimary = Customer.#fruitColors.get(fruitType);
+            console.log(this.#bodyMaterial.clrPrimary, fruitType);
+        };
         onAfterPhysicsBeforeDrawUpdate = () => {
-            this.modelPositionBuffer = this.modelRigidbody.getPosition();
-            this.modelRigidbody.setPosition(this.rigidbody.getPosition());
+            // console.log(
+            //   this.node.getComponent(f.ComponentRigidbody).getPosition().x,
+            //   this.node.getComponent(f.ComponentRigidbody).getPosition().y,
+            //   this.node.getComponent(f.ComponentRigidbody).getPosition().z
+            // );
+            if (this == Customer.test) {
+                console.log("customer rigidbody rotation", this.node.getComponent(f.ComponentRigidbody).getRotation().x, this.node.getComponent(f.ComponentRigidbody).getRotation().y, this.node.getComponent(f.ComponentRigidbody).getRotation().z);
+                console.log("model rigidbody rotation", this.#modelRigidbody.getRotation().x, this.#modelRigidbody.getRotation().y, this.#modelRigidbody.getRotation().z);
+            }
+            this.#modelPositionBuffer = this.#modelRigidbody.getPosition();
+            this.#modelRigidbody.setPosition(this.#rigidbody.getPosition());
         };
         onAfterDrawUpdate = () => {
-            this.modelRigidbody.setPosition(this.modelPositionBuffer);
+            this.#modelRigidbody.setPosition(this.#modelPositionBuffer);
         };
     }
     GantryGlutton.Customer = Customer;
@@ -153,67 +166,17 @@ var GantryGlutton;
 (function (GantryGlutton) {
     var f = FudgeCore;
     f.Project.registerScriptNamespace(GantryGlutton); // Register the namespace to FUDGE for serialization
-    class CustomerQueue {
-        /**
-         * How many groups should there be in each queue.
-         */
-        static queueLength = 3;
-        /**
-         * The groups in this queue.
-         */
-        groups = [];
-        /**
-         * The offset between each group in the queue.
-         */
-        groupOffset;
-        /**
-         * The position of the head of the queue, where the first group stands.
-         */
-        queueHeadPosition;
-        constructor(groupOffset, queueHeadPosition) {
-            this.groupOffset = groupOffset;
-            this.queueHeadPosition = queueHeadPosition;
-        }
-        ensureEnoughGroups = () => { };
-        generateGroup = () => { };
-        removeFirstGroup = () => { };
-    }
-    class CustomerManager extends f.ComponentScript {
-        // Register the script as component for use in the editor via drag&drop
-        static iSubclass = f.Component.registerSubclass(CustomerManager);
-        constructor() {
-            super();
-            // Don't start when running in editor
-            if (f.Project.mode == f.MODE.EDITOR)
-                return;
-            // Listen to this component being added to or removed from a node
-            this.addEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
-            this.addEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
-            this.addEventListener("nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */, this.hndEvent);
-        }
-        // Activate the functions of this component as response to events
-        hndEvent = (_event) => {
-            switch (_event.type) {
-                case "componentAdd" /* f.EVENT.COMPONENT_ADD */:
-                    break;
-                case "componentRemove" /* f.EVENT.COMPONENT_REMOVE */:
-                    this.removeEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
-                    this.removeEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
-                    break;
-                case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
-                    break;
-            }
-        };
-    }
-    GantryGlutton.CustomerManager = CustomerManager;
-})(GantryGlutton || (GantryGlutton = {}));
-var GantryGlutton;
-(function (GantryGlutton) {
-    var f = FudgeCore;
-    f.Project.registerScriptNamespace(GantryGlutton); // Register the namespace to FUDGE for serialization
     class CustomerQueue extends f.ComponentScript {
         // Register the script as component for use in the editor via drag&drop
         static iSubclass = f.Component.registerSubclass(CustomerQueue);
+        static customerGraphResource;
+        static targetGroupCount = 3;
+        static #groupNumberMap = [1, 1, 1, 1, 1, 1, 2, 2, 2, 3];
+        /**
+         * The offset between groups in local space.
+         */
+        static groupOffset = new f.Vector3(0, 0, -2);
+        #groups = [];
         constructor() {
             super();
             // Don't start when running in editor
@@ -224,6 +187,9 @@ var GantryGlutton;
             this.addEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
             this.addEventListener("nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */, this.hndEvent);
         }
+        generateQueue = () => {
+            this.ensureGroupCount();
+        };
         // Activate the functions of this component as response to events
         hndEvent = (_event) => {
             switch (_event.type) {
@@ -234,12 +200,57 @@ var GantryGlutton;
                     this.removeEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
                     break;
                 case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
-                    this.node.getComponent(f.ComponentRigidbody).addEventListener("TriggerEnteredCollision" /* f.EVENT_PHYSICS.TRIGGER_ENTER */, this.handlePlayerEnterPickupZone);
+                    this.node
+                        .getComponent(f.ComponentRigidbody)
+                        .addEventListener("TriggerEnteredCollision" /* f.EVENT_PHYSICS.TRIGGER_ENTER */, this.handlePlayerEnterPickupZone);
                     break;
             }
         };
         handlePlayerEnterPickupZone = (_event) => {
-            if (_event.cmpRigidbody.node.name == "Platform") {
+            if (_event.cmpRigidbody.node.name !== "Platform") {
+                return;
+            }
+            const platform = _event.cmpRigidbody.node.getComponent(GantryGlutton.Platform);
+            this.ensureGroupCount();
+        };
+        createGroup = async () => {
+            const randomGroupSize = CustomerQueue.#groupNumberMap[Math.floor(CustomerQueue.#groupNumberMap.length * Math.random())];
+            const groupNode = new f.Node("Group");
+            groupNode.addComponent(new f.ComponentTransform());
+            const groupComponent = new GantryGlutton.Group();
+            groupNode.addComponent(groupComponent);
+            const addCustomerPromises = [];
+            const createAndAddCustomer = async () => {
+                groupComponent.addCustomer(await this.createRandomCustomer());
+            };
+            for (let i = 0; i < randomGroupSize; i++) {
+                addCustomerPromises.push(createAndAddCustomer());
+            }
+            await Promise.all(addCustomerPromises);
+            return groupComponent;
+        };
+        createRandomCustomer = async () => {
+            if (!CustomerQueue.customerGraphResource) {
+                CustomerQueue.customerGraphResource = (f.Project.getResourcesByName("Customer")[0]);
+            }
+            const customerGraphInstance = await f.Project.createGraphInstance(CustomerQueue.customerGraphResource);
+            const customer = customerGraphInstance.getComponent(GantryGlutton.Customer);
+            customer.setFruitType(GantryGlutton.getRandomFruitType());
+            return customer;
+        };
+        ensureGroupCount = async () => {
+            while (this.#groups.length < CustomerQueue.targetGroupCount) {
+                const group = await this.createGroup();
+                this.#groups.push(group);
+                this.node.addChild(group.node);
+            }
+            this.updateGroupPositions();
+        };
+        updateGroupPositions = () => {
+            for (let i = 0; i < this.#groups.length; i++) {
+                const groupNode = this.#groups[i].node;
+                const groupTransform = groupNode.getComponent(f.ComponentTransform);
+                groupTransform.mtxLocal = f.Matrix4x4.TRANSLATION(f.Vector3.SCALE(CustomerQueue.groupOffset, i));
             }
         };
     }
@@ -252,10 +263,10 @@ var GantryGlutton;
     class Fruit extends f.ComponentScript {
         // Register the script as component for use in the editor via drag&drop
         static iSubclass = f.Component.registerSubclass(Fruit);
-        static fallSpeed = 5;
-        static fruitIndicationDuration = 10;
-        modelTransform;
-        shadowTransform;
+        static #fallSpeed = 5;
+        static #fruitIndicationDuration = 10;
+        #modelTransform;
+        #shadowTransform;
         constructor() {
             super();
             // Don't start when running in editor
@@ -277,26 +288,26 @@ var GantryGlutton;
                     this.removeEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
                     break;
                 case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
-                    this.modelTransform = this.node.getChildrenByName("Model")[0].getComponent(f.ComponentTransform);
-                    this.shadowTransform = this.node.getChildrenByName("Shadow")[0].getComponent(f.ComponentTransform);
-                    this.shadowTransform.mtxLocal.scaling = f.Vector3.ZERO();
+                    this.#modelTransform = this.node.getChildrenByName("Model")[0].getComponent(f.ComponentTransform);
+                    this.#shadowTransform = this.node.getChildrenByName("Shadow")[0].getComponent(f.ComponentTransform);
+                    this.#shadowTransform.mtxLocal.scaling = f.Vector3.ZERO();
                     break;
             }
         };
         supplyFallDuration = (fallDuration) => {
-            const oldModelPosition = this.modelTransform.mtxLocal.translation;
-            oldModelPosition.y = fallDuration * Fruit.fallSpeed;
-            this.modelTransform.mtxLocal.translation = oldModelPosition;
+            const oldModelPosition = this.#modelTransform.mtxLocal.translation;
+            oldModelPosition.y = fallDuration * Fruit.#fallSpeed;
+            this.#modelTransform.mtxLocal.translation = oldModelPosition;
         };
         update = (_event) => {
             const deltaTime = f.Loop.timeFrameGame / 1000;
-            this.modelTransform.mtxLocal.translateY(-deltaTime * Fruit.fallSpeed);
-            const remainingFallDuration = this.modelTransform.mtxLocal.translation.y / Fruit.fallSpeed;
-            if (0 < remainingFallDuration && remainingFallDuration < Fruit.fruitIndicationDuration) {
-                this.shadowTransform.mtxLocal = f.Matrix4x4.SCALING(f.Vector3.ONE(1 - remainingFallDuration / Fruit.fruitIndicationDuration));
+            this.#modelTransform.mtxLocal.translateY(-deltaTime * Fruit.#fallSpeed);
+            const remainingFallDuration = this.#modelTransform.mtxLocal.translation.y / Fruit.#fallSpeed;
+            if (0 < remainingFallDuration && remainingFallDuration < Fruit.#fruitIndicationDuration) {
+                this.#shadowTransform.mtxLocal = f.Matrix4x4.SCALING(f.Vector3.ONE(1 - remainingFallDuration / Fruit.#fruitIndicationDuration));
             }
             else {
-                this.shadowTransform.mtxLocal.scaling = f.Vector3.ZERO();
+                this.#shadowTransform.mtxLocal.scaling = f.Vector3.ZERO();
             }
         };
     }
@@ -306,16 +317,6 @@ var GantryGlutton;
 (function (GantryGlutton) {
     var f = FudgeCore;
     f.Project.registerScriptNamespace(GantryGlutton); // Register the namespace to FUDGE for serialization
-    /**
-     * Types of fruit.
-    */
-    let FruitType;
-    (function (FruitType) {
-        FruitType[FruitType["Banana"] = 0] = "Banana";
-        FruitType[FruitType["Blueberry"] = 1] = "Blueberry";
-        FruitType[FruitType["Cherry"] = 2] = "Cherry";
-        FruitType[FruitType["Pear"] = 3] = "Pear";
-    })(FruitType = GantryGlutton.FruitType || (GantryGlutton.FruitType = {}));
     class FruitManager extends f.ComponentScript {
         // Register the script as component for use in the editor via drag&drop
         static iSubclass = f.Component.registerSubclass(FruitManager);
@@ -364,19 +365,19 @@ var GantryGlutton;
         };
         generateCourse = () => {
             const fruitGraphs = new Map([
-                [FruitType.Banana, f.Project.getResourcesByName("Banana")[0]],
-                [FruitType.Blueberry, f.Project.getResourcesByName("Blueberry")[0]],
-                [FruitType.Cherry, f.Project.getResourcesByName("Cherry")[0]],
-                [FruitType.Pear, f.Project.getResourcesByName("Pear")[0]],
+                [GantryGlutton.FruitType.Banana, f.Project.getResourcesByName("Banana")[0]],
+                [GantryGlutton.FruitType.Blueberry, f.Project.getResourcesByName("Blueberry")[0]],
+                [GantryGlutton.FruitType.Cherry, f.Project.getResourcesByName("Cherry")[0]],
+                [GantryGlutton.FruitType.Pear, f.Project.getResourcesByName("Pear")[0]],
             ]);
             const stageWidth = 10 - 2 * this.courseInset;
             let timeFromStart = this.courseDelay;
             for (let i = 0; i < this.fruitCourseLength; i++) {
                 const fruitFallDuration = timeFromStart;
-                const randomFruit = Math.floor(4 * Math.random());
+                const randomFruitType = GantryGlutton.getRandomFruitType();
                 const randomPosition = new f.Vector3((Math.random() * stageWidth) + this.courseInset, 0, -(Math.random() * stageWidth) - this.courseInset);
                 (async () => {
-                    let fruitInstance = await f.Project.createGraphInstance(fruitGraphs.get(randomFruit));
+                    let fruitInstance = await f.Project.createGraphInstance(fruitGraphs.get(randomFruitType));
                     const fruitTransform = fruitInstance.getComponent(f.ComponentTransform);
                     fruitTransform.mtxLocal.translation = randomPosition;
                     const fruitComponent = fruitInstance.getComponent(GantryGlutton.Fruit);
@@ -389,6 +390,22 @@ var GantryGlutton;
         };
     }
     GantryGlutton.FruitManager = FruitManager;
+})(GantryGlutton || (GantryGlutton = {}));
+var GantryGlutton;
+(function (GantryGlutton) {
+    /**
+     * Types of fruit.
+    */
+    let FruitType;
+    (function (FruitType) {
+        FruitType[FruitType["Banana"] = 0] = "Banana";
+        FruitType[FruitType["Blueberry"] = 1] = "Blueberry";
+        FruitType[FruitType["Cherry"] = 2] = "Cherry";
+        FruitType[FruitType["Pear"] = 3] = "Pear";
+    })(FruitType = GantryGlutton.FruitType || (GantryGlutton.FruitType = {}));
+    GantryGlutton.getRandomFruitType = () => {
+        return Math.floor(4 * Math.random());
+    };
 })(GantryGlutton || (GantryGlutton = {}));
 var GantryGlutton;
 (function (GantryGlutton) {
@@ -444,7 +461,7 @@ var GantryGlutton;
         // Properties may be mutated by users in the editor via the automatically created user interface
         platformOffset = 0;
         platformRigidbody;
-        transform;
+        #transform;
         constructor() {
             super();
             // Don't start when running in editor
@@ -471,16 +488,70 @@ var GantryGlutton;
             }
         };
         onAfterPhysicsBeforeDrawUpdate = () => {
-            const oldPosition = this.transform.mtxLocal.translation;
+            const oldPosition = this.#transform.mtxLocal.translation;
             oldPosition.x = this.platformRigidbody.getPosition().x + this.platformOffset;
-            this.transform.mtxLocal.translation = oldPosition;
+            this.#transform.mtxLocal.translation = oldPosition;
         };
         start = (_event) => {
-            this.transform = this.node.getComponent(f.ComponentTransform);
+            this.#transform = this.node.getComponent(f.ComponentTransform);
             GantryGlutton.addAfterPhysicsBeforeDrawUpdateSubscriber(this);
         };
     }
     GantryGlutton.GantryBridge = GantryBridge;
+})(GantryGlutton || (GantryGlutton = {}));
+var GantryGlutton;
+(function (GantryGlutton) {
+    var f = FudgeCore;
+    f.Project.registerScriptNamespace(GantryGlutton); // Register the namespace to FUDGE for serialization
+    class Group extends f.ComponentScript {
+        // Register the script as component for use in the editor via drag&drop
+        static iSubclass = f.Component.registerSubclass(Group);
+        static #maxCustomerCount = 3;
+        #customers = [];
+        static #relativeCustomerPositions = [
+            new f.Vector3(0, 0, 0),
+            new f.Vector3(-0.5, 0, -0.5),
+            new f.Vector3(0.5, 0, -0.5),
+            new f.Vector3(0, 0, -1),
+        ];
+        constructor() {
+            super();
+            // Don't start when running in editor
+            if (f.Project.mode == f.MODE.EDITOR)
+                return;
+            // Listen to this component being added to or removed from a node
+            this.addEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
+            this.addEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
+            this.addEventListener("nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */, this.hndEvent);
+        }
+        // Activate the functions of this component as response to events
+        hndEvent = (_event) => {
+            switch (_event.type) {
+                case "componentAdd" /* f.EVENT.COMPONENT_ADD */:
+                    break;
+                case "componentRemove" /* f.EVENT.COMPONENT_REMOVE */:
+                    this.removeEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
+                    this.removeEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
+                    break;
+                case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
+                    break;
+            }
+        };
+        addCustomer = (customer) => {
+            if (Group.#maxCustomerCount <= this.#customers.length) {
+                console.warn("No more customers can be added when the group already contains the max amount, which is ", Group.#maxCustomerCount);
+                return;
+            }
+            const currentCustomerIndex = this.#customers.length;
+            this.#customers.push(customer);
+            this.node.addChild(customer.node);
+            const customerRigidbody = customer.node.getComponent(f.ComponentRigidbody);
+            customerRigidbody.setPosition(Group.#relativeCustomerPositions[currentCustomerIndex]);
+            // const joint = customer.node.getComponent(f.JointSpherical);
+            // joint.breakForce = 0.001;
+        };
+    }
+    GantryGlutton.Group = Group;
 })(GantryGlutton || (GantryGlutton = {}));
 var GantryGlutton;
 (function (GantryGlutton) {
@@ -507,6 +578,8 @@ var GantryGlutton;
         viewport.camera.mtxPivot = referenceCameraObject.getComponent(f.ComponentTransform).mtxLocal;
         const fruitManager = GantryGlutton.graph.getChildrenByName("FruitManager")[0].getComponent(GantryGlutton.FruitManager);
         fruitManager.generateCourse();
+        const stage = GantryGlutton.graph.getChildrenByName("Stage")[0].getComponent(GantryGlutton.Stage);
+        stage.generateStage();
         f.Loop.addEventListener("loopFrame" /* f.EVENT.LOOP_FRAME */, update);
         f.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
     }
@@ -548,8 +621,8 @@ var GantryGlutton;
         // Properties may be mutated by users in the editor via the automatically created user interface
         message = "CustomComponentScript added to ";
         motorForce = 1;
-        rigidbody;
-        initialY;
+        #rigidbody;
+        #initialY;
         constructor() {
             super();
             // Don't start when running in editor
@@ -577,8 +650,8 @@ var GantryGlutton;
             }
         };
         start = (_event) => {
-            this.rigidbody = this.node.getComponent(f.ComponentRigidbody);
-            this.initialY = this.node.getComponent(f.ComponentTransform).mtxLocal.translation.y;
+            this.#rigidbody = this.node.getComponent(f.ComponentRigidbody);
+            this.#initialY = this.node.getComponent(f.ComponentTransform).mtxLocal.translation.y;
         };
         update = (_event) => {
             //f.Physics.simulate();
@@ -586,11 +659,11 @@ var GantryGlutton;
             const inputDirection = this.getInputAsCardinalDirection();
             const gantryBaseActivation = Platform.getGantryBaseActivation(inputDirection);
             const gantryBridgeActivation = Platform.getGantryBridgeActivation(inputDirection);
-            this.rigidbody.applyForce(new f.Vector3(this.motorForce * gantryBaseActivation, 0, -this.motorForce * gantryBridgeActivation));
-            const oldPosition = this.rigidbody.getPosition();
-            oldPosition.y = this.initialY;
-            this.rigidbody.setPosition(oldPosition);
-            this.rigidbody.setRotation(f.Vector3.ZERO());
+            this.#rigidbody.applyForce(new f.Vector3(this.motorForce * gantryBaseActivation, 0, -this.motorForce * gantryBridgeActivation));
+            const oldPosition = this.#rigidbody.getPosition();
+            oldPosition.y = this.#initialY;
+            this.#rigidbody.setPosition(oldPosition);
+            this.#rigidbody.setRotation(f.Vector3.ZERO());
         };
         /**
          * Get the cardinal direction of current WASD or arrow input.
@@ -677,5 +750,49 @@ var GantryGlutton;
         }
     }
     GantryGlutton.Platform = Platform;
+})(GantryGlutton || (GantryGlutton = {}));
+var GantryGlutton;
+(function (GantryGlutton) {
+    var f = FudgeCore;
+    f.Project.registerScriptNamespace(GantryGlutton); // Register the namespace to FUDGE for serialization
+    class Stage extends f.ComponentScript {
+        // Register the script as component for use in the editor via drag&drop
+        static iSubclass = f.Component.registerSubclass(Stage);
+        #queueComponents;
+        constructor() {
+            super();
+            // Don't start when running in editor
+            if (f.Project.mode == f.MODE.EDITOR)
+                return;
+            // Listen to this component being added to or removed from a node
+            this.addEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
+            this.addEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
+            this.addEventListener("nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */, this.hndEvent);
+        }
+        generateStage = () => {
+            for (const customerQueue of this.#queueComponents) {
+                customerQueue.generateQueue();
+            }
+        };
+        // Activate the functions of this component as response to events
+        hndEvent = (_event) => {
+            switch (_event.type) {
+                case "componentAdd" /* f.EVENT.COMPONENT_ADD */:
+                    break;
+                case "componentRemove" /* f.EVENT.COMPONENT_REMOVE */:
+                    this.removeEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
+                    this.removeEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
+                    break;
+                case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
+                    this.#queueComponents = ["NE", "SE", "SW", "NW"].map((direction) => {
+                        return this.node
+                            .getChildrenByName(`CustomerQueue-${direction}`)[0]
+                            .getComponent(GantryGlutton.CustomerQueue);
+                    });
+                    break;
+            }
+        };
+    }
+    GantryGlutton.Stage = Stage;
 })(GantryGlutton || (GantryGlutton = {}));
 //# sourceMappingURL=Script.js.map

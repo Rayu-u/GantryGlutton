@@ -2,14 +2,21 @@ namespace GantryGlutton {
   import f = FudgeCore;
   f.Project.registerScriptNamespace(GantryGlutton); // Register the namespace to FUDGE for serialization
 
-  export class GantryBridge extends f.ComponentScript {
+  export class Group extends f.ComponentScript {
     // Register the script as component for use in the editor via drag&drop
     public static readonly iSubclass: number =
-      f.Component.registerSubclass(GantryBridge);
-    // Properties may be mutated by users in the editor via the automatically created user interface
-    public platformOffset: number = 0;
-    public platformRigidbody: f.ComponentRigidbody;
-    #transform: f.ComponentTransform;
+      f.Component.registerSubclass(Group);
+
+    static readonly #maxCustomerCount: number = 3;
+
+    #customers: Customer[] = [];
+
+    static readonly #relativeCustomerPositions: f.Vector3[] = [
+      new f.Vector3(0, 0, 0),
+      new f.Vector3(-0.5, 0, -0.5),
+      new f.Vector3(0.5, 0, -0.5),
+      new f.Vector3(0, 0, -1),
+    ];
 
     constructor() {
       super();
@@ -33,21 +40,30 @@ namespace GantryGlutton {
           this.removeEventListener(f.EVENT.COMPONENT_REMOVE, this.hndEvent);
           break;
         case f.EVENT.NODE_DESERIALIZED:
-          // if deserialized the node is now fully reconstructed and access to all its components and children is possible
-          this.start(_event);
           break;
       }
     };
 
-    public onAfterPhysicsBeforeDrawUpdate = () => {
-      const oldPosition = this.#transform.mtxLocal.translation;
-      oldPosition.x = this.platformRigidbody.getPosition().x + this.platformOffset;
-      this.#transform.mtxLocal.translation = oldPosition;
-    };
+    public addCustomer = (customer: Customer) => {
+      if (Group.#maxCustomerCount <= this.#customers.length) {
+        console.warn(
+          "No more customers can be added when the group already contains the max amount, which is ",
+          Group.#maxCustomerCount
+        );
+        return;
+      }
 
-    public start = (_event: Event): void => {
-      this.#transform = this.node.getComponent(f.ComponentTransform);
-      addAfterPhysicsBeforeDrawUpdateSubscriber(this);
+      const currentCustomerIndex = this.#customers.length;
+      this.#customers.push(customer);
+      this.node.addChild(customer.node);
+
+      const customerRigidbody = customer.node.getComponent(
+        f.ComponentRigidbody
+      );
+      customerRigidbody.setPosition(Group.#relativeCustomerPositions[currentCustomerIndex]);
+
+      // const joint = customer.node.getComponent(f.JointSpherical);
+      // joint.breakForce = 0.001;
     };
   }
 }

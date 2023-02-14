@@ -1,9 +1,9 @@
 declare namespace GantryGlutton {
     import f = FudgeCore;
     class Cog extends f.ComponentScript {
+        #private;
         static readonly iSubclass: number;
         platformRigidbody: f.ComponentRigidbody;
-        private transform;
         platformVelocityDimensionSelector: f.Vector3;
         constructor();
         hndEvent: (_event: Event) => void;
@@ -22,46 +22,43 @@ declare namespace GantryGlutton {
 declare namespace GantryGlutton {
     import f = FudgeCore;
     class Customer extends f.ComponentScript {
+        #private;
         static readonly iSubclass: number;
-        private static readonly fruitColors;
-        private _fruitType;
-        private rigidbody;
-        private bodyMaterial;
-        private modelRigidbody;
-        private modelPositionBuffer;
+        static test: Customer;
         constructor();
         hndEvent: (_event: Event) => void;
-        get fruitType(): FruitType;
-        set fruitType(fruitType: FruitType);
+        getFruitType: () => FruitType;
+        setFruitType: (fruitType: FruitType) => void;
         onAfterPhysicsBeforeDrawUpdate: () => void;
         onAfterDrawUpdate: () => void;
     }
 }
 declare namespace GantryGlutton {
     import f = FudgeCore;
-    class CustomerManager extends f.ComponentScript {
-        static readonly iSubclass: number;
-        constructor();
-        hndEvent: (_event: Event) => void;
-    }
-}
-declare namespace GantryGlutton {
-    import f = FudgeCore;
     class CustomerQueue extends f.ComponentScript {
+        #private;
         static readonly iSubclass: number;
+        static customerGraphResource: f.Graph;
+        static targetGroupCount: number;
+        /**
+         * The offset between groups in local space.
+         */
+        static readonly groupOffset: f.Vector3;
         constructor();
+        generateQueue: () => void;
         hndEvent: (_event: Event) => void;
         private handlePlayerEnterPickupZone;
+        private createGroup;
+        private createRandomCustomer;
+        private ensureGroupCount;
+        private updateGroupPositions;
     }
 }
 declare namespace GantryGlutton {
     import f = FudgeCore;
     class Fruit extends f.ComponentScript {
+        #private;
         static readonly iSubclass: number;
-        private static fallSpeed;
-        private static fruitIndicationDuration;
-        private modelTransform;
-        private shadowTransform;
         constructor();
         hndEvent: (_event: Event) => void;
         supplyFallDuration: (fallDuration: number) => void;
@@ -70,15 +67,6 @@ declare namespace GantryGlutton {
 }
 declare namespace GantryGlutton {
     import f = FudgeCore;
-    /**
-     * Types of fruit.
-    */
-    enum FruitType {
-        Banana = 0,
-        Blueberry = 1,
-        Cherry = 2,
-        Pear = 3
-    }
     class FruitManager extends f.ComponentScript {
         static readonly iSubclass: number;
         /**
@@ -107,6 +95,18 @@ declare namespace GantryGlutton {
     }
 }
 declare namespace GantryGlutton {
+    /**
+     * Types of fruit.
+    */
+    enum FruitType {
+        Banana = 0,
+        Blueberry = 1,
+        Cherry = 2,
+        Pear = 3
+    }
+    const getRandomFruitType: () => FruitType;
+}
+declare namespace GantryGlutton {
     import f = FudgeCore;
     class Gantry extends f.ComponentScript {
         static readonly iSubclass: number;
@@ -119,14 +119,24 @@ declare namespace GantryGlutton {
 declare namespace GantryGlutton {
     import f = FudgeCore;
     class GantryBridge extends f.ComponentScript {
+        #private;
         static readonly iSubclass: number;
         platformOffset: number;
         platformRigidbody: f.ComponentRigidbody;
-        private transform;
         constructor();
         hndEvent: (_event: Event) => void;
         onAfterPhysicsBeforeDrawUpdate: () => void;
         start: (_event: Event) => void;
+    }
+}
+declare namespace GantryGlutton {
+    import f = FudgeCore;
+    class Group extends f.ComponentScript {
+        #private;
+        static readonly iSubclass: number;
+        constructor();
+        hndEvent: (_event: Event) => void;
+        addCustomer: (customer: Customer) => void;
     }
 }
 declare namespace GantryGlutton {
@@ -146,11 +156,10 @@ declare namespace GantryGlutton {
     import f = FudgeCore;
     type CardinalDirection = "" | "N" | "NE" | "E" | "SE" | "S" | "SW" | "W" | "NW";
     export class Platform extends f.ComponentScript {
+        #private;
         static readonly iSubclass: number;
         message: string;
         motorForce: number;
-        private rigidbody;
-        private initialY;
         constructor();
         hndEvent: (_event: Event) => void;
         start: (_event: Event) => void;
@@ -191,4 +200,14 @@ declare namespace GantryGlutton {
         static classifyCardinalDirection(direction: CardinalDirection, positiveGroup: CardinalDirection[], negativeGroup: CardinalDirection[]): number;
     }
     export {};
+}
+declare namespace GantryGlutton {
+    import f = FudgeCore;
+    class Stage extends f.ComponentScript {
+        #private;
+        static readonly iSubclass: number;
+        constructor();
+        generateStage: () => void;
+        hndEvent: (_event: Event) => void;
+    }
 }

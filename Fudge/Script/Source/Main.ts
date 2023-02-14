@@ -41,6 +41,8 @@ namespace GantryGlutton {
 
     const fruitManager: FruitManager = graph.getChildrenByName("FruitManager")[0].getComponent(FruitManager);
     fruitManager.generateCourse();
+    const stage: Stage = graph.getChildrenByName("Stage")[0].getComponent(Stage);
+    stage.generateStage();
 
     f.Loop.addEventListener(f.EVENT.LOOP_FRAME, update);
     f.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a

@@ -37,8 +37,8 @@ namespace GantryGlutton {
     // Properties may be mutated by users in the editor via the automatically created user interface
     public message: string = "CustomComponentScript added to ";
     public motorForce: number = 1;
-    private rigidbody: f.ComponentRigidbody;
-    private initialY: number;
+    #rigidbody: f.ComponentRigidbody;
+    #initialY: number;
 
     constructor() {
       super();
@@ -70,8 +70,8 @@ namespace GantryGlutton {
     };
 
     public start = (_event: Event): void => {
-      this.rigidbody = this.node.getComponent(f.ComponentRigidbody);
-      this.initialY = this.node.getComponent(f.ComponentTransform).mtxLocal.translation.y;
+      this.#rigidbody = this.node.getComponent(f.ComponentRigidbody);
+      this.#initialY = this.node.getComponent(f.ComponentTransform).mtxLocal.translation.y;
     };
     
     public update = (_event: Event): void => {
@@ -83,17 +83,17 @@ namespace GantryGlutton {
       const gantryBridgeActivation =
         Platform.getGantryBridgeActivation(inputDirection);
 
-      this.rigidbody.applyForce(
+      this.#rigidbody.applyForce(
         new f.Vector3(
           this.motorForce * gantryBaseActivation,
           0,
           -this.motorForce * gantryBridgeActivation
         )
       );
-      const oldPosition: f.Vector3 = this.rigidbody.getPosition();
-      oldPosition.y = this.initialY;
-      this.rigidbody.setPosition(oldPosition);
-      this.rigidbody.setRotation(f.Vector3.ZERO());
+      const oldPosition: f.Vector3 = this.#rigidbody.getPosition();
+      oldPosition.y = this.#initialY;
+      this.#rigidbody.setPosition(oldPosition);
+      this.#rigidbody.setRotation(f.Vector3.ZERO());
     };
 
     /**
