@@ -263,6 +263,7 @@ var GantryGlutton;
         static #fallSpeed = 5;
         static #fruitIndicationDuration = 10;
         fruitType;
+        #modelRigidbody;
         #modelTransform;
         #shadowTransform;
         constructor() {
@@ -287,9 +288,8 @@ var GantryGlutton;
                     break;
                 case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
                     const modelNode = this.node.getChildrenByName("Model")[0];
-                    modelNode
-                        .getComponent(f.ComponentRigidbody)
-                        .addEventListener("TriggerEnteredCollision" /* f.EVENT_PHYSICS.TRIGGER_ENTER */, this.handlePlayerEnterFruit);
+                    this.#modelRigidbody = modelNode.getComponent(f.ComponentRigidbody);
+                    this.#modelRigidbody.addEventListener("TriggerEnteredCollision" /* f.EVENT_PHYSICS.TRIGGER_ENTER */, this.handlePlayerEnterFruit);
                     this.#modelTransform = modelNode.getComponent(f.ComponentTransform);
                     this.#shadowTransform = this.node
                         .getChildrenByName("Shadow")[0]
@@ -307,6 +307,7 @@ var GantryGlutton;
             if (_event.cmpRigidbody.node.name !== "Platform") {
                 return;
             }
+            this.#modelRigidbody.removeEventListener("TriggerEnteredCollision" /* f.EVENT_PHYSICS.TRIGGER_ENTER */, this.handlePlayerEnterFruit);
             const platformInteractions = _event.cmpRigidbody.node.getComponent(GantryGlutton.PlatformInteractions);
             platformInteractions.handleHitFruit(this.fruitType);
         };

@@ -12,6 +12,7 @@ namespace GantryGlutton {
 
     private fruitType: number;
 
+    #modelRigidbody: f.ComponentRigidbody;
     #modelTransform: f.ComponentTransform;
     #shadowTransform: f.ComponentTransform;
 
@@ -39,12 +40,11 @@ namespace GantryGlutton {
           break;
         case f.EVENT.NODE_DESERIALIZED:
           const modelNode = this.node.getChildrenByName("Model")[0];
-          modelNode
-            .getComponent(f.ComponentRigidbody)
-            .addEventListener(
-              f.EVENT_PHYSICS.TRIGGER_ENTER,
-              this.handlePlayerEnterFruit
-            );
+          this.#modelRigidbody = modelNode.getComponent(f.ComponentRigidbody);
+          this.#modelRigidbody.addEventListener(
+            f.EVENT_PHYSICS.TRIGGER_ENTER,
+            this.handlePlayerEnterFruit
+          );
           this.#modelTransform = modelNode.getComponent(f.ComponentTransform);
           this.#shadowTransform = this.node
             .getChildrenByName("Shadow")[0]
@@ -64,6 +64,11 @@ namespace GantryGlutton {
       if (_event.cmpRigidbody.node.name !== "Platform") {
         return;
       }
+
+      this.#modelRigidbody.removeEventListener(
+        f.EVENT_PHYSICS.TRIGGER_ENTER,
+        this.handlePlayerEnterFruit
+      );
 
       const platformInteractions: PlatformInteractions =
         _event.cmpRigidbody.node.getComponent(PlatformInteractions);
