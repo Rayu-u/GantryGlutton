@@ -2,11 +2,9 @@ namespace GantryGlutton {
   import f = FudgeCore;
   f.Project.registerScriptNamespace(GantryGlutton);  // Register the namespace to FUDGE for serialization
 
-  export class CustomComponentScript extends f.ComponentScript {
+  export class CustomerQueue extends f.ComponentScript {
     // Register the script as component for use in the editor via drag&drop
-    public static readonly iSubclass: number = f.Component.registerSubclass(CustomComponentScript);
-    // Properties may be mutated by users in the editor via the automatically created user interface
-    public message: string = "CustomComponentScript added to ";
+    public static readonly iSubclass: number = f.Component.registerSubclass(CustomerQueue);
 
 
     constructor() {
@@ -26,21 +24,23 @@ namespace GantryGlutton {
     public hndEvent = (_event: Event): void => {
       switch (_event.type) {
         case f.EVENT.COMPONENT_ADD:
-          f.Debug.log(this.message, this.node);
           break;
         case f.EVENT.COMPONENT_REMOVE:
           this.removeEventListener(f.EVENT.COMPONENT_ADD, this.hndEvent);
           this.removeEventListener(f.EVENT.COMPONENT_REMOVE, this.hndEvent);
           break;
-        case f.EVENT.NODE_DESERIALIZED:
-          // if deserialized the node is now fully reconstructed and access to all its components and children is possible
+        case f.EVENT.NODE_DESERIALIZED:          
+          this.node.getComponent(f.ComponentRigidbody).addEventListener(f.EVENT_PHYSICS.TRIGGER_ENTER, this.handlePlayerEnterPickupZone);
           break;
       }
     }
 
-    // protected reduceMutator(_mutator: ƒ.Mutator): void {
-    //   // delete properties that should not be mutated
-    //   // undefined properties and private fields (#) will not be included by default
-    // }
+    private handlePlayerEnterPickupZone = (_event: f.EventPhysics): void => {
+      if (_event.cmpRigidbody.node.name == "Platform") {
+        
+      }
+      
+      
+    };
   }
 }

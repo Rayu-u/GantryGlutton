@@ -10,9 +10,9 @@ declare namespace GantryGlutton {
         onAfterPhysicsBeforeDrawUpdate: () => void;
     }
 }
-declare namespace Script {
-    import ƒ = FudgeCore;
-    class CustomComponentScript extends ƒ.ComponentScript {
+declare namespace GantryGlutton {
+    import f = FudgeCore;
+    class CustomComponentScript extends f.ComponentScript {
         static readonly iSubclass: number;
         message: string;
         constructor();
@@ -23,12 +23,16 @@ declare namespace GantryGlutton {
     import f = FudgeCore;
     class Customer extends f.ComponentScript {
         static readonly iSubclass: number;
+        private static readonly fruitColors;
+        private _fruitType;
         private rigidbody;
+        private bodyMaterial;
         private modelRigidbody;
         private modelPositionBuffer;
-        private test;
         constructor();
         hndEvent: (_event: Event) => void;
+        get fruitType(): FruitType;
+        set fruitType(fruitType: FruitType);
         onAfterPhysicsBeforeDrawUpdate: () => void;
         onAfterDrawUpdate: () => void;
     }
@@ -39,6 +43,15 @@ declare namespace GantryGlutton {
         static readonly iSubclass: number;
         constructor();
         hndEvent: (_event: Event) => void;
+    }
+}
+declare namespace GantryGlutton {
+    import f = FudgeCore;
+    class CustomerQueue extends f.ComponentScript {
+        static readonly iSubclass: number;
+        constructor();
+        hndEvent: (_event: Event) => void;
+        private handlePlayerEnterPickupZone;
     }
 }
 declare namespace GantryGlutton {
