@@ -8,7 +8,7 @@ namespace GantryGlutton {
       f.Component.registerSubclass(CustomerQueue);
 
     public static customerGraphResource: f.Graph;
-    public static targetGroupCount: number = 3;
+    public static targetGroupCount: number = 2;
 
     static readonly #groupNumberMap: number[] = [1, 1, 1, 1, 1, 1, 2, 2, 2, 3];
 

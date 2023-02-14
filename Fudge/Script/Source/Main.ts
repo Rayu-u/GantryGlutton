@@ -7,24 +7,14 @@ namespace GantryGlutton {
   export let graph: f.Node;
   document.addEventListener("interactiveViewportStarted", <EventListener>start);
 
-  interface AfterPhysicsBeforeDrawUpdateSubscriber {
-    onAfterPhysicsBeforeDrawUpdate: () => void;
+  interface AfterPhysicsUpdateSubscriber {
+    onAfterPhysicsUpdate: () => void;
   }
-  const afterPhysicsBeforeDrawUpdateSubscribers: AfterPhysicsBeforeDrawUpdateSubscriber[] = [];
-  export function addAfterPhysicsBeforeDrawUpdateSubscriber(
-    subcriber: AfterPhysicsBeforeDrawUpdateSubscriber
+  const afterPhysicsUpdateSubscribers: AfterPhysicsUpdateSubscriber[] = [];
+  export function addAfterPhysicsUpdateSubscriber(
+    subscriber: AfterPhysicsUpdateSubscriber
   ) {
-    afterPhysicsBeforeDrawUpdateSubscribers.push(subcriber);
-  }
-
-  interface AfterDrawUpdateSubscriber {
-    onAfterDrawUpdate: () => void;
-  }
-  const afterDrawUpdateSubscribers: AfterDrawUpdateSubscriber[] = [];
-  export function addAfterDrawUpdateSubscriber(
-    subcriber: AfterDrawUpdateSubscriber
-  ) {
-    afterDrawUpdateSubscribers.push(subcriber);
+    afterPhysicsUpdateSubscribers.push(subscriber);
   }
 
   function start(_event: CustomEvent): void {
@@ -39,9 +29,13 @@ namespace GantryGlutton {
       f.ComponentTransform
     ).mtxLocal;
 
-    const fruitManager: FruitManager = graph.getChildrenByName("FruitManager")[0].getComponent(FruitManager);
+    const fruitManager: FruitManager = graph
+      .getChildrenByName("FruitManager")[0]
+      .getComponent(FruitManager);
     fruitManager.generateCourse();
-    const stage: Stage = graph.getChildrenByName("Stage")[0].getComponent(Stage);
+    const stage: Stage = graph
+      .getChildrenByName("Stage")[0]
+      .getComponent(Stage);
     stage.generateStage();
 
     f.Loop.addEventListener(f.EVENT.LOOP_FRAME, update);
@@ -49,19 +43,13 @@ namespace GantryGlutton {
   }
 
   function update(_event: Event): void {
-
     f.Physics.simulate(); // if physics is included and used
 
-    for (const subscriber of afterPhysicsBeforeDrawUpdateSubscribers) {
-      subscriber.onAfterPhysicsBeforeDrawUpdate();
+    for (const subscriber of afterPhysicsUpdateSubscribers) {
+      subscriber.onAfterPhysicsUpdate();
     }
 
     viewport.draw();
-
-    for (const subscriber of afterDrawUpdateSubscribers) {
-      subscriber.onAfterDrawUpdate();
-    }
-
     f.AudioManager.default.update();
   }
 }

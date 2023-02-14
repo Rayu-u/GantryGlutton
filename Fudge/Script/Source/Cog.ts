@@ -1,10 +1,11 @@
 namespace GantryGlutton {
   import f = FudgeCore;
-  f.Project.registerScriptNamespace(GantryGlutton);  // Register the namespace to FUDGE for serialization
+  f.Project.registerScriptNamespace(GantryGlutton); // Register the namespace to FUDGE for serialization
 
   export class Cog extends f.ComponentScript {
     // Register the script as component for use in the editor via drag&drop
-    public static readonly iSubclass: number = f.Component.registerSubclass(Cog);
+    public static readonly iSubclass: number =
+      f.Component.registerSubclass(Cog);
     // Properties may be mutated by users in the editor via the automatically created user interface
     public platformRigidbody: f.ComponentRigidbody;
     public platformVelocityDimensionSelector: f.Vector3 = f.Vector3.ZERO();
@@ -15,8 +16,7 @@ namespace GantryGlutton {
       super();
 
       // Don't start when running in editor
-      if (f.Project.mode == f.MODE.EDITOR)
-        return;
+      if (f.Project.mode == f.MODE.EDITOR) return;
 
       // Listen to this component being added to or removed from a node
       this.addEventListener(f.EVENT.COMPONENT_ADD, this.hndEvent);
@@ -35,17 +35,20 @@ namespace GantryGlutton {
           break;
         case f.EVENT.NODE_DESERIALIZED:
           // if deserialized the node is now fully reconstructed and access to all its components and children is possible
-          addAfterPhysicsBeforeDrawUpdateSubscriber(this);
+          addAfterPhysicsUpdateSubscriber(this);
           this.#transform = this.node.getComponent(f.ComponentTransform);
           break;
       }
-    }
+    };
 
-    public onAfterPhysicsBeforeDrawUpdate = () => {
-      const relevantSpeed = f.Vector3.DOT(this.platformRigidbody.getVelocity(), this.platformVelocityDimensionSelector);
+    public onAfterPhysicsUpdate = () => {
+      const relevantSpeed = f.Vector3.DOT(
+        this.platformRigidbody.getVelocity(),
+        this.platformVelocityDimensionSelector
+      );
       const deltaTime: number = f.Loop.timeFrameGame / 1000;
-      const angle = deltaTime * relevantSpeed * 360 / Math.PI;      
-      
+      const angle = (deltaTime * relevantSpeed * 360) / Math.PI;
+
       this.#transform.mtxLocal.rotateX(angle);
     };
   }

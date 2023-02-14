@@ -7,7 +7,7 @@ declare namespace GantryGlutton {
         platformVelocityDimensionSelector: f.Vector3;
         constructor();
         hndEvent: (_event: Event) => void;
-        onAfterPhysicsBeforeDrawUpdate: () => void;
+        onAfterPhysicsUpdate: () => void;
     }
 }
 declare namespace GantryGlutton {
@@ -29,8 +29,7 @@ declare namespace GantryGlutton {
         hndEvent: (_event: Event) => void;
         getFruitType: () => FruitType;
         setFruitType: (fruitType: FruitType) => void;
-        onAfterPhysicsBeforeDrawUpdate: () => void;
-        onAfterDrawUpdate: () => void;
+        onAfterPhysicsUpdate: () => void;
     }
 }
 declare namespace GantryGlutton {
@@ -125,7 +124,7 @@ declare namespace GantryGlutton {
         platformRigidbody: f.ComponentRigidbody;
         constructor();
         hndEvent: (_event: Event) => void;
-        onAfterPhysicsBeforeDrawUpdate: () => void;
+        onAfterPhysicsUpdate: () => void;
         start: (_event: Event) => void;
     }
 }
@@ -142,14 +141,10 @@ declare namespace GantryGlutton {
 declare namespace GantryGlutton {
     import f = FudgeCore;
     export let graph: f.Node;
-    interface AfterPhysicsBeforeDrawUpdateSubscriber {
-        onAfterPhysicsBeforeDrawUpdate: () => void;
+    interface AfterPhysicsUpdateSubscriber {
+        onAfterPhysicsUpdate: () => void;
     }
-    export function addAfterPhysicsBeforeDrawUpdateSubscriber(subcriber: AfterPhysicsBeforeDrawUpdateSubscriber): void;
-    interface AfterDrawUpdateSubscriber {
-        onAfterDrawUpdate: () => void;
-    }
-    export function addAfterDrawUpdateSubscriber(subcriber: AfterDrawUpdateSubscriber): void;
+    export function addAfterPhysicsUpdateSubscriber(subscriber: AfterPhysicsUpdateSubscriber): void;
     export {};
 }
 declare namespace GantryGlutton {

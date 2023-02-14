@@ -57,13 +57,13 @@ namespace GantryGlutton {
       this.#customers.push(customer);
       this.node.addChild(customer.node);
 
-      const customerRigidbody = customer.node.getComponent(
-        f.ComponentRigidbody
+      const customerTransform = customer.node.getComponent(
+        f.ComponentTransform
       );
-      customerRigidbody.setPosition(Group.#relativeCustomerPositions[currentCustomerIndex]);
 
-      // const joint = customer.node.getComponent(f.JointSpherical);
-      // joint.breakForce = 0.001;
+      customerTransform.mtxLocal = f.Matrix4x4.TRANSLATION(
+        Group.#relativeCustomerPositions[currentCustomerIndex]
+      );
     };
   }
 }

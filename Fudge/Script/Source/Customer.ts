@@ -11,12 +11,9 @@ namespace GantryGlutton {
 
     #fruitType: FruitType;
 
-    #rigidbody: f.ComponentRigidbody;
-    #bodyMaterial: f.ComponentMaterial;
-    #modelRigidbody: f.ComponentRigidbody;
-
-    #modelPositionBuffer: f.Vector3;
-    #modelRotationBuffer: f.Vector3;
+    #bodyModelMaterial: f.ComponentMaterial;
+    #jointSimulationRigidbody: f.ComponentRigidbody;
+    #modelTransform: f.ComponentTransform;
 
     constructor() {
       super();
@@ -40,15 +37,17 @@ namespace GantryGlutton {
           this.removeEventListener(f.EVENT.COMPONENT_REMOVE, this.hndEvent);
           break;
         case f.EVENT.NODE_DESERIALIZED:
-          this.#rigidbody = this.node.getComponent(f.ComponentRigidbody);
           const model = this.node.getChildrenByName("Model")[0];
-          this.#modelRigidbody = model.getComponent(f.ComponentRigidbody);
-          this.#bodyMaterial = model
+
+          this.#bodyModelMaterial = model
             .getChildrenByName("Body")[0]
             .getComponent(f.ComponentMaterial);
+          this.#jointSimulationRigidbody = this.node
+            .getChildrenByName("JointSimulation")[0]
+            .getComponent(f.ComponentRigidbody);
+          this.#modelTransform = model.getComponent(f.ComponentTransform);
 
-          addAfterDrawUpdateSubscriber(this);
-          addAfterPhysicsBeforeDrawUpdateSubscriber(this);
+          addAfterPhysicsUpdateSubscriber(this);
           break;
       }
     };
@@ -78,36 +77,13 @@ namespace GantryGlutton {
         Customer.test = this;
       }
 
-      this.#bodyMaterial.clrPrimary = Customer.#fruitColors.get(fruitType);
-      console.log(this.#bodyMaterial.clrPrimary, fruitType);
+      this.#bodyModelMaterial.clrPrimary = Customer.#fruitColors.get(fruitType);
     };
 
-    public onAfterPhysicsBeforeDrawUpdate = (): void => {
-      // console.log(
-      //   this.node.getComponent(f.ComponentRigidbody).getPosition().x,
-      //   this.node.getComponent(f.ComponentRigidbody).getPosition().y,
-      //   this.node.getComponent(f.ComponentRigidbody).getPosition().z
-      // );
-      if (this == Customer.test) {
-        console.log(
-          "customer rigidbody rotation",
-          this.node.getComponent(f.ComponentRigidbody).getRotation().x,
-          this.node.getComponent(f.ComponentRigidbody).getRotation().y,
-          this.node.getComponent(f.ComponentRigidbody).getRotation().z
-        );
-        console.log(
-          "model rigidbody rotation",
-          this.#modelRigidbody.getRotation().x,
-          this.#modelRigidbody.getRotation().y,
-          this.#modelRigidbody.getRotation().z
-        );
-      }
-      this.#modelPositionBuffer = this.#modelRigidbody.getPosition();
-      this.#modelRigidbody.setPosition(this.#rigidbody.getPosition());
-    };
-
-    public onAfterDrawUpdate = (): void => {
-      this.#modelRigidbody.setPosition(this.#modelPositionBuffer);
+    public onAfterPhysicsUpdate = (): void => {
+      this.#modelTransform.mtxLocal = f.Matrix4x4.ROTATION(
+        this.#jointSimulationRigidbody.getRotation()
+      );
     };
   }
 }

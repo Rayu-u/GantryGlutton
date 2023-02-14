@@ -39,15 +39,16 @@ namespace GantryGlutton {
       }
     };
 
-    public onAfterPhysicsBeforeDrawUpdate = () => {
+    public onAfterPhysicsUpdate = () => {
       const oldPosition = this.#transform.mtxLocal.translation;
-      oldPosition.x = this.platformRigidbody.getPosition().x + this.platformOffset;
+      oldPosition.x =
+        this.platformRigidbody.getPosition().x + this.platformOffset;
       this.#transform.mtxLocal.translation = oldPosition;
     };
 
     public start = (_event: Event): void => {
       this.#transform = this.node.getComponent(f.ComponentTransform);
-      addAfterPhysicsBeforeDrawUpdateSubscriber(this);
+      addAfterPhysicsUpdateSubscriber(this);
     };
   }
 }

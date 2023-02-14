@@ -595,13 +595,6 @@
                         },
                         "children": []
                       }
-                    },
-                    {
-                      "ƒ.GraphInstance": {
-                        "deserializeFromSource": true,
-                        "name": "Customer",
-                        "idSource": "Graph|2023-02-14T14:03:59.825Z|93867"
-                      }
                     }
                   ]
                 }
@@ -831,8 +824,8 @@
                           "friction": 0.2,
                           "restitution": 0.2,
                           "mass": 1,
-                          "dampTranslation": 0.1,
-                          "dampRotation": 0.1,
+                          "dampTranslation": 0,
+                          "dampRotation": 5,
                           "effectGravity": 1,
                           "typeBody": "STATIC",
                           "typeCollider": "CUBE",
@@ -1056,15 +1049,7 @@
                       }
                     ]
                   },
-                  "children": [
-                    {
-                      "ƒ.GraphInstance": {
-                        "deserializeFromSource": true,
-                        "name": "Customer",
-                        "idSource": "Graph|2023-02-14T14:03:59.825Z|93867"
-                      }
-                    }
-                  ]
+                  "children": []
                 }
               },
               {
@@ -1175,13 +1160,6 @@
                     ]
                   },
                   "children": []
-                }
-              },
-              {
-                "ƒ.GraphInstance": {
-                  "deserializeFromSource": true,
-                  "name": "Customer",
-                  "idSource": "Graph|2023-02-14T14:03:59.825Z|93867"
                 }
               }
             ]
@@ -2060,7 +2038,7 @@
           {
             "ƒ.ComponentTransform": {
               "local": {
-                "translation": "[0.5, 0, -0.5]",
+                "translation": "[0, 0, 0]",
                 "rotation": "[0, 0, 0]",
                 "scaling": "[1, 1, 1]"
               },
@@ -2108,7 +2086,7 @@
               "springDamping": 0,
               "springFrequency": 0,
               "Joint": {
-                "nameChildToConnect": "Model",
+                "nameChildToConnect": "JointSimulation",
                 "internalCollision": false,
                 "breakForce": 0,
                 "breakTorque": 0,
@@ -2131,34 +2109,9 @@
                 {
                   "ƒ.ComponentTransform": {
                     "local": {
-                      "translation": "[0, 1, 0]",
-                      "rotation": "[0, 0, 0]",
-                      "scaling": "[0.699999988079071, 0.6999999284744263, 0.699999988079071]"
-                    },
-                    "Component": {
-                      "active": true
-                    }
-                  }
-                }
-              ],
-              "ComponentRigidbody": [
-                {
-                  "ƒ.ComponentRigidbody": {
-                    "initialization": "TO_NODE",
-                    "friction": 0.19999999999999996,
-                    "restitution": 0.2,
-                    "mass": 1,
-                    "dampTranslation": 0.5,
-                    "dampRotation": 3,
-                    "effectGravity": -10,
-                    "typeBody": "DYNAMIC",
-                    "typeCollider": "CUBE",
-                    "isTrigger": true,
-                    "id": 5,
-                    "pivot": {
                       "translation": "[0, 0, 0]",
                       "rotation": "[0, 0, 0]",
-                      "scaling": "[1, 1, 1]"
+                      "scaling": "[1, 0.9999999403953552, 1]"
                     },
                     "Component": {
                       "active": true
@@ -2180,7 +2133,7 @@
                           "pivot": {
                             "translation": "[0, 0, 0]",
                             "rotation": "[0, 0, 0]",
-                            "scaling": "[1, 1, 1]"
+                            "scaling": "[0.699999988079071, 0.699999988079071, 0.699999988079071]"
                           },
                           "Component": {
                             "active": true
@@ -2222,7 +2175,7 @@
                           "pivot": {
                             "translation": "[0, 0, 0]",
                             "rotation": "[0, 0, 0]",
-                            "scaling": "[1, 1, 1]"
+                            "scaling": "[0.699999988079071, 0.699999988079071, 0.699999988079071]"
                           },
                           "Component": {
                             "active": true
@@ -2253,6 +2206,54 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "ƒ.Node": {
+            "name": "JointSimulation",
+            "active": true,
+            "components": {
+              "ComponentTransform": [
+                {
+                  "ƒ.ComponentTransform": {
+                    "local": {
+                      "translation": "[0, 0, 0]",
+                      "rotation": "[0, 0, 0]",
+                      "scaling": "[1, 1, 1]"
+                    },
+                    "Component": {
+                      "active": true
+                    }
+                  }
+                }
+              ],
+              "ComponentRigidbody": [
+                {
+                  "ƒ.ComponentRigidbody": {
+                    "initialization": "TO_PIVOT",
+                    "friction": 0.2,
+                    "restitution": 0.2,
+                    "mass": 1,
+                    "dampTranslation": 2,
+                    "dampRotation": 2,
+                    "effectGravity": -10,
+                    "typeBody": "DYNAMIC",
+                    "typeCollider": "CUBE",
+                    "isTrigger": true,
+                    "id": 0,
+                    "pivot": {
+                      "translation": "[0, 1, 0]",
+                      "rotation": "[0, 0, 0]",
+                      "scaling": "[1, 1, 1]"
+                    },
+                    "Component": {
+                      "active": true
+                    }
+                  }
+                }
+              ]
+            },
+            "children": []
           }
         }
       ],

@@ -31,15 +31,15 @@ var GantryGlutton;
                     break;
                 case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
                     // if deserialized the node is now fully reconstructed and access to all its components and children is possible
-                    GantryGlutton.addAfterPhysicsBeforeDrawUpdateSubscriber(this);
+                    GantryGlutton.addAfterPhysicsUpdateSubscriber(this);
                     this.#transform = this.node.getComponent(f.ComponentTransform);
                     break;
             }
         };
-        onAfterPhysicsBeforeDrawUpdate = () => {
+        onAfterPhysicsUpdate = () => {
             const relevantSpeed = f.Vector3.DOT(this.platformRigidbody.getVelocity(), this.platformVelocityDimensionSelector);
             const deltaTime = f.Loop.timeFrameGame / 1000;
-            const angle = deltaTime * relevantSpeed * 360 / Math.PI;
+            const angle = (deltaTime * relevantSpeed * 360) / Math.PI;
             this.#transform.mtxLocal.rotateX(angle);
         };
     }
@@ -92,11 +92,9 @@ var GantryGlutton;
         static #fruitColors = new Map();
         static test;
         #fruitType;
-        #rigidbody;
-        #bodyMaterial;
-        #modelRigidbody;
-        #modelPositionBuffer;
-        #modelRotationBuffer;
+        #bodyModelMaterial;
+        #jointSimulationRigidbody;
+        #modelTransform;
         constructor() {
             super();
             // Don't start when running in editor
@@ -117,14 +115,15 @@ var GantryGlutton;
                     this.removeEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
                     break;
                 case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
-                    this.#rigidbody = this.node.getComponent(f.ComponentRigidbody);
                     const model = this.node.getChildrenByName("Model")[0];
-                    this.#modelRigidbody = model.getComponent(f.ComponentRigidbody);
-                    this.#bodyMaterial = model
+                    this.#bodyModelMaterial = model
                         .getChildrenByName("Body")[0]
                         .getComponent(f.ComponentMaterial);
-                    GantryGlutton.addAfterDrawUpdateSubscriber(this);
-                    GantryGlutton.addAfterPhysicsBeforeDrawUpdateSubscriber(this);
+                    this.#jointSimulationRigidbody = this.node
+                        .getChildrenByName("JointSimulation")[0]
+                        .getComponent(f.ComponentRigidbody);
+                    this.#modelTransform = model.getComponent(f.ComponentTransform);
+                    GantryGlutton.addAfterPhysicsUpdateSubscriber(this);
                     break;
             }
         };
@@ -140,24 +139,10 @@ var GantryGlutton;
                 Customer.#fruitColors.set(GantryGlutton.FruitType.Pear, new f.Color(0.47, 0.84, 0.16, 1));
                 Customer.test = this;
             }
-            this.#bodyMaterial.clrPrimary = Customer.#fruitColors.get(fruitType);
-            console.log(this.#bodyMaterial.clrPrimary, fruitType);
+            this.#bodyModelMaterial.clrPrimary = Customer.#fruitColors.get(fruitType);
         };
-        onAfterPhysicsBeforeDrawUpdate = () => {
-            // console.log(
-            //   this.node.getComponent(f.ComponentRigidbody).getPosition().x,
-            //   this.node.getComponent(f.ComponentRigidbody).getPosition().y,
-            //   this.node.getComponent(f.ComponentRigidbody).getPosition().z
-            // );
-            if (this == Customer.test) {
-                console.log("customer rigidbody rotation", this.node.getComponent(f.ComponentRigidbody).getRotation().x, this.node.getComponent(f.ComponentRigidbody).getRotation().y, this.node.getComponent(f.ComponentRigidbody).getRotation().z);
-                console.log("model rigidbody rotation", this.#modelRigidbody.getRotation().x, this.#modelRigidbody.getRotation().y, this.#modelRigidbody.getRotation().z);
-            }
-            this.#modelPositionBuffer = this.#modelRigidbody.getPosition();
-            this.#modelRigidbody.setPosition(this.#rigidbody.getPosition());
-        };
-        onAfterDrawUpdate = () => {
-            this.#modelRigidbody.setPosition(this.#modelPositionBuffer);
+        onAfterPhysicsUpdate = () => {
+            this.#modelTransform.mtxLocal = f.Matrix4x4.ROTATION(this.#jointSimulationRigidbody.getRotation());
         };
     }
     GantryGlutton.Customer = Customer;
@@ -170,7 +155,7 @@ var GantryGlutton;
         // Register the script as component for use in the editor via drag&drop
         static iSubclass = f.Component.registerSubclass(CustomerQueue);
         static customerGraphResource;
-        static targetGroupCount = 3;
+        static targetGroupCount = 2;
         static #groupNumberMap = [1, 1, 1, 1, 1, 1, 2, 2, 2, 3];
         /**
          * The offset between groups in local space.
@@ -487,14 +472,15 @@ var GantryGlutton;
                     break;
             }
         };
-        onAfterPhysicsBeforeDrawUpdate = () => {
+        onAfterPhysicsUpdate = () => {
             const oldPosition = this.#transform.mtxLocal.translation;
-            oldPosition.x = this.platformRigidbody.getPosition().x + this.platformOffset;
+            oldPosition.x =
+                this.platformRigidbody.getPosition().x + this.platformOffset;
             this.#transform.mtxLocal.translation = oldPosition;
         };
         start = (_event) => {
             this.#transform = this.node.getComponent(f.ComponentTransform);
-            GantryGlutton.addAfterPhysicsBeforeDrawUpdateSubscriber(this);
+            GantryGlutton.addAfterPhysicsUpdateSubscriber(this);
         };
     }
     GantryGlutton.GantryBridge = GantryBridge;
@@ -545,10 +531,8 @@ var GantryGlutton;
             const currentCustomerIndex = this.#customers.length;
             this.#customers.push(customer);
             this.node.addChild(customer.node);
-            const customerRigidbody = customer.node.getComponent(f.ComponentRigidbody);
-            customerRigidbody.setPosition(Group.#relativeCustomerPositions[currentCustomerIndex]);
-            // const joint = customer.node.getComponent(f.JointSpherical);
-            // joint.breakForce = 0.001;
+            const customerTransform = customer.node.getComponent(f.ComponentTransform);
+            customerTransform.mtxLocal = f.Matrix4x4.TRANSLATION(Group.#relativeCustomerPositions[currentCustomerIndex]);
         };
     }
     GantryGlutton.Group = Group;
@@ -560,38 +544,34 @@ var GantryGlutton;
     //let cmpCamera: f.ComponentCamera;
     let viewport;
     document.addEventListener("interactiveViewportStarted", start);
-    const afterPhysicsBeforeDrawUpdateSubscribers = [];
-    function addAfterPhysicsBeforeDrawUpdateSubscriber(subcriber) {
-        afterPhysicsBeforeDrawUpdateSubscribers.push(subcriber);
+    const afterPhysicsUpdateSubscribers = [];
+    function addAfterPhysicsUpdateSubscriber(subscriber) {
+        afterPhysicsUpdateSubscribers.push(subscriber);
     }
-    GantryGlutton.addAfterPhysicsBeforeDrawUpdateSubscriber = addAfterPhysicsBeforeDrawUpdateSubscriber;
-    const afterDrawUpdateSubscribers = [];
-    function addAfterDrawUpdateSubscriber(subcriber) {
-        afterDrawUpdateSubscribers.push(subcriber);
-    }
-    GantryGlutton.addAfterDrawUpdateSubscriber = addAfterDrawUpdateSubscriber;
+    GantryGlutton.addAfterPhysicsUpdateSubscriber = addAfterPhysicsUpdateSubscriber;
     function start(_event) {
         viewport = _event.detail;
         GantryGlutton.graph = viewport.getBranch();
         let referenceCameraObject = GantryGlutton.graph.getChildrenByName("CameraReference")[0];
         viewport.camera.projectCentral(undefined, 60);
         viewport.camera.mtxPivot = referenceCameraObject.getComponent(f.ComponentTransform).mtxLocal;
-        const fruitManager = GantryGlutton.graph.getChildrenByName("FruitManager")[0].getComponent(GantryGlutton.FruitManager);
+        const fruitManager = GantryGlutton.graph
+            .getChildrenByName("FruitManager")[0]
+            .getComponent(GantryGlutton.FruitManager);
         fruitManager.generateCourse();
-        const stage = GantryGlutton.graph.getChildrenByName("Stage")[0].getComponent(GantryGlutton.Stage);
+        const stage = GantryGlutton.graph
+            .getChildrenByName("Stage")[0]
+            .getComponent(GantryGlutton.Stage);
         stage.generateStage();
         f.Loop.addEventListener("loopFrame" /* f.EVENT.LOOP_FRAME */, update);
         f.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
     }
     function update(_event) {
         f.Physics.simulate(); // if physics is included and used
-        for (const subscriber of afterPhysicsBeforeDrawUpdateSubscribers) {
-            subscriber.onAfterPhysicsBeforeDrawUpdate();
+        for (const subscriber of afterPhysicsUpdateSubscribers) {
+            subscriber.onAfterPhysicsUpdate();
         }
         viewport.draw();
-        for (const subscriber of afterDrawUpdateSubscribers) {
-            subscriber.onAfterDrawUpdate();
-        }
         f.AudioManager.default.update();
     }
 })(GantryGlutton || (GantryGlutton = {}));
