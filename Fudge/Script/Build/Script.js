@@ -160,7 +160,11 @@ var GantryGlutton;
         /**
          * The offset between groups in local space.
          */
-        static groupOffset = new f.Vector3(0, 0, -2);
+        static betweenGroupOffset = new f.Vector3(0, 0, -2);
+        /**
+         * The offset between the first group and the position of the queue.
+         */
+        static firstGroupOffset = new f.Vector3(0, 0, -1);
         #groups = [];
         constructor() {
             super();
@@ -235,7 +239,7 @@ var GantryGlutton;
             for (let i = 0; i < this.#groups.length; i++) {
                 const groupNode = this.#groups[i].node;
                 const groupTransform = groupNode.getComponent(f.ComponentTransform);
-                groupTransform.mtxLocal = f.Matrix4x4.TRANSLATION(f.Vector3.SCALE(CustomerQueue.groupOffset, i));
+                groupTransform.mtxLocal = f.Matrix4x4.TRANSLATION(f.Vector3.SUM(CustomerQueue.firstGroupOffset, f.Vector3.SCALE(CustomerQueue.betweenGroupOffset, i)));
             }
         };
     }

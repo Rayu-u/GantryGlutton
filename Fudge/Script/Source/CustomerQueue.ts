@@ -15,7 +15,12 @@ namespace GantryGlutton {
     /**
      * The offset between groups in local space.
      */
-    static readonly groupOffset: f.Vector3 = new f.Vector3(0, 0, -2);
+    static readonly betweenGroupOffset: f.Vector3 = new f.Vector3(0, 0, -2);
+
+    /**
+     * The offset between the first group and the position of the queue.
+     */
+    static readonly firstGroupOffset: f.Vector3 = new f.Vector3(0, 0, -1);
 
     #groups: Group[] = [];
 
@@ -119,7 +124,10 @@ namespace GantryGlutton {
         const groupNode = this.#groups[i].node;
         const groupTransform = groupNode.getComponent(f.ComponentTransform);
         groupTransform.mtxLocal = f.Matrix4x4.TRANSLATION(
-          f.Vector3.SCALE(CustomerQueue.groupOffset, i)
+          f.Vector3.SUM(
+            CustomerQueue.firstGroupOffset,
+            f.Vector3.SCALE(CustomerQueue.betweenGroupOffset, i)
+          )
         );
       }
     };

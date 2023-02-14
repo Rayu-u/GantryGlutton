@@ -42,7 +42,11 @@ declare namespace GantryGlutton {
         /**
          * The offset between groups in local space.
          */
-        static readonly groupOffset: f.Vector3;
+        static readonly betweenGroupOffset: f.Vector3;
+        /**
+         * The offset between the first group and the position of the queue.
+         */
+        static readonly firstGroupOffset: f.Vector3;
         constructor();
         generateQueue: () => void;
         hndEvent: (_event: Event) => void;
