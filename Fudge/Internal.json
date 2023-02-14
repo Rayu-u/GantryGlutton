@@ -486,7 +486,7 @@
                   "children": [
                     {
                       "ƒ.Node": {
-                        "name": "gantry__platform-F",
+                        "name": "Trapdoor-N",
                         "active": true,
                         "components": {
                           "ComponentMesh": [
@@ -526,7 +526,7 @@
                             {
                               "ƒ.ComponentTransform": {
                                 "local": {
-                                  "translation": "[1, -0.20000000298023224, -1.899999976158142]",
+                                  "translation": "[1.5, -0.10000000149011612, -1.899999976158142]",
                                   "rotation": "[0, 0, 0]",
                                   "scaling": "[1, 1, 1]"
                                 },
@@ -542,7 +542,7 @@
                     },
                     {
                       "ƒ.Node": {
-                        "name": "gantry__platform-N",
+                        "name": "Trapdoor-E",
                         "active": true,
                         "components": {
                           "ComponentMesh": [
@@ -551,7 +551,7 @@
                                 "idMesh": "MeshObj|2023-02-12T08:57:48.308Z|09044",
                                 "pivot": {
                                   "translation": "[0, 0, 0]",
-                                  "rotation": "[0, 0, 0]",
+                                  "rotation": "[0, 180, 0]",
                                   "scaling": "[1, 1, 1]"
                                 },
                                 "Component": {
@@ -582,7 +582,119 @@
                             {
                               "ƒ.ComponentTransform": {
                                 "local": {
-                                  "translation": "[1, -0.20000000298023224, -0.10000000149011612]",
+                                  "translation": "[1.5, -0.09999999403953552, -0.10000002384185791]",
+                                  "rotation": "[0, 180, 0]",
+                                  "scaling": "[1, 1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "children": []
+                      }
+                    },
+                    {
+                      "ƒ.Node": {
+                        "name": "Trapdoor-S",
+                        "active": true,
+                        "components": {
+                          "ComponentMesh": [
+                            {
+                              "ƒ.ComponentMesh": {
+                                "idMesh": "MeshObj|2023-02-12T08:57:48.308Z|09044",
+                                "pivot": {
+                                  "translation": "[0, 0, 0]",
+                                  "rotation": "[0, 180, 0]",
+                                  "scaling": "[1, 1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                }
+                              }
+                            }
+                          ],
+                          "ComponentMaterial": [
+                            {
+                              "ƒ.ComponentMaterial": {
+                                "sortForAlpha": false,
+                                "clrPrimary": "[0.8745098039215686, 0.6431372549019608, 0.42745098039215684, 1]",
+                                "clrSecondary": "[1, 1, 1, 1]",
+                                "pivot": {
+                                  "translation": "[0, 0]",
+                                  "rotation": 0,
+                                  "scaling": "[1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                },
+                                "idMaterial": "Material|2023-02-11T18:46:51.960Z|66281"
+                              }
+                            }
+                          ],
+                          "ComponentTransform": [
+                            {
+                              "ƒ.ComponentTransform": {
+                                "local": {
+                                  "translation": "[0.5, -0.09999999403953552, -0.10000002384185791]",
+                                  "rotation": "[0, 180, 0]",
+                                  "scaling": "[1, 1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "children": []
+                      }
+                    },
+                    {
+                      "ƒ.Node": {
+                        "name": "Trapdoor-W",
+                        "active": true,
+                        "components": {
+                          "ComponentMesh": [
+                            {
+                              "ƒ.ComponentMesh": {
+                                "idMesh": "MeshObj|2023-02-12T08:57:48.308Z|09044",
+                                "pivot": {
+                                  "translation": "[0, 0, 0]",
+                                  "rotation": "[0, 180, 0]",
+                                  "scaling": "[1, 1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                }
+                              }
+                            }
+                          ],
+                          "ComponentMaterial": [
+                            {
+                              "ƒ.ComponentMaterial": {
+                                "sortForAlpha": false,
+                                "clrPrimary": "[0.8745098039215686, 0.6431372549019608, 0.42745098039215684, 1]",
+                                "clrSecondary": "[1, 1, 1, 1]",
+                                "pivot": {
+                                  "translation": "[0, 0]",
+                                  "rotation": 0,
+                                  "scaling": "[1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                },
+                                "idMaterial": "Material|2023-02-11T18:46:51.960Z|66281"
+                              }
+                            }
+                          ],
+                          "ComponentTransform": [
+                            {
+                              "ƒ.ComponentTransform": {
+                                "local": {
+                                  "translation": "[0.5, -0.09999999403953552, -1.899999976158142]",
                                   "rotation": "[0, 0, 0]",
                                   "scaling": "[1, 1, 1]"
                                 },
