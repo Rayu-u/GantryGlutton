@@ -42,6 +42,11 @@ namespace GantryGlutton {
 
     readonly #spots: Customer[] = [null, null, null, null];
 
+    /**
+     * An array with indices that's shuffled before random iterations.
+     */
+    readonly #spotIndices = [0, 1, 2, 3];
+
     constructor() {
       super();
 
@@ -59,7 +64,27 @@ namespace GantryGlutton {
     };
 
     public handleHitFruit = (fruitType: FruitType): void => {
-      console.log(fruitType);
+      // Random iteration
+      // Associated random numbers
+      const associatedRandomNumbers: number[] = this.#spotIndices.map(
+        Math.random
+      );
+      this.#spotIndices.sort(
+        (a, b) => associatedRandomNumbers[a] - associatedRandomNumbers[b]
+      );
+
+      // Look for customer with correct fruit type
+      for (const spotIndex of this.#spotIndices) {
+        const customer: Customer = this.#spots[spotIndex];
+        if (!customer || customer.getFruitType() != fruitType) {
+          continue;
+        }
+
+        // Customer found with correct fruit type
+        this.#spots[spotIndex] = null;
+        this.node.removeChild(customer.node);
+        break;
+      }
     };
 
     // Activate the functions of this component as response to events
