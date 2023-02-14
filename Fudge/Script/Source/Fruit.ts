@@ -1,30 +1,32 @@
 namespace GantryGlutton {
   import f = FudgeCore;
-  f.Project.registerScriptNamespace(GantryGlutton);  // Register the namespace to FUDGE for serialization
+  f.Project.registerScriptNamespace(GantryGlutton); // Register the namespace to FUDGE for serialization
 
   export class Fruit extends f.ComponentScript {
     // Register the script as component for use in the editor via drag&drop
-    public static readonly iSubclass: number = f.Component.registerSubclass(Fruit);
-    
+    public static readonly iSubclass: number =
+      f.Component.registerSubclass(Fruit);
+
     static readonly #fallSpeed: number = 5;
     static readonly #fruitIndicationDuration: number = 10;
+
+    private fruitType: number;
 
     #modelTransform: f.ComponentTransform;
     #shadowTransform: f.ComponentTransform;
 
     constructor() {
       super();
-      
+
       // Don't start when running in editor
-      if (f.Project.mode == f.MODE.EDITOR)
-      return;
-      
+      if (f.Project.mode == f.MODE.EDITOR) return;
+
       // Listen to this component being added to or removed from a node
       this.addEventListener(f.EVENT.COMPONENT_ADD, this.hndEvent);
       this.addEventListener(f.EVENT.COMPONENT_REMOVE, this.hndEvent);
       this.addEventListener(f.EVENT.NODE_DESERIALIZED, this.hndEvent);
     }
-    
+
     // Activate the functions of this component as response to events
     public hndEvent = (_event: Event): void => {
       switch (_event.type) {
@@ -36,29 +38,60 @@ namespace GantryGlutton {
           this.removeEventListener(f.EVENT.COMPONENT_REMOVE, this.hndEvent);
           break;
         case f.EVENT.NODE_DESERIALIZED:
-          this.#modelTransform = this.node.getChildrenByName("Model")[0].getComponent(f.ComponentTransform);
-          this.#shadowTransform = this.node.getChildrenByName("Shadow")[0].getComponent(f.ComponentTransform);
-          this.#shadowTransform.mtxLocal.scaling = f.Vector3.ZERO();          
+          const modelNode = this.node.getChildrenByName("Model")[0];
+          modelNode
+            .getComponent(f.ComponentRigidbody)
+            .addEventListener(
+              f.EVENT_PHYSICS.TRIGGER_ENTER,
+              this.handlePlayerEnterFruit
+            );
+          this.#modelTransform = modelNode.getComponent(f.ComponentTransform);
+          this.#shadowTransform = this.node
+            .getChildrenByName("Shadow")[0]
+            .getComponent(f.ComponentTransform);
+          this.setShadowScale(0);
           break;
       }
-    }
+    };
 
     public supplyFallDuration = (fallDuration: number): void => {
       const oldModelPosition = this.#modelTransform.mtxLocal.translation;
       oldModelPosition.y = fallDuration * Fruit.#fallSpeed;
       this.#modelTransform.mtxLocal.translation = oldModelPosition;
-    }
+    };
 
-    public update = (_event: Event): void => {
+    private handlePlayerEnterFruit = (_event: f.EventPhysics): void => {
+      if (_event.cmpRigidbody.node.name !== "Platform") {
+        return;
+      }
+
+      const platformComponent: Platform =
+        _event.cmpRigidbody.node.getComponent(Platform);
+      platformComponent.handleHitFruit(this.fruitType);
+    };
+
+    private setShadowScale = (scale: number): void => {
+      this.#shadowTransform.mtxLocal = f.Matrix4x4.SCALING(
+        f.Vector3.ONE(scale)
+      );
+    };
+
+    private update = (_event: Event): void => {
       const deltaTime: number = f.Loop.timeFrameGame / 1000;
       this.#modelTransform.mtxLocal.translateY(-deltaTime * Fruit.#fallSpeed);
 
-      const remainingFallDuration: number = this.#modelTransform.mtxLocal.translation.y / Fruit.#fallSpeed;
-      if (0 < remainingFallDuration && remainingFallDuration < Fruit.#fruitIndicationDuration) {
-        this.#shadowTransform.mtxLocal = f.Matrix4x4.SCALING(f.Vector3.ONE(1 - remainingFallDuration / Fruit.#fruitIndicationDuration));
+      const remainingFallDuration: number =
+        this.#modelTransform.mtxLocal.translation.y / Fruit.#fallSpeed;
+      if (
+        0 < remainingFallDuration &&
+        remainingFallDuration < Fruit.#fruitIndicationDuration
+      ) {
+        this.setShadowScale(
+          1 - remainingFallDuration / Fruit.#fruitIndicationDuration
+        );
       } else {
-        this.#shadowTransform.mtxLocal.scaling = f.Vector3.ZERO();
+        this.setShadowScale(0);
       }
-    } 
+    };
   }
 }

@@ -1379,7 +1379,8 @@
         "Fruit": [
           {
             "GantryGlutton.Fruit": {
-              "active": true
+              "active": true,
+              "fruitType": "3"
             }
           }
         ]
@@ -1601,7 +1602,8 @@
         "Fruit": [
           {
             "GantryGlutton.Fruit": {
-              "active": true
+              "active": true,
+              "fruitType": "2"
             }
           }
         ]
@@ -1823,7 +1825,8 @@
         "Fruit": [
           {
             "GantryGlutton.Fruit": {
-              "active": true
+              "active": true,
+              "fruitType": "0"
             }
           }
         ]
@@ -1993,7 +1996,8 @@
         "Fruit": [
           {
             "GantryGlutton.Fruit": {
-              "active": true
+              "active": true,
+              "fruitType": "1"
             }
           }
         ]

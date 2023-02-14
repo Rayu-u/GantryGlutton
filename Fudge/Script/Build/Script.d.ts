@@ -62,10 +62,13 @@ declare namespace GantryGlutton {
     class Fruit extends f.ComponentScript {
         #private;
         static readonly iSubclass: number;
+        private fruitType;
         constructor();
         hndEvent: (_event: Event) => void;
         supplyFallDuration: (fallDuration: number) => void;
-        update: (_event: Event) => void;
+        private handlePlayerEnterFruit;
+        private setShadowScale;
+        private update;
     }
 }
 declare namespace GantryGlutton {
@@ -153,40 +156,9 @@ declare namespace GantryGlutton {
 }
 declare namespace GantryGlutton {
     import f = FudgeCore;
-    type CardinalDirection = "" | "N" | "NE" | "E" | "SE" | "S" | "SW" | "W" | "NW";
-    export class Platform extends f.ComponentScript {
+    class Platform extends f.ComponentScript {
         #private;
         static readonly iSubclass: number;
-        message: string;
-        motorForce: number;
-        constructor();
-        hndEvent: (_event: Event) => void;
-        start: (_event: Event) => void;
-        update: (_event: Event) => void;
-        /**
-         * Get the cardinal direction of current WASD or arrow input.
-         *
-         * @returns The cardinal direction of current WASD or arrow input.
-         */
-        getInputAsCardinalDirection(): CardinalDirection;
-        static getGantryBaseDirection__positiveGroup: CardinalDirection[];
-        static getGantryBaseDirection__negativeGroup: CardinalDirection[];
-        /**
-         * Get the activation direction of the gantry base motor.
-         *
-         * @param inputDirection The direction of the input.
-         * @returns The activation direction of the gantry base.
-         */
-        static getGantryBaseActivation(inputDirection: CardinalDirection): number;
-        static getGantryBridgeDirection__positiveGroup: CardinalDirection[];
-        static getGantryBridgeDirection__negativeGroup: CardinalDirection[];
-        /**
-         * Get the activation direction of the gantry bridge motor.
-         *
-         * @param inputDirection The direction of the input.
-         * @returns The activation direction of the gantry bridge.
-         */
-        static getGantryBridgeActivation(inputDirection: CardinalDirection): number;
         /**
          *
          * Classify the supplied direction into positive, negative or neutral in the form of a number.
@@ -196,9 +168,37 @@ declare namespace GantryGlutton {
          * @param negativeGroup The group of negative directions.
          * @returns The group that the supplied direction was in in the form of a number.
          */
-        static classifyCardinalDirection(direction: CardinalDirection, positiveGroup: CardinalDirection[], negativeGroup: CardinalDirection[]): number;
+        private static classifyCardinalDirection;
+        private static getGantryBaseDirection__positiveGroup;
+        private static getGantryBaseDirection__negativeGroup;
+        /**
+         * Get the activation direction of the gantry base motor.
+         *
+         * @param inputDirection The direction of the input.
+         * @returns The activation direction of the gantry base.
+         */
+        private static getGantryBaseActivation;
+        private static getGantryBridgeDirection__positiveGroup;
+        private static getGantryBridgeDirection__negativeGroup;
+        /**
+         * Get the activation direction of the gantry bridge motor.
+         *
+         * @param inputDirection The direction of the input.
+         * @returns The activation direction of the gantry bridge.
+         */
+        private static getGantryBridgeActivation;
+        motorForce: number;
+        constructor();
+        handleHitFruit: (fruitType: FruitType) => void;
+        hndEvent: (_event: Event) => void;
+        /**
+         * Get the cardinal direction of current WASD or arrow input.
+         *
+         * @returns The cardinal direction of current WASD or arrow input.
+         */
+        private getInputAsCardinalDirection;
+        private update;
     }
-    export {};
 }
 declare namespace GantryGlutton {
     import f = FudgeCore;

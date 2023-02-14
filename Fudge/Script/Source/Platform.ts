@@ -34,8 +34,70 @@ namespace GantryGlutton {
     // Register the script as component for use in the editor via drag&drop
     public static readonly iSubclass: number =
       f.Component.registerSubclass(Platform);
-    // Properties may be mutated by users in the editor via the automatically created user interface
-    public message: string = "CustomComponentScript added to ";
+
+    /**
+     *
+     * Classify the supplied direction into positive, negative or neutral in the form of a number.
+     *
+     * @param direction The direction that should be classified.
+     * @param positiveGroup The group of positive directions.
+     * @param negativeGroup The group of negative directions.
+     * @returns The group that the supplied direction was in in the form of a number.
+     */
+    private static classifyCardinalDirection(
+      direction: CardinalDirection,
+      positiveGroup: CardinalDirection[],
+      negativeGroup: CardinalDirection[]
+    ): number {
+      if (positiveGroup.includes(direction)) {
+        return 1;
+      } else if (negativeGroup.includes(direction)) {
+        return -1;
+      } else {
+        return 0;
+      }
+    }
+
+    private static getGantryBaseDirection__positiveGroup: CardinalDirection[] =
+      ["N", "NE", "E"];
+    private static getGantryBaseDirection__negativeGroup: CardinalDirection[] =
+      ["S", "SW", "W"];
+    /**
+     * Get the activation direction of the gantry base motor.
+     *
+     * @param inputDirection The direction of the input.
+     * @returns The activation direction of the gantry base.
+     */
+    private static getGantryBaseActivation(
+      inputDirection: CardinalDirection
+    ): number {
+      return Platform.classifyCardinalDirection(
+        inputDirection,
+        Platform.getGantryBaseDirection__positiveGroup,
+        Platform.getGantryBaseDirection__negativeGroup
+      );
+    }
+
+    private static getGantryBridgeDirection__positiveGroup: CardinalDirection[] =
+      ["W", "NW", "N"];
+    private static getGantryBridgeDirection__negativeGroup: CardinalDirection[] =
+      ["E", "SE", "S"];
+    /**
+     * Get the activation direction of the gantry bridge motor.
+     *
+     * @param inputDirection The direction of the input.
+     * @returns The activation direction of the gantry bridge.
+     */
+    private static getGantryBridgeActivation(
+      inputDirection: CardinalDirection
+    ): number {
+      return Platform.classifyCardinalDirection(
+        inputDirection,
+        Platform.getGantryBridgeDirection__positiveGroup,
+        Platform.getGantryBridgeDirection__negativeGroup
+      );
+    }
+
     public motorForce: number = 1;
     #rigidbody: f.ComponentRigidbody;
     #initialY: number;
@@ -52,6 +114,10 @@ namespace GantryGlutton {
       this.addEventListener(f.EVENT.NODE_DESERIALIZED, this.hndEvent);
     }
 
+    public handleHitFruit = (fruitType: FruitType): void => {
+      console.log(fruitType);
+    };
+
     // Activate the functions of this component as response to events
     public hndEvent = (_event: Event): void => {
       switch (_event.type) {
@@ -63,36 +129,12 @@ namespace GantryGlutton {
           this.removeEventListener(f.EVENT.COMPONENT_REMOVE, this.hndEvent);
           break;
         case f.EVENT.NODE_DESERIALIZED:
-          this.start(_event);
+          this.#rigidbody = this.node.getComponent(f.ComponentRigidbody);
+          this.#initialY = this.node.getComponent(
+            f.ComponentTransform
+          ).mtxLocal.translation.y;
           break;
       }
-    };
-
-    public start = (_event: Event): void => {
-      this.#rigidbody = this.node.getComponent(f.ComponentRigidbody);
-      this.#initialY = this.node.getComponent(
-        f.ComponentTransform
-      ).mtxLocal.translation.y;
-    };
-
-    public update = (_event: Event): void => {
-      const inputDirection = this.getInputAsCardinalDirection();
-      const gantryBaseActivation =
-        Platform.getGantryBaseActivation(inputDirection);
-      const gantryBridgeActivation =
-        Platform.getGantryBridgeActivation(inputDirection);
-
-      this.#rigidbody.applyForce(
-        new f.Vector3(
-          this.motorForce * gantryBaseActivation,
-          0,
-          -this.motorForce * gantryBridgeActivation
-        )
-      );
-      const oldPosition: f.Vector3 = this.#rigidbody.getPosition();
-      oldPosition.y = this.#initialY;
-      this.#rigidbody.setPosition(oldPosition);
-      this.#rigidbody.setRotation(f.Vector3.ZERO());
     };
 
     /**
@@ -100,7 +142,7 @@ namespace GantryGlutton {
      *
      * @returns The cardinal direction of current WASD or arrow input.
      */
-    getInputAsCardinalDirection(): CardinalDirection {
+    private getInputAsCardinalDirection(): CardinalDirection {
       let cardinalDirection = "";
 
       const up = f.Keyboard.isPressedOne(upKeyCode);
@@ -120,77 +162,24 @@ namespace GantryGlutton {
       return cardinalDirection as CardinalDirection;
     }
 
-    static getGantryBaseDirection__positiveGroup: CardinalDirection[] = [
-      "N",
-      "NE",
-      "E",
-    ];
-    static getGantryBaseDirection__negativeGroup: CardinalDirection[] = [
-      "S",
-      "SW",
-      "W",
-    ];
-    /**
-     * Get the activation direction of the gantry base motor.
-     *
-     * @param inputDirection The direction of the input.
-     * @returns The activation direction of the gantry base.
-     */
-    static getGantryBaseActivation(inputDirection: CardinalDirection): number {
-      return Platform.classifyCardinalDirection(
-        inputDirection,
-        Platform.getGantryBaseDirection__positiveGroup,
-        Platform.getGantryBaseDirection__negativeGroup
-      );
-    }
+    private update = (_event: Event): void => {
+      const inputDirection = this.getInputAsCardinalDirection();
+      const gantryBaseActivation =
+        Platform.getGantryBaseActivation(inputDirection);
+      const gantryBridgeActivation =
+        Platform.getGantryBridgeActivation(inputDirection);
 
-    static getGantryBridgeDirection__positiveGroup: CardinalDirection[] = [
-      "W",
-      "NW",
-      "N",
-    ];
-    static getGantryBridgeDirection__negativeGroup: CardinalDirection[] = [
-      "E",
-      "SE",
-      "S",
-    ];
-    /**
-     * Get the activation direction of the gantry bridge motor.
-     *
-     * @param inputDirection The direction of the input.
-     * @returns The activation direction of the gantry bridge.
-     */
-    static getGantryBridgeActivation(
-      inputDirection: CardinalDirection
-    ): number {
-      return Platform.classifyCardinalDirection(
-        inputDirection,
-        Platform.getGantryBridgeDirection__positiveGroup,
-        Platform.getGantryBridgeDirection__negativeGroup
+      this.#rigidbody.applyForce(
+        new f.Vector3(
+          this.motorForce * gantryBaseActivation,
+          0,
+          -this.motorForce * gantryBridgeActivation
+        )
       );
-    }
-
-    /**
-     *
-     * Classify the supplied direction into positive, negative or neutral in the form of a number.
-     *
-     * @param direction The direction that should be classified.
-     * @param positiveGroup The group of positive directions.
-     * @param negativeGroup The group of negative directions.
-     * @returns The group that the supplied direction was in in the form of a number.
-     */
-    static classifyCardinalDirection(
-      direction: CardinalDirection,
-      positiveGroup: CardinalDirection[],
-      negativeGroup: CardinalDirection[]
-    ): number {
-      if (positiveGroup.includes(direction)) {
-        return 1;
-      } else if (negativeGroup.includes(direction)) {
-        return -1;
-      } else {
-        return 0;
-      }
-    }
+      const oldPosition: f.Vector3 = this.#rigidbody.getPosition();
+      oldPosition.y = this.#initialY;
+      this.#rigidbody.setPosition(oldPosition);
+      this.#rigidbody.setRotation(f.Vector3.ZERO());
+    };
   }
 }

@@ -254,6 +254,7 @@ var GantryGlutton;
         static iSubclass = f.Component.registerSubclass(Fruit);
         static #fallSpeed = 5;
         static #fruitIndicationDuration = 10;
+        fruitType;
         #modelTransform;
         #shadowTransform;
         constructor() {
@@ -277,9 +278,15 @@ var GantryGlutton;
                     this.removeEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
                     break;
                 case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
-                    this.#modelTransform = this.node.getChildrenByName("Model")[0].getComponent(f.ComponentTransform);
-                    this.#shadowTransform = this.node.getChildrenByName("Shadow")[0].getComponent(f.ComponentTransform);
-                    this.#shadowTransform.mtxLocal.scaling = f.Vector3.ZERO();
+                    const modelNode = this.node.getChildrenByName("Model")[0];
+                    modelNode
+                        .getComponent(f.ComponentRigidbody)
+                        .addEventListener("TriggerEnteredCollision" /* f.EVENT_PHYSICS.TRIGGER_ENTER */, this.handlePlayerEnterFruit);
+                    this.#modelTransform = modelNode.getComponent(f.ComponentTransform);
+                    this.#shadowTransform = this.node
+                        .getChildrenByName("Shadow")[0]
+                        .getComponent(f.ComponentTransform);
+                    this.setShadowScale(0);
                     break;
             }
         };
@@ -288,15 +295,26 @@ var GantryGlutton;
             oldModelPosition.y = fallDuration * Fruit.#fallSpeed;
             this.#modelTransform.mtxLocal.translation = oldModelPosition;
         };
+        handlePlayerEnterFruit = (_event) => {
+            if (_event.cmpRigidbody.node.name !== "Platform") {
+                return;
+            }
+            const platformComponent = _event.cmpRigidbody.node.getComponent(GantryGlutton.Platform);
+            platformComponent.handleHitFruit(this.fruitType);
+        };
+        setShadowScale = (scale) => {
+            this.#shadowTransform.mtxLocal = f.Matrix4x4.SCALING(f.Vector3.ONE(scale));
+        };
         update = (_event) => {
             const deltaTime = f.Loop.timeFrameGame / 1000;
             this.#modelTransform.mtxLocal.translateY(-deltaTime * Fruit.#fallSpeed);
             const remainingFallDuration = this.#modelTransform.mtxLocal.translation.y / Fruit.#fallSpeed;
-            if (0 < remainingFallDuration && remainingFallDuration < Fruit.#fruitIndicationDuration) {
-                this.#shadowTransform.mtxLocal = f.Matrix4x4.SCALING(f.Vector3.ONE(1 - remainingFallDuration / Fruit.#fruitIndicationDuration));
+            if (0 < remainingFallDuration &&
+                remainingFallDuration < Fruit.#fruitIndicationDuration) {
+                this.setShadowScale(1 - remainingFallDuration / Fruit.#fruitIndicationDuration);
             }
             else {
-                this.#shadowTransform.mtxLocal.scaling = f.Vector3.ZERO();
+                this.setShadowScale(0);
             }
         };
     }
@@ -602,8 +620,48 @@ var GantryGlutton;
     class Platform extends f.ComponentScript {
         // Register the script as component for use in the editor via drag&drop
         static iSubclass = f.Component.registerSubclass(Platform);
-        // Properties may be mutated by users in the editor via the automatically created user interface
-        message = "CustomComponentScript added to ";
+        /**
+         *
+         * Classify the supplied direction into positive, negative or neutral in the form of a number.
+         *
+         * @param direction The direction that should be classified.
+         * @param positiveGroup The group of positive directions.
+         * @param negativeGroup The group of negative directions.
+         * @returns The group that the supplied direction was in in the form of a number.
+         */
+        static classifyCardinalDirection(direction, positiveGroup, negativeGroup) {
+            if (positiveGroup.includes(direction)) {
+                return 1;
+            }
+            else if (negativeGroup.includes(direction)) {
+                return -1;
+            }
+            else {
+                return 0;
+            }
+        }
+        static getGantryBaseDirection__positiveGroup = ["N", "NE", "E"];
+        static getGantryBaseDirection__negativeGroup = ["S", "SW", "W"];
+        /**
+         * Get the activation direction of the gantry base motor.
+         *
+         * @param inputDirection The direction of the input.
+         * @returns The activation direction of the gantry base.
+         */
+        static getGantryBaseActivation(inputDirection) {
+            return Platform.classifyCardinalDirection(inputDirection, Platform.getGantryBaseDirection__positiveGroup, Platform.getGantryBaseDirection__negativeGroup);
+        }
+        static getGantryBridgeDirection__positiveGroup = ["W", "NW", "N"];
+        static getGantryBridgeDirection__negativeGroup = ["E", "SE", "S"];
+        /**
+         * Get the activation direction of the gantry bridge motor.
+         *
+         * @param inputDirection The direction of the input.
+         * @returns The activation direction of the gantry bridge.
+         */
+        static getGantryBridgeActivation(inputDirection) {
+            return Platform.classifyCardinalDirection(inputDirection, Platform.getGantryBridgeDirection__positiveGroup, Platform.getGantryBridgeDirection__negativeGroup);
+        }
         motorForce = 1;
         #rigidbody;
         #initialY;
@@ -617,6 +675,9 @@ var GantryGlutton;
             this.addEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
             this.addEventListener("nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */, this.hndEvent);
         }
+        handleHitFruit = (fruitType) => {
+            console.log(fruitType);
+        };
         // Activate the functions of this component as response to events
         hndEvent = (_event) => {
             switch (_event.type) {
@@ -628,23 +689,10 @@ var GantryGlutton;
                     this.removeEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
                     break;
                 case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
-                    this.start(_event);
+                    this.#rigidbody = this.node.getComponent(f.ComponentRigidbody);
+                    this.#initialY = this.node.getComponent(f.ComponentTransform).mtxLocal.translation.y;
                     break;
             }
-        };
-        start = (_event) => {
-            this.#rigidbody = this.node.getComponent(f.ComponentRigidbody);
-            this.#initialY = this.node.getComponent(f.ComponentTransform).mtxLocal.translation.y;
-        };
-        update = (_event) => {
-            const inputDirection = this.getInputAsCardinalDirection();
-            const gantryBaseActivation = Platform.getGantryBaseActivation(inputDirection);
-            const gantryBridgeActivation = Platform.getGantryBridgeActivation(inputDirection);
-            this.#rigidbody.applyForce(new f.Vector3(this.motorForce * gantryBaseActivation, 0, -this.motorForce * gantryBridgeActivation));
-            const oldPosition = this.#rigidbody.getPosition();
-            oldPosition.y = this.#initialY;
-            this.#rigidbody.setPosition(oldPosition);
-            this.#rigidbody.setRotation(f.Vector3.ZERO());
         };
         /**
          * Get the cardinal direction of current WASD or arrow input.
@@ -671,64 +719,16 @@ var GantryGlutton;
             }
             return cardinalDirection;
         }
-        static getGantryBaseDirection__positiveGroup = [
-            "N",
-            "NE",
-            "E",
-        ];
-        static getGantryBaseDirection__negativeGroup = [
-            "S",
-            "SW",
-            "W",
-        ];
-        /**
-         * Get the activation direction of the gantry base motor.
-         *
-         * @param inputDirection The direction of the input.
-         * @returns The activation direction of the gantry base.
-         */
-        static getGantryBaseActivation(inputDirection) {
-            return Platform.classifyCardinalDirection(inputDirection, Platform.getGantryBaseDirection__positiveGroup, Platform.getGantryBaseDirection__negativeGroup);
-        }
-        static getGantryBridgeDirection__positiveGroup = [
-            "W",
-            "NW",
-            "N",
-        ];
-        static getGantryBridgeDirection__negativeGroup = [
-            "E",
-            "SE",
-            "S",
-        ];
-        /**
-         * Get the activation direction of the gantry bridge motor.
-         *
-         * @param inputDirection The direction of the input.
-         * @returns The activation direction of the gantry bridge.
-         */
-        static getGantryBridgeActivation(inputDirection) {
-            return Platform.classifyCardinalDirection(inputDirection, Platform.getGantryBridgeDirection__positiveGroup, Platform.getGantryBridgeDirection__negativeGroup);
-        }
-        /**
-         *
-         * Classify the supplied direction into positive, negative or neutral in the form of a number.
-         *
-         * @param direction The direction that should be classified.
-         * @param positiveGroup The group of positive directions.
-         * @param negativeGroup The group of negative directions.
-         * @returns The group that the supplied direction was in in the form of a number.
-         */
-        static classifyCardinalDirection(direction, positiveGroup, negativeGroup) {
-            if (positiveGroup.includes(direction)) {
-                return 1;
-            }
-            else if (negativeGroup.includes(direction)) {
-                return -1;
-            }
-            else {
-                return 0;
-            }
-        }
+        update = (_event) => {
+            const inputDirection = this.getInputAsCardinalDirection();
+            const gantryBaseActivation = Platform.getGantryBaseActivation(inputDirection);
+            const gantryBridgeActivation = Platform.getGantryBridgeActivation(inputDirection);
+            this.#rigidbody.applyForce(new f.Vector3(this.motorForce * gantryBaseActivation, 0, -this.motorForce * gantryBridgeActivation));
+            const oldPosition = this.#rigidbody.getPosition();
+            oldPosition.y = this.#initialY;
+            this.#rigidbody.setPosition(oldPosition);
+            this.#rigidbody.setRotation(f.Vector3.ZERO());
+        };
     }
     GantryGlutton.Platform = Platform;
 })(GantryGlutton || (GantryGlutton = {}));
