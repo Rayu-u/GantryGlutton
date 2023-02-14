@@ -199,7 +199,7 @@ var GantryGlutton;
             if (_event.cmpRigidbody.node.name !== "Platform") {
                 return;
             }
-            const platform = _event.cmpRigidbody.node.getComponent(GantryGlutton.Platform);
+            const platform = _event.cmpRigidbody.node.getComponent(GantryGlutton.PlatformMovement);
             this.ensureGroupCount();
         };
         createGroup = async () => {
@@ -299,8 +299,8 @@ var GantryGlutton;
             if (_event.cmpRigidbody.node.name !== "Platform") {
                 return;
             }
-            const platformComponent = _event.cmpRigidbody.node.getComponent(GantryGlutton.Platform);
-            platformComponent.handleHitFruit(this.fruitType);
+            const platformInteractions = _event.cmpRigidbody.node.getComponent(GantryGlutton.PlatformInteractions);
+            platformInteractions.handleHitFruit(this.fruitType);
         };
         setShadowScale = (scale) => {
             this.#shadowTransform.mtxLocal = f.Matrix4x4.SCALING(f.Vector3.ONE(scale));
@@ -601,6 +601,43 @@ var GantryGlutton;
 (function (GantryGlutton) {
     var f = FudgeCore;
     f.Project.registerScriptNamespace(GantryGlutton); // Register the namespace to FUDGE for serialization
+    class PlatformInteractions extends f.ComponentScript {
+        // Register the script as component for use in the editor via drag&drop
+        static iSubclass = f.Component.registerSubclass(PlatformInteractions);
+        constructor() {
+            super();
+            // Don't start when running in editor
+            if (f.Project.mode == f.MODE.EDITOR)
+                return;
+            // Listen to this component being added to or removed from a node
+            this.addEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
+            this.addEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
+            this.addEventListener("nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */, this.hndEvent);
+        }
+        handleHitFruit = (fruitType) => {
+            console.log(fruitType);
+        };
+        // Activate the functions of this component as response to events
+        hndEvent = (_event) => {
+            switch (_event.type) {
+                case "componentAdd" /* f.EVENT.COMPONENT_ADD */:
+                    break;
+                case "componentRemove" /* f.EVENT.COMPONENT_REMOVE */:
+                    this.removeEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
+                    this.removeEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
+                    break;
+                case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
+                    // if deserialized the node is now fully reconstructed and access to all its components and children is possible
+                    break;
+            }
+        };
+    }
+    GantryGlutton.PlatformInteractions = PlatformInteractions;
+})(GantryGlutton || (GantryGlutton = {}));
+var GantryGlutton;
+(function (GantryGlutton) {
+    var f = FudgeCore;
+    f.Project.registerScriptNamespace(GantryGlutton); // Register the namespace to FUDGE for serialization
     let leftKeyCode = [
         f.KEYBOARD_CODE.A,
         f.KEYBOARD_CODE.ARROW_LEFT,
@@ -617,9 +654,9 @@ var GantryGlutton;
         f.KEYBOARD_CODE.S,
         f.KEYBOARD_CODE.ARROW_DOWN,
     ];
-    class Platform extends f.ComponentScript {
+    class PlatformMovement extends f.ComponentScript {
         // Register the script as component for use in the editor via drag&drop
-        static iSubclass = f.Component.registerSubclass(Platform);
+        static iSubclass = f.Component.registerSubclass(PlatformMovement);
         /**
          *
          * Classify the supplied direction into positive, negative or neutral in the form of a number.
@@ -649,7 +686,7 @@ var GantryGlutton;
          * @returns The activation direction of the gantry base.
          */
         static getGantryBaseActivation(inputDirection) {
-            return Platform.classifyCardinalDirection(inputDirection, Platform.getGantryBaseDirection__positiveGroup, Platform.getGantryBaseDirection__negativeGroup);
+            return PlatformMovement.classifyCardinalDirection(inputDirection, PlatformMovement.getGantryBaseDirection__positiveGroup, PlatformMovement.getGantryBaseDirection__negativeGroup);
         }
         static getGantryBridgeDirection__positiveGroup = ["W", "NW", "N"];
         static getGantryBridgeDirection__negativeGroup = ["E", "SE", "S"];
@@ -660,7 +697,7 @@ var GantryGlutton;
          * @returns The activation direction of the gantry bridge.
          */
         static getGantryBridgeActivation(inputDirection) {
-            return Platform.classifyCardinalDirection(inputDirection, Platform.getGantryBridgeDirection__positiveGroup, Platform.getGantryBridgeDirection__negativeGroup);
+            return PlatformMovement.classifyCardinalDirection(inputDirection, PlatformMovement.getGantryBridgeDirection__positiveGroup, PlatformMovement.getGantryBridgeDirection__negativeGroup);
         }
         motorForce = 1;
         #rigidbody;
@@ -675,9 +712,6 @@ var GantryGlutton;
             this.addEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
             this.addEventListener("nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */, this.hndEvent);
         }
-        handleHitFruit = (fruitType) => {
-            console.log(fruitType);
-        };
         // Activate the functions of this component as response to events
         hndEvent = (_event) => {
             switch (_event.type) {
@@ -721,8 +755,8 @@ var GantryGlutton;
         }
         update = (_event) => {
             const inputDirection = this.getInputAsCardinalDirection();
-            const gantryBaseActivation = Platform.getGantryBaseActivation(inputDirection);
-            const gantryBridgeActivation = Platform.getGantryBridgeActivation(inputDirection);
+            const gantryBaseActivation = PlatformMovement.getGantryBaseActivation(inputDirection);
+            const gantryBridgeActivation = PlatformMovement.getGantryBridgeActivation(inputDirection);
             this.#rigidbody.applyForce(new f.Vector3(this.motorForce * gantryBaseActivation, 0, -this.motorForce * gantryBridgeActivation));
             const oldPosition = this.#rigidbody.getPosition();
             oldPosition.y = this.#initialY;
@@ -730,7 +764,7 @@ var GantryGlutton;
             this.#rigidbody.setRotation(f.Vector3.ZERO());
         };
     }
-    GantryGlutton.Platform = Platform;
+    GantryGlutton.PlatformMovement = PlatformMovement;
 })(GantryGlutton || (GantryGlutton = {}));
 var GantryGlutton;
 (function (GantryGlutton) {

@@ -65,9 +65,9 @@ namespace GantryGlutton {
         return;
       }
 
-      const platformComponent: Platform =
-        _event.cmpRigidbody.node.getComponent(Platform);
-      platformComponent.handleHitFruit(this.fruitType);
+      const platformInteractions: PlatformInteractions =
+        _event.cmpRigidbody.node.getComponent(PlatformInteractions);
+      platformInteractions.handleHitFruit(this.fruitType);
     };
 
     private setShadowScale = (scale: number): void => {

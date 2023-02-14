@@ -30,10 +30,10 @@ namespace GantryGlutton {
     f.KEYBOARD_CODE.ARROW_DOWN,
   ];
 
-  export class Platform extends f.ComponentScript {
+  export class PlatformMovement extends f.ComponentScript {
     // Register the script as component for use in the editor via drag&drop
     public static readonly iSubclass: number =
-      f.Component.registerSubclass(Platform);
+      f.Component.registerSubclass(PlatformMovement);
 
     /**
      *
@@ -71,10 +71,10 @@ namespace GantryGlutton {
     private static getGantryBaseActivation(
       inputDirection: CardinalDirection
     ): number {
-      return Platform.classifyCardinalDirection(
+      return PlatformMovement.classifyCardinalDirection(
         inputDirection,
-        Platform.getGantryBaseDirection__positiveGroup,
-        Platform.getGantryBaseDirection__negativeGroup
+        PlatformMovement.getGantryBaseDirection__positiveGroup,
+        PlatformMovement.getGantryBaseDirection__negativeGroup
       );
     }
 
@@ -91,10 +91,10 @@ namespace GantryGlutton {
     private static getGantryBridgeActivation(
       inputDirection: CardinalDirection
     ): number {
-      return Platform.classifyCardinalDirection(
+      return PlatformMovement.classifyCardinalDirection(
         inputDirection,
-        Platform.getGantryBridgeDirection__positiveGroup,
-        Platform.getGantryBridgeDirection__negativeGroup
+        PlatformMovement.getGantryBridgeDirection__positiveGroup,
+        PlatformMovement.getGantryBridgeDirection__negativeGroup
       );
     }
 
@@ -113,10 +113,6 @@ namespace GantryGlutton {
       this.addEventListener(f.EVENT.COMPONENT_REMOVE, this.hndEvent);
       this.addEventListener(f.EVENT.NODE_DESERIALIZED, this.hndEvent);
     }
-
-    public handleHitFruit = (fruitType: FruitType): void => {
-      console.log(fruitType);
-    };
 
     // Activate the functions of this component as response to events
     public hndEvent = (_event: Event): void => {
@@ -165,9 +161,9 @@ namespace GantryGlutton {
     private update = (_event: Event): void => {
       const inputDirection = this.getInputAsCardinalDirection();
       const gantryBaseActivation =
-        Platform.getGantryBaseActivation(inputDirection);
+        PlatformMovement.getGantryBaseActivation(inputDirection);
       const gantryBridgeActivation =
-        Platform.getGantryBridgeActivation(inputDirection);
+        PlatformMovement.getGantryBridgeActivation(inputDirection);
 
       this.#rigidbody.applyForce(
         new f.Vector3(

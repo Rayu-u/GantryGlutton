@@ -65,8 +65,8 @@ namespace GantryGlutton {
         return;
       }
 
-      const platform: Platform =
-        _event.cmpRigidbody.node.getComponent(Platform);
+      const platform: PlatformMovement =
+        _event.cmpRigidbody.node.getComponent(PlatformMovement);
       this.ensureGroupCount();
     };
 

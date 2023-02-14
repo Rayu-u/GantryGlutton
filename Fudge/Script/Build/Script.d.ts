@@ -156,7 +156,16 @@ declare namespace GantryGlutton {
 }
 declare namespace GantryGlutton {
     import f = FudgeCore;
-    class Platform extends f.ComponentScript {
+    class PlatformInteractions extends f.ComponentScript {
+        static readonly iSubclass: number;
+        constructor();
+        handleHitFruit: (fruitType: FruitType) => void;
+        hndEvent: (_event: Event) => void;
+    }
+}
+declare namespace GantryGlutton {
+    import f = FudgeCore;
+    class PlatformMovement extends f.ComponentScript {
         #private;
         static readonly iSubclass: number;
         /**
@@ -189,7 +198,6 @@ declare namespace GantryGlutton {
         private static getGantryBridgeActivation;
         motorForce: number;
         constructor();
-        handleHitFruit: (fruitType: FruitType) => void;
         hndEvent: (_event: Event) => void;
         /**
          * Get the cardinal direction of current WASD or arrow input.

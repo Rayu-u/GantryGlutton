@@ -473,11 +473,17 @@
                         }
                       }
                     ],
-                    "Platform": [
+                    "PlatformInteractions": [
                       {
-                        "GantryGlutton.Platform": {
+                        "GantryGlutton.PlatformInteractions": {
+                          "active": true
+                        }
+                      }
+                    ],
+                    "PlatformMovement": [
+                      {
+                        "GantryGlutton.PlatformMovement": {
                           "active": true,
-                          "message": "CustomComponentScript added to ",
                           "motorForce": 20
                         }
                       }
