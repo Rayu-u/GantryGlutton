@@ -628,7 +628,6 @@ var GantryGlutton;
                     this.removeEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
                     break;
                 case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
-                    // if deserialized the node is now fully reconstructed and access to all its components and children is possible
                     this.start(_event);
                     break;
             }
@@ -638,8 +637,6 @@ var GantryGlutton;
             this.#initialY = this.node.getComponent(f.ComponentTransform).mtxLocal.translation.y;
         };
         update = (_event) => {
-            //f.Physics.simulate();
-            //this.node.dispatchEvent(new Event("SensorHit", {bubbles: true}));
             const inputDirection = this.getInputAsCardinalDirection();
             const gantryBaseActivation = Platform.getGantryBaseActivation(inputDirection);
             const gantryBridgeActivation = Platform.getGantryBridgeActivation(inputDirection);

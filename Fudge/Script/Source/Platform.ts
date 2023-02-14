@@ -63,7 +63,6 @@ namespace GantryGlutton {
           this.removeEventListener(f.EVENT.COMPONENT_REMOVE, this.hndEvent);
           break;
         case f.EVENT.NODE_DESERIALIZED:
-          // if deserialized the node is now fully reconstructed and access to all its components and children is possible
           this.start(_event);
           break;
       }
@@ -71,12 +70,12 @@ namespace GantryGlutton {
 
     public start = (_event: Event): void => {
       this.#rigidbody = this.node.getComponent(f.ComponentRigidbody);
-      this.#initialY = this.node.getComponent(f.ComponentTransform).mtxLocal.translation.y;
+      this.#initialY = this.node.getComponent(
+        f.ComponentTransform
+      ).mtxLocal.translation.y;
     };
-    
+
     public update = (_event: Event): void => {
-      //f.Physics.simulate();
-      //this.node.dispatchEvent(new Event("SensorHit", {bubbles: true}));
       const inputDirection = this.getInputAsCardinalDirection();
       const gantryBaseActivation =
         Platform.getGantryBaseActivation(inputDirection);

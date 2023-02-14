@@ -438,7 +438,7 @@
                       {
                         "ƒ.ComponentTransform": {
                           "local": {
-                            "translation": "[0, 0, 0]",
+                            "translation": "[0, -0.10000000149011612, 0]",
                             "rotation": "[0, 0, 0]",
                             "scaling": "[1, 1, 1]"
                           },
@@ -463,7 +463,7 @@
                           "isTrigger": false,
                           "id": 1,
                           "pivot": {
-                            "translation": "[1, -0.10000000149011612, -1]",
+                            "translation": "[1, 0, -1]",
                             "rotation": "[0, 0, 0]",
                             "scaling": "[2, 0.20000000298023224, 2]"
                           },
@@ -526,7 +526,7 @@
                             {
                               "ƒ.ComponentTransform": {
                                 "local": {
-                                  "translation": "[1.5, -0.10000000149011612, -1.899999976158142]",
+                                  "translation": "[1.5, 0, -1.899999976158142]",
                                   "rotation": "[0, 0, 0]",
                                   "scaling": "[1, 1, 1]"
                                 },
@@ -582,7 +582,7 @@
                             {
                               "ƒ.ComponentTransform": {
                                 "local": {
-                                  "translation": "[1.5, -0.09999999403953552, -0.10000002384185791]",
+                                  "translation": "[1.5, 0, -0.10000002384185791]",
                                   "rotation": "[0, 180, 0]",
                                   "scaling": "[1, 1, 1]"
                                 },
@@ -638,7 +638,7 @@
                             {
                               "ƒ.ComponentTransform": {
                                 "local": {
-                                  "translation": "[0.5, -0.09999999403953552, -0.10000002384185791]",
+                                  "translation": "[0.5, 0, -0.10000002384185791]",
                                   "rotation": "[0, 180, 0]",
                                   "scaling": "[1, 1, 1]"
                                 },
@@ -694,7 +694,7 @@
                             {
                               "ƒ.ComponentTransform": {
                                 "local": {
-                                  "translation": "[0.5, -0.09999999403953552, -1.899999976158142]",
+                                  "translation": "[0.5, 0, -1.899999976158142]",
                                   "rotation": "[0, 0, 0]",
                                   "scaling": "[1, 1, 1]"
                                 },
