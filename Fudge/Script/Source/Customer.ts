@@ -15,6 +15,8 @@ namespace GantryGlutton {
     #jointSimulationRigidbody: f.ComponentRigidbody;
     #modelTransform: f.ComponentTransform;
 
+    #isDetached: boolean = false;
+
     constructor() {
       super();
 
@@ -81,9 +83,37 @@ namespace GantryGlutton {
     };
 
     public onAfterPhysicsUpdate = (): void => {
+      if (this.#isDetached) {
+        return;
+      }
+
       this.#modelTransform.mtxLocal = f.Matrix4x4.ROTATION(
         this.#jointSimulationRigidbody.getRotation()
       );
+    };
+
+    public detach = (): void => {
+      // Move model and dynamic rigidbody to root of scene.
+      this.node.removeChild(this.#modelTransform.node);
+      this.node.removeChild(this.#jointSimulationRigidbody.node);
+
+      this.#jointSimulationRigidbody.dampRotation = 0;
+      this.#jointSimulationRigidbody.effectGravity = 1;
+      this.#jointSimulationRigidbody.node.addChild(this.#modelTransform.node);
+      this.#modelTransform.mtxLocal = f.Matrix4x4.IDENTITY();
+
+      graph.addChild(this.#jointSimulationRigidbody.node);
+      this.#jointSimulationRigidbody.node.getComponent(
+        f.ComponentTransform
+      ).mtxLocal = f.Matrix4x4.TRANSLATION(
+        this.node.getComponent(f.ComponentRigidbody).getPosition()
+      );
+
+      // Remove the customer node, which acted like the attachment point to the stage and platform.
+      this.node.removeComponent(this.node.getComponent(f.JointSpherical));
+      this.node.getParent().removeChild(this.node);
+
+      this.#isDetached = true;
     };
   }
 }

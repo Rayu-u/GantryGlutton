@@ -142,6 +142,22 @@
       "url": "Assets\\Models\\person__head.obj"
     }
   },
+  "MeshObj|2023-02-15T00:48:26.492Z|38916": {
+    "ƒ.MeshObj": {
+      "idResource": "MeshObj|2023-02-15T00:48:26.492Z|38916",
+      "name": "Assets\\Models\\stage__plane.obj",
+      "type": "MeshObj",
+      "url": "Assets\\Models\\stage__plane.obj"
+    }
+  },
+  "MeshObj|2023-02-15T00:48:45.348Z|43795": {
+    "ƒ.MeshObj": {
+      "idResource": "MeshObj|2023-02-15T00:48:45.348Z|43795",
+      "name": "Assets\\Models\\stage__pick-up-zone.obj",
+      "type": "MeshObj",
+      "url": "Assets\\Models\\stage__pick-up-zone.obj"
+    }
+  },
   "Graph|2023-02-11T14:47:26.962Z|84962": {
     "ƒ.Graph": {
       "name": "Level",
@@ -444,7 +460,7 @@
                       {
                         "ƒ.ComponentRigidbody": {
                           "initialization": "TO_PIVOT",
-                          "friction": 0,
+                          "friction": 1,
                           "restitution": 0.2,
                           "mass": 1,
                           "dampTranslation": 5,
@@ -818,8 +834,6 @@
             "name": "Stage",
             "active": true,
             "components": {
-              "ComponentMesh": [],
-              "ComponentMaterial": [],
               "Stage": [
                 {
                   "GantryGlutton.Stage": {
@@ -852,7 +866,7 @@
                       {
                         "ƒ.ComponentRigidbody": {
                           "initialization": "TO_PIVOT",
-                          "friction": 0.2,
+                          "friction": 0,
                           "restitution": 0.2,
                           "mass": 1,
                           "dampTranslation": 0.1,
@@ -900,7 +914,7 @@
                       {
                         "ƒ.ComponentRigidbody": {
                           "initialization": "TO_PIVOT",
-                          "friction": 0.2,
+                          "friction": 0,
                           "restitution": 0.2,
                           "mass": 1,
                           "dampTranslation": 0,
@@ -948,7 +962,7 @@
                       {
                         "ƒ.ComponentRigidbody": {
                           "initialization": "TO_PIVOT",
-                          "friction": 0.2,
+                          "friction": 0,
                           "restitution": 0.2,
                           "mass": 1,
                           "dampTranslation": 0.1,
@@ -996,7 +1010,7 @@
                       {
                         "ƒ.ComponentRigidbody": {
                           "initialization": "TO_PIVOT",
-                          "friction": 0.2,
+                          "friction": 0,
                           "restitution": 0.2,
                           "mass": 1,
                           "dampTranslation": 0.1,
@@ -2407,8 +2421,8 @@
                 {
                   "ƒ.ComponentRigidbody": {
                     "initialization": "TO_PIVOT",
-                    "friction": 0.2,
-                    "restitution": 0.2,
+                    "friction": 1,
+                    "restitution": 0,
                     "mass": 1,
                     "dampTranslation": 2,
                     "dampRotation": 2,
@@ -2435,22 +2449,6 @@
       ],
       "idResource": "Graph|2023-02-14T14:03:59.825Z|93867",
       "type": "Graph"
-    }
-  },
-  "MeshObj|2023-02-15T00:48:26.492Z|38916": {
-    "ƒ.MeshObj": {
-      "idResource": "MeshObj|2023-02-15T00:48:26.492Z|38916",
-      "name": "Assets\\Models\\stage__plane.obj",
-      "type": "MeshObj",
-      "url": "Assets\\Models\\stage__plane.obj"
-    }
-  },
-  "MeshObj|2023-02-15T00:48:45.348Z|43795": {
-    "ƒ.MeshObj": {
-      "idResource": "MeshObj|2023-02-15T00:48:45.348Z|43795",
-      "name": "Assets\\Models\\stage__pick-up-zone.obj",
-      "type": "MeshObj",
-      "url": "Assets\\Models\\stage__pick-up-zone.obj"
     }
   }
 }

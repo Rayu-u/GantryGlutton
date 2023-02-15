@@ -56,7 +56,7 @@ namespace GantryGlutton {
 
         // Customer found with correct fruit type
         this.#spots[spotIndex] = null;
-        this.node.removeChild(customer.node);
+        customer.detach();
         break;
       }
     };

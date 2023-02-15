@@ -30,6 +30,7 @@ declare namespace GantryGlutton {
         getFruitType: () => FruitType;
         setFruitType: (fruitType: FruitType) => void;
         onAfterPhysicsUpdate: () => void;
+        detach: () => void;
     }
 }
 declare namespace GantryGlutton {
@@ -222,6 +223,14 @@ declare namespace GantryGlutton {
         static readonly iSubclass: number;
         constructor();
         generateStage: () => void;
+        hndEvent: (_event: Event) => void;
+    }
+}
+declare namespace GantryGlutton {
+    import f = FudgeCore;
+    class Trapdoor extends f.ComponentScript {
+        static readonly iSubclass: number;
+        constructor();
         hndEvent: (_event: Event) => void;
     }
 }

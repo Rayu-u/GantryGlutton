@@ -95,6 +95,7 @@ var GantryGlutton;
         #bodyModelMaterial;
         #jointSimulationRigidbody;
         #modelTransform;
+        #isDetached = false;
         constructor() {
             super();
             // Don't start when running in editor
@@ -142,7 +143,25 @@ var GantryGlutton;
             this.#bodyModelMaterial.clrPrimary = Customer.#fruitColors.get(fruitType);
         };
         onAfterPhysicsUpdate = () => {
+            if (this.#isDetached) {
+                return;
+            }
             this.#modelTransform.mtxLocal = f.Matrix4x4.ROTATION(this.#jointSimulationRigidbody.getRotation());
+        };
+        detach = () => {
+            // Move model and dynamic rigidbody to root of scene.
+            this.node.removeChild(this.#modelTransform.node);
+            this.node.removeChild(this.#jointSimulationRigidbody.node);
+            this.#jointSimulationRigidbody.dampRotation = 0;
+            this.#jointSimulationRigidbody.effectGravity = 1;
+            this.#jointSimulationRigidbody.node.addChild(this.#modelTransform.node);
+            this.#modelTransform.mtxLocal = f.Matrix4x4.IDENTITY();
+            GantryGlutton.graph.addChild(this.#jointSimulationRigidbody.node);
+            this.#jointSimulationRigidbody.node.getComponent(f.ComponentTransform).mtxLocal = f.Matrix4x4.TRANSLATION(this.node.getComponent(f.ComponentRigidbody).getPosition());
+            // Remove the customer node, which acted like the attachment point to the stage and platform.
+            this.node.removeComponent(this.node.getComponent(f.JointSpherical));
+            this.node.getParent().removeChild(this.node);
+            this.#isDetached = true;
         };
     }
     GantryGlutton.Customer = Customer;
@@ -685,7 +704,7 @@ var GantryGlutton;
                 }
                 // Customer found with correct fruit type
                 this.#spots[spotIndex] = null;
-                this.node.removeChild(customer.node);
+                customer.detach();
                 break;
             }
         };
@@ -897,5 +916,38 @@ var GantryGlutton;
         };
     }
     GantryGlutton.Stage = Stage;
+})(GantryGlutton || (GantryGlutton = {}));
+var GantryGlutton;
+(function (GantryGlutton) {
+    var f = FudgeCore;
+    f.Project.registerScriptNamespace(GantryGlutton); // Register the namespace to FUDGE for serialization
+    class Trapdoor extends f.ComponentScript {
+        // Register the script as component for use in the editor via drag&drop
+        static iSubclass = f.Component.registerSubclass(Trapdoor);
+        constructor() {
+            super();
+            // Don't start when running in editor
+            if (f.Project.mode == f.MODE.EDITOR)
+                return;
+            // Listen to this component being added to or removed from a node
+            this.addEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
+            this.addEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
+            this.addEventListener("nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */, this.hndEvent);
+        }
+        // Activate the functions of this component as response to events
+        hndEvent = (_event) => {
+            switch (_event.type) {
+                case "componentAdd" /* f.EVENT.COMPONENT_ADD */:
+                    break;
+                case "componentRemove" /* f.EVENT.COMPONENT_REMOVE */:
+                    this.removeEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
+                    this.removeEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
+                    break;
+                case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
+                    break;
+            }
+        };
+    }
+    GantryGlutton.Trapdoor = Trapdoor;
 })(GantryGlutton || (GantryGlutton = {}));
 //# sourceMappingURL=Script.js.map
