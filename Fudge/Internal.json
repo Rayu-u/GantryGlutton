@@ -72,14 +72,6 @@
       "url": "Assets\\Models\\platform.obj"
     }
   },
-  "MeshObj|2023-02-12T09:13:41.355Z|00195": {
-    "ƒ.MeshObj": {
-      "idResource": "MeshObj|2023-02-12T09:13:41.355Z|00195",
-      "name": "Assets\\Models\\stage.obj",
-      "type": "MeshObj",
-      "url": "Assets\\Models\\stage.obj"
-    }
-  },
   "MeshObj|2023-02-12T15:10:18.328Z|10454": {
     "ƒ.MeshObj": {
       "idResource": "MeshObj|2023-02-12T15:10:18.328Z|10454",
@@ -826,39 +818,8 @@
             "name": "Stage",
             "active": true,
             "components": {
-              "ComponentMesh": [
-                {
-                  "ƒ.ComponentMesh": {
-                    "idMesh": "MeshObj|2023-02-12T09:13:41.355Z|00195",
-                    "pivot": {
-                      "translation": "[0, 0, 0]",
-                      "rotation": "[0, 0, 0]",
-                      "scaling": "[1, 1, 1]"
-                    },
-                    "Component": {
-                      "active": true
-                    }
-                  }
-                }
-              ],
-              "ComponentMaterial": [
-                {
-                  "ƒ.ComponentMaterial": {
-                    "sortForAlpha": false,
-                    "clrPrimary": "[0.6392156862745098, 0.6392156862745098, 0.6392156862745098, 1]",
-                    "clrSecondary": "[1, 1, 1, 1]",
-                    "pivot": {
-                      "translation": "[0, 0]",
-                      "rotation": 0,
-                      "scaling": "[1, 1]"
-                    },
-                    "Component": {
-                      "active": true
-                    },
-                    "idMaterial": "Material|2023-02-11T18:46:51.960Z|66281"
-                  }
-                }
-              ],
+              "ComponentMesh": [],
+              "ComponentMaterial": [],
               "Stage": [
                 {
                   "GantryGlutton.Stage": {
@@ -1278,6 +1239,99 @@
                     ]
                   },
                   "children": []
+                }
+              },
+              {
+                "ƒ.Node": {
+                  "name": "Model",
+                  "active": true,
+                  "components": {},
+                  "children": [
+                    {
+                      "ƒ.Node": {
+                        "name": "Stage",
+                        "active": true,
+                        "components": {
+                          "ComponentMaterial": [
+                            {
+                              "ƒ.ComponentMaterial": {
+                                "sortForAlpha": false,
+                                "clrPrimary": "[0.6392156862745098, 0.6392156862745098, 0.6392156862745098, 1]",
+                                "clrSecondary": "[1, 1, 1, 1]",
+                                "pivot": {
+                                  "translation": "[0, 0]",
+                                  "rotation": 0,
+                                  "scaling": "[1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                },
+                                "idMaterial": "Material|2023-02-11T18:46:51.960Z|66281"
+                              }
+                            }
+                          ],
+                          "ComponentMesh": [
+                            {
+                              "ƒ.ComponentMesh": {
+                                "idMesh": "MeshObj|2023-02-15T00:48:26.492Z|38916",
+                                "pivot": {
+                                  "translation": "[0, 0, 0]",
+                                  "rotation": "[0, 0, 0]",
+                                  "scaling": "[1, 1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "children": []
+                      }
+                    },
+                    {
+                      "ƒ.Node": {
+                        "name": "PickUpZones",
+                        "active": true,
+                        "components": {
+                          "ComponentMesh": [
+                            {
+                              "ƒ.ComponentMesh": {
+                                "idMesh": "MeshObj|2023-02-15T00:48:45.348Z|43795",
+                                "pivot": {
+                                  "translation": "[0, 0, 0]",
+                                  "rotation": "[0, 0, 0]",
+                                  "scaling": "[1, 1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                }
+                              }
+                            }
+                          ],
+                          "ComponentMaterial": [
+                            {
+                              "ƒ.ComponentMaterial": {
+                                "sortForAlpha": false,
+                                "clrPrimary": "[0.3607843137254902, 0.3607843137254902, 0.3607843137254902, 1]",
+                                "clrSecondary": "[1, 1, 1, 1]",
+                                "pivot": {
+                                  "translation": "[0, 0]",
+                                  "rotation": 0,
+                                  "scaling": "[1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                },
+                                "idMaterial": "Material|2023-02-11T18:46:51.960Z|66281"
+                              }
+                            }
+                          ]
+                        },
+                        "children": []
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -2381,6 +2435,22 @@
       ],
       "idResource": "Graph|2023-02-14T14:03:59.825Z|93867",
       "type": "Graph"
+    }
+  },
+  "MeshObj|2023-02-15T00:48:26.492Z|38916": {
+    "ƒ.MeshObj": {
+      "idResource": "MeshObj|2023-02-15T00:48:26.492Z|38916",
+      "name": "Assets\\Models\\stage__plane.obj",
+      "type": "MeshObj",
+      "url": "Assets\\Models\\stage__plane.obj"
+    }
+  },
+  "MeshObj|2023-02-15T00:48:45.348Z|43795": {
+    "ƒ.MeshObj": {
+      "idResource": "MeshObj|2023-02-15T00:48:45.348Z|43795",
+      "name": "Assets\\Models\\stage__pick-up-zone.obj",
+      "type": "MeshObj",
+      "url": "Assets\\Models\\stage__pick-up-zone.obj"
     }
   }
 }
