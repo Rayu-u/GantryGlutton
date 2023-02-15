@@ -225,3 +225,14 @@ declare namespace GantryGlutton {
         hndEvent: (_event: Event) => void;
     }
 }
+declare namespace GantryGlutton {
+    import f = FudgeCore;
+    class Trapdoor extends f.ComponentScript {
+        #private;
+        static readonly iSubclass: number;
+        constructor();
+        hndEvent: (_event: Event) => void;
+        onAfterPhysicsUpdate: () => void;
+        open: (openAngularImpulse: number, closeTorque: number, duration: number) => Promise<void>;
+    }
+}

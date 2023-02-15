@@ -142,6 +142,22 @@
       "url": "Assets\\Models\\person__head.obj"
     }
   },
+  "MeshObj|2023-02-15T00:48:26.492Z|38916": {
+    "ƒ.MeshObj": {
+      "idResource": "MeshObj|2023-02-15T00:48:26.492Z|38916",
+      "name": "Assets\\Models\\stage__plane.obj",
+      "type": "MeshObj",
+      "url": "Assets\\Models\\stage__plane.obj"
+    }
+  },
+  "MeshObj|2023-02-15T00:48:45.348Z|43795": {
+    "ƒ.MeshObj": {
+      "idResource": "MeshObj|2023-02-15T00:48:45.348Z|43795",
+      "name": "Assets\\Models\\stage__pick-up-zone.obj",
+      "type": "MeshObj",
+      "url": "Assets\\Models\\stage__pick-up-zone.obj"
+    }
+  },
   "Graph|2023-02-11T14:47:26.962Z|84962": {
     "ƒ.Graph": {
       "name": "Level",
@@ -479,6 +495,100 @@
                           "motorForce": 20
                         }
                       }
+                    ],
+                    "JointRevolute": [
+                      {
+                        "ƒ.JointRevolute": {
+                          "motorTorque": 0,
+                          "JointAxial": {
+                            "springDamping": 0,
+                            "springFrequency": 0,
+                            "maxMotor": 360,
+                            "minMotor": 0,
+                            "motorSpeed": 0,
+                            "axis": "[1, 0, 0]",
+                            "Joint": {
+                              "nameChildToConnect": "Trapdoor-N",
+                              "internalCollision": false,
+                              "breakForce": 0,
+                              "breakTorque": 0,
+                              "anchor": "[1.5, -0.10000000149011612, -1.899999976158142]",
+                              "Component": {
+                                "active": true
+                              }
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "ƒ.JointRevolute": {
+                          "motorTorque": 0,
+                          "JointAxial": {
+                            "springDamping": 0,
+                            "springFrequency": 0,
+                            "maxMotor": 360,
+                            "minMotor": 0,
+                            "motorSpeed": 0,
+                            "axis": "[-1, 0, 0]",
+                            "Joint": {
+                              "nameChildToConnect": "Trapdoor-E",
+                              "internalCollision": false,
+                              "breakForce": 0,
+                              "breakTorque": 0,
+                              "anchor": "[1.5, -0.10000000149011612, -0.10000000149011612]",
+                              "Component": {
+                                "active": true
+                              }
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "ƒ.JointRevolute": {
+                          "motorTorque": 0,
+                          "JointAxial": {
+                            "springDamping": 0,
+                            "springFrequency": 0,
+                            "maxMotor": 360,
+                            "minMotor": 0,
+                            "motorSpeed": 0,
+                            "axis": "[-1, 0, 0]",
+                            "Joint": {
+                              "nameChildToConnect": "Trapdoor-S",
+                              "internalCollision": false,
+                              "breakForce": 0,
+                              "breakTorque": 0,
+                              "anchor": "[0.5, -0.10000000149011612, -0.10000000149011612]",
+                              "Component": {
+                                "active": true
+                              }
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "ƒ.JointRevolute": {
+                          "motorTorque": 0,
+                          "JointAxial": {
+                            "springDamping": 0,
+                            "springFrequency": 0,
+                            "maxMotor": 360,
+                            "minMotor": 0,
+                            "motorSpeed": 0,
+                            "axis": "[1, 0, 0]",
+                            "Joint": {
+                              "nameChildToConnect": "Trapdoor-W",
+                              "internalCollision": false,
+                              "breakForce": 0,
+                              "breakTorque": 0,
+                              "anchor": "[0.5, -0.10000000149011612, -1.899999976158142]",
+                              "Component": {
+                                "active": true
+                              }
+                            }
+                          }
+                        }
+                      }
                     ]
                   },
                   "children": [
@@ -527,6 +637,31 @@
                                   "translation": "[1.5, 0, -1.899999976158142]",
                                   "rotation": "[0, 0, 0]",
                                   "scaling": "[1, 1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                }
+                              }
+                            }
+                          ],
+                          "ComponentRigidbody": [
+                            {
+                              "ƒ.ComponentRigidbody": {
+                                "initialization": "TO_PIVOT",
+                                "friction": 0.2,
+                                "restitution": 0.2,
+                                "mass": 1,
+                                "dampTranslation": 0.1,
+                                "dampRotation": 0.1,
+                                "effectGravity": 1,
+                                "typeBody": "DYNAMIC",
+                                "typeCollider": "CUBE",
+                                "isTrigger": false,
+                                "id": 3,
+                                "pivot": {
+                                  "translation": "[0, 0, 0.4000000059604645]",
+                                  "rotation": "[0, 0, 0]",
+                                  "scaling": "[1, 0.19999998807907104, 1]"
                                 },
                                 "Component": {
                                   "active": true
@@ -589,6 +724,31 @@
                                 }
                               }
                             }
+                          ],
+                          "ComponentRigidbody": [
+                            {
+                              "ƒ.ComponentRigidbody": {
+                                "initialization": "TO_PIVOT",
+                                "friction": 0.2,
+                                "restitution": 0.2,
+                                "mass": 1,
+                                "dampTranslation": 0.1,
+                                "dampRotation": 0.1,
+                                "effectGravity": 1,
+                                "typeBody": "DYNAMIC",
+                                "typeCollider": "CUBE",
+                                "isTrigger": false,
+                                "id": 4,
+                                "pivot": {
+                                  "translation": "[0, 0, 0.4000000059604645]",
+                                  "rotation": "[0, 0, 0]",
+                                  "scaling": "[1, 0.20000001788139343, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                }
+                              }
+                            }
                           ]
                         },
                         "children": []
@@ -645,6 +805,31 @@
                                 }
                               }
                             }
+                          ],
+                          "ComponentRigidbody": [
+                            {
+                              "ƒ.ComponentRigidbody": {
+                                "initialization": "TO_PIVOT",
+                                "friction": 0.2,
+                                "restitution": 0.2,
+                                "mass": 1,
+                                "dampTranslation": 0.1,
+                                "dampRotation": 0.1,
+                                "effectGravity": 1,
+                                "typeBody": "DYNAMIC",
+                                "typeCollider": "CUBE",
+                                "isTrigger": false,
+                                "id": 5,
+                                "pivot": {
+                                  "translation": "[0, 0, 0.4000000059604645]",
+                                  "rotation": "[0, 0, 0]",
+                                  "scaling": "[1, 0.20000001788139343, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                }
+                              }
+                            }
                           ]
                         },
                         "children": []
@@ -695,6 +880,31 @@
                                   "translation": "[0.5, 0, -1.899999976158142]",
                                   "rotation": "[0, 0, 0]",
                                   "scaling": "[1, 1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                }
+                              }
+                            }
+                          ],
+                          "ComponentRigidbody": [
+                            {
+                              "ƒ.ComponentRigidbody": {
+                                "initialization": "TO_PIVOT",
+                                "friction": 0.2,
+                                "restitution": 0.2,
+                                "mass": 1,
+                                "dampTranslation": 0.1,
+                                "dampRotation": 0.1,
+                                "effectGravity": 1,
+                                "typeBody": "DYNAMIC",
+                                "typeCollider": "CUBE",
+                                "isTrigger": false,
+                                "id": 6,
+                                "pivot": {
+                                  "translation": "[0, 0, 0.4000000059604645]",
+                                  "rotation": "[0, 0, 0]",
+                                  "scaling": "[1, 0.20000000298023224, 1]"
                                 },
                                 "Component": {
                                   "active": true
@@ -818,8 +1028,6 @@
             "name": "Stage",
             "active": true,
             "components": {
-              "ComponentMesh": [],
-              "ComponentMaterial": [],
               "Stage": [
                 {
                   "GantryGlutton.Stage": {
@@ -2435,22 +2643,6 @@
       ],
       "idResource": "Graph|2023-02-14T14:03:59.825Z|93867",
       "type": "Graph"
-    }
-  },
-  "MeshObj|2023-02-15T00:48:26.492Z|38916": {
-    "ƒ.MeshObj": {
-      "idResource": "MeshObj|2023-02-15T00:48:26.492Z|38916",
-      "name": "Assets\\Models\\stage__plane.obj",
-      "type": "MeshObj",
-      "url": "Assets\\Models\\stage__plane.obj"
-    }
-  },
-  "MeshObj|2023-02-15T00:48:45.348Z|43795": {
-    "ƒ.MeshObj": {
-      "idResource": "MeshObj|2023-02-15T00:48:45.348Z|43795",
-      "name": "Assets\\Models\\stage__pick-up-zone.obj",
-      "type": "MeshObj",
-      "url": "Assets\\Models\\stage__pick-up-zone.obj"
     }
   }
 }
