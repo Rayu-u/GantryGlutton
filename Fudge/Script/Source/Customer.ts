@@ -6,7 +6,11 @@ namespace GantryGlutton {
     // Register the script as component for use in the editor via drag&drop
     public static readonly iSubclass: number =
       f.Component.registerSubclass(Customer);
+
     static readonly #fruitColors: Map<FruitType, f.Color> = new Map();
+
+    /** How long will the customer live after being dispatch. */
+    static readonly #afterDispatchLifetime = 12;
     static test: Customer;
 
     #fruitType: FruitType;
@@ -92,7 +96,7 @@ namespace GantryGlutton {
       );
     };
 
-    public detach = (): void => {
+    public detach = async (): Promise<void> => {
       // Move model and dynamic rigidbody to root of scene.
       this.node.removeChild(this.#modelTransform.node);
       this.node.removeChild(this.#jointSimulationRigidbody.node);
@@ -122,6 +126,16 @@ namespace GantryGlutton {
       this.node.getParent().removeChild(this.node);
 
       this.#isDetached = true;
+
+      // Wait for the customer to fall outside of view.
+      await new Promise((resolver) =>
+        setTimeout(resolver, 1000 * Customer.#afterDispatchLifetime)
+      );
+
+      // Remove remaining customer.
+      this.#jointSimulationRigidbody.node
+        .getParent()
+        .removeChild(this.#jointSimulationRigidbody.node);
     };
   }
 }

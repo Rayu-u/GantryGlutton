@@ -44,7 +44,7 @@ declare namespace GantryGlutton {
         getFruitType: () => FruitType;
         setFruitType: (fruitType: FruitType) => void;
         onAfterPhysicsUpdate: () => void;
-        detach: () => void;
+        detach: () => Promise<void>;
     }
 }
 declare namespace GantryGlutton {

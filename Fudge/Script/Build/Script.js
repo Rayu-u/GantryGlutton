@@ -90,6 +90,8 @@ var GantryGlutton;
         // Register the script as component for use in the editor via drag&drop
         static iSubclass = f.Component.registerSubclass(Customer);
         static #fruitColors = new Map();
+        /** How long will the customer live after being dispatch. */
+        static #afterDispatchLifetime = 12;
         static test;
         #fruitType;
         #bodyModelMaterial;
@@ -148,7 +150,7 @@ var GantryGlutton;
             }
             this.#modelTransform.mtxLocal = f.Matrix4x4.ROTATION(this.#jointSimulationRigidbody.getRotation());
         };
-        detach = () => {
+        detach = async () => {
             // Move model and dynamic rigidbody to root of scene.
             this.node.removeChild(this.#modelTransform.node);
             this.node.removeChild(this.#jointSimulationRigidbody.node);
@@ -165,6 +167,12 @@ var GantryGlutton;
             this.node.removeComponent(this.node.getComponent(f.JointSpherical));
             this.node.getParent().removeChild(this.node);
             this.#isDetached = true;
+            // Wait for the customer to fall outside of view.
+            await new Promise((resolver) => setTimeout(resolver, 1000 * Customer.#afterDispatchLifetime));
+            // Remove remaining customer.
+            this.#jointSimulationRigidbody.node
+                .getParent()
+                .removeChild(this.#jointSimulationRigidbody.node);
         };
     }
     GantryGlutton.Customer = Customer;
