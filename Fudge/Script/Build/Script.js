@@ -158,6 +158,9 @@ var GantryGlutton;
             this.#modelTransform.mtxLocal = f.Matrix4x4.IDENTITY();
             GantryGlutton.graph.addChild(this.#jointSimulationRigidbody.node);
             this.#jointSimulationRigidbody.node.getComponent(f.ComponentTransform).mtxLocal = f.Matrix4x4.TRANSLATION(this.node.getComponent(f.ComponentRigidbody).getPosition());
+            // Add random torque for tumble
+            const randomAngularImpulse = new f.Vector3(2 * Math.random() - 1, 2 * Math.random() - 1, 2 * Math.random() - 1);
+            this.#jointSimulationRigidbody.applyAngularImpulse(randomAngularImpulse);
             // Remove the customer node, which acted like the attachment point to the stage and platform.
             this.node.removeComponent(this.node.getComponent(f.JointSpherical));
             this.node.getParent().removeChild(this.node);
