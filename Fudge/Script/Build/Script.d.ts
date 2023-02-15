@@ -54,6 +54,7 @@ declare namespace GantryGlutton {
         private createGroup;
         private createRandomCustomer;
         private ensureGroupCount;
+        private updateGroupPosition;
         private updateGroupPositions;
     }
 }
@@ -144,6 +145,8 @@ declare namespace GantryGlutton {
         constructor();
         hndEvent: (_event: Event) => void;
         addCustomer: (customer: Customer) => void;
+        moveTo: (localTargetPosition: f.Vector3, instant: boolean) => void;
+        private update;
     }
 }
 declare namespace GantryGlutton {

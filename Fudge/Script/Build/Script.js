@@ -208,6 +208,7 @@ var GantryGlutton;
             this.#groups.shift();
             platformInteractions.seatCustomers(group.customers);
             group.node.removeChild(group.node);
+            this.updateGroupPositions();
             this.ensureGroupCount();
         };
         createGroup = async () => {
@@ -240,14 +241,16 @@ var GantryGlutton;
                 const group = await this.createGroup();
                 this.#groups.push(group);
                 this.node.addChild(group.node);
+                this.updateGroupPosition(this.#groups.length - 1, true);
             }
-            this.updateGroupPositions();
+        };
+        updateGroupPosition = (index, instant) => {
+            const localTargetPosition = f.Vector3.SUM(CustomerQueue.firstGroupOffset, f.Vector3.SCALE(CustomerQueue.betweenGroupOffset, index));
+            this.#groups[index].moveTo(localTargetPosition, instant);
         };
         updateGroupPositions = () => {
             for (let i = 0; i < this.#groups.length; i++) {
-                const groupNode = this.#groups[i].node;
-                const groupTransform = groupNode.getComponent(f.ComponentTransform);
-                groupTransform.mtxLocal = f.Matrix4x4.TRANSLATION(f.Vector3.SUM(CustomerQueue.firstGroupOffset, f.Vector3.SCALE(CustomerQueue.betweenGroupOffset, i)));
+                this.updateGroupPosition(i, false);
             }
         };
     }
@@ -530,7 +533,11 @@ var GantryGlutton;
             new f.Vector3(0.5, 0, -0.5),
             new f.Vector3(0, 0, -1),
         ];
+        static #speed = 10;
         customers = [];
+        #localTargetPosition = f.Vector3.ZERO();
+        #moving = true;
+        #transform;
         constructor() {
             super();
             // Don't start when running in editor
@@ -545,6 +552,8 @@ var GantryGlutton;
         hndEvent = (_event) => {
             switch (_event.type) {
                 case "componentAdd" /* f.EVENT.COMPONENT_ADD */:
+                    this.#transform = this.node.getComponent(f.ComponentTransform);
+                    this.node.addEventListener("renderPrepare" /* f.EVENT.RENDER_PREPARE */, this.update);
                     break;
                 case "componentRemove" /* f.EVENT.COMPONENT_REMOVE */:
                     this.removeEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
@@ -564,6 +573,32 @@ var GantryGlutton;
             this.node.addChild(customer.node);
             const customerTransform = customer.node.getComponent(f.ComponentTransform);
             customerTransform.mtxLocal = f.Matrix4x4.TRANSLATION(Group.#relativeCustomerPositions[currentCustomerIndex]);
+        };
+        moveTo = (localTargetPosition, instant) => {
+            if (instant) {
+                this.#transform.mtxLocal.translation = localTargetPosition;
+                this.#moving = false;
+            }
+            else {
+                this.#localTargetPosition = localTargetPosition;
+                this.#moving = true;
+            }
+        };
+        update = (_event) => {
+            if (!this.#moving) {
+                return;
+            }
+            const remainingTravel = f.Vector3.DIFFERENCE(this.#localTargetPosition, this.#transform.mtxLocal.translation);
+            const remainingDistance = remainingTravel.magnitude;
+            const deltaTime = f.Loop.timeFrameGame / 1000;
+            const distanceToTravelThisFrame = deltaTime * Group.#speed;
+            if (remainingDistance < distanceToTravelThisFrame) {
+                this.#transform.mtxLocal.translation = this.#localTargetPosition;
+                this.#moving = false;
+            }
+            else {
+                this.#transform.mtxLocal.translate(f.Vector3.SCALE(f.Vector3.NORMALIZATION(remainingTravel), distanceToTravelThisFrame));
+            }
         };
     }
     GantryGlutton.Group = Group;
@@ -613,16 +648,11 @@ var GantryGlutton;
     class PlatformInteractions extends f.ComponentScript {
         // Register the script as component for use in the editor via drag&drop
         static iSubclass = f.Component.registerSubclass(PlatformInteractions);
-        /**
-         * How far from the edge of the platform are the spots located.
-         */
-        static #spotInset = 0.5;
-        static #platformLength = 2;
         static #spotPositions = [
-            new f.Vector3(PlatformInteractions.#spotInset, 0, -PlatformInteractions.#spotInset),
-            new f.Vector3(PlatformInteractions.#platformLength - PlatformInteractions.#spotInset, 0, -PlatformInteractions.#spotInset),
-            new f.Vector3(PlatformInteractions.#spotInset, 0, -(PlatformInteractions.#platformLength - PlatformInteractions.#spotInset)),
-            new f.Vector3(PlatformInteractions.#platformLength - PlatformInteractions.#spotInset, 0, -(PlatformInteractions.#platformLength - PlatformInteractions.#spotInset)),
+            new f.Vector3(0.5, 0, -0.5),
+            new f.Vector3(1.5, 0, -0.5),
+            new f.Vector3(0.5, 0, -1.5),
+            new f.Vector3(1.5, 0, -1.5),
         ];
         #spots = [null, null, null, null];
         /**

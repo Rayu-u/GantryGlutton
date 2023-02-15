@@ -78,6 +78,7 @@ namespace GantryGlutton {
       platformInteractions.seatCustomers(group.customers);
       group.node.removeChild(group.node);
 
+      this.updateGroupPositions();
       this.ensureGroupCount();
     };
 
@@ -125,21 +126,21 @@ namespace GantryGlutton {
         const group: Group = await this.createGroup();
         this.#groups.push(group);
         this.node.addChild(group.node);
+        this.updateGroupPosition(this.#groups.length - 1, true);
       }
+    };
 
-      this.updateGroupPositions();
+    private updateGroupPosition = (index: number, instant: boolean): void => {
+      const localTargetPosition = f.Vector3.SUM(
+        CustomerQueue.firstGroupOffset,
+        f.Vector3.SCALE(CustomerQueue.betweenGroupOffset, index)
+      );
+      this.#groups[index].moveTo(localTargetPosition, instant);
     };
 
     private updateGroupPositions = (): void => {
       for (let i = 0; i < this.#groups.length; i++) {
-        const groupNode = this.#groups[i].node;
-        const groupTransform = groupNode.getComponent(f.ComponentTransform);
-        groupTransform.mtxLocal = f.Matrix4x4.TRANSLATION(
-          f.Vector3.SUM(
-            CustomerQueue.firstGroupOffset,
-            f.Vector3.SCALE(CustomerQueue.betweenGroupOffset, i)
-          )
-        );
+        this.updateGroupPosition(i, false);
       }
     };
   }

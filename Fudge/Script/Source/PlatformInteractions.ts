@@ -7,37 +7,11 @@ namespace GantryGlutton {
     public static readonly iSubclass: number =
       f.Component.registerSubclass(PlatformInteractions);
 
-    /**
-     * How far from the edge of the platform are the spots located.
-     */
-    static readonly #spotInset: number = 0.5;
-    static readonly #platformLength: number = 2;
-
     static readonly #spotPositions: f.Vector3[] = [
-      new f.Vector3(
-        PlatformInteractions.#spotInset,
-        0,
-        -PlatformInteractions.#spotInset
-      ),
-      new f.Vector3(
-        PlatformInteractions.#platformLength - PlatformInteractions.#spotInset,
-        0,
-        -PlatformInteractions.#spotInset
-      ),
-      new f.Vector3(
-        PlatformInteractions.#spotInset,
-        0,
-        -(
-          PlatformInteractions.#platformLength - PlatformInteractions.#spotInset
-        )
-      ),
-      new f.Vector3(
-        PlatformInteractions.#platformLength - PlatformInteractions.#spotInset,
-        0,
-        -(
-          PlatformInteractions.#platformLength - PlatformInteractions.#spotInset
-        )
-      ),
+      new f.Vector3(0.5, 0, -0.5),
+      new f.Vector3(1.5, 0, -0.5),
+      new f.Vector3(0.5, 0, -1.5),
+      new f.Vector3(1.5, 0, -1.5),
     ];
 
     readonly #spots: Customer[] = [null, null, null, null];
