@@ -6,8 +6,6 @@ namespace GantryGlutton {
     // Register the script as component for use in the editor via drag&drop
     public static readonly iSubclass: number =
       f.Component.registerSubclass(Gantry);
-    // Properties may be mutated by users in the editor via the automatically created user interface
-    public message: string = "CustomComponentScript added to ";
 
     constructor() {
       super();
@@ -25,7 +23,6 @@ namespace GantryGlutton {
     public hndEvent = (_event: Event): void => {
       switch (_event.type) {
         case f.EVENT.COMPONENT_ADD:
-          f.Debug.log(this.message, this.node);
           break;
         case f.EVENT.COMPONENT_REMOVE:
           this.removeEventListener(f.EVENT.COMPONENT_ADD, this.hndEvent);
@@ -39,11 +36,21 @@ namespace GantryGlutton {
     };
 
     public start = (_event: Event): void => {
-      let platformRigidbody: f.ComponentRigidbody = this.node.getChildrenByName("Platform")[0].getComponent(f.ComponentRigidbody);
-      
-      this.node.getChildrenByName("Bridge")[0].getComponent(GantryBridge).platformRigidbody = platformRigidbody;
-      this.node.getChildrenByName("Base")[0].getChildrenByName("Cog")[0].getComponent(Cog).platformRigidbody = platformRigidbody;
-      this.node.getChildrenByName("Bridge")[0].getChildrenByName("Cog")[0].getComponent(Cog).platformRigidbody = platformRigidbody;
+      let platformRigidbody: f.ComponentRigidbody = this.node
+        .getChildrenByName("Platform")[0]
+        .getComponent(f.ComponentRigidbody);
+
+      this.node
+        .getChildrenByName("Bridge")[0]
+        .getComponent(GantryBridge).platformRigidbody = platformRigidbody;
+      this.node
+        .getChildrenByName("Base")[0]
+        .getChildrenByName("Cog")[0]
+        .getComponent(Cog).platformRigidbody = platformRigidbody;
+      this.node
+        .getChildrenByName("Bridge")[0]
+        .getChildrenByName("Cog")[0]
+        .getComponent(Cog).platformRigidbody = platformRigidbody;
     };
   }
 }

@@ -452,8 +452,6 @@ var GantryGlutton;
     class Gantry extends f.ComponentScript {
         // Register the script as component for use in the editor via drag&drop
         static iSubclass = f.Component.registerSubclass(Gantry);
-        // Properties may be mutated by users in the editor via the automatically created user interface
-        message = "CustomComponentScript added to ";
         constructor() {
             super();
             // Don't start when running in editor
@@ -468,7 +466,6 @@ var GantryGlutton;
         hndEvent = (_event) => {
             switch (_event.type) {
                 case "componentAdd" /* f.EVENT.COMPONENT_ADD */:
-                    f.Debug.log(this.message, this.node);
                     break;
                 case "componentRemove" /* f.EVENT.COMPONENT_REMOVE */:
                     this.removeEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
@@ -481,10 +478,20 @@ var GantryGlutton;
             }
         };
         start = (_event) => {
-            let platformRigidbody = this.node.getChildrenByName("Platform")[0].getComponent(f.ComponentRigidbody);
-            this.node.getChildrenByName("Bridge")[0].getComponent(GantryGlutton.GantryBridge).platformRigidbody = platformRigidbody;
-            this.node.getChildrenByName("Base")[0].getChildrenByName("Cog")[0].getComponent(GantryGlutton.Cog).platformRigidbody = platformRigidbody;
-            this.node.getChildrenByName("Bridge")[0].getChildrenByName("Cog")[0].getComponent(GantryGlutton.Cog).platformRigidbody = platformRigidbody;
+            let platformRigidbody = this.node
+                .getChildrenByName("Platform")[0]
+                .getComponent(f.ComponentRigidbody);
+            this.node
+                .getChildrenByName("Bridge")[0]
+                .getComponent(GantryGlutton.GantryBridge).platformRigidbody = platformRigidbody;
+            this.node
+                .getChildrenByName("Base")[0]
+                .getChildrenByName("Cog")[0]
+                .getComponent(GantryGlutton.Cog).platformRigidbody = platformRigidbody;
+            this.node
+                .getChildrenByName("Bridge")[0]
+                .getChildrenByName("Cog")[0]
+                .getComponent(GantryGlutton.Cog).platformRigidbody = platformRigidbody;
         };
     }
     GantryGlutton.Gantry = Gantry;
@@ -496,7 +503,6 @@ var GantryGlutton;
     class GantryBridge extends f.ComponentScript {
         // Register the script as component for use in the editor via drag&drop
         static iSubclass = f.Component.registerSubclass(GantryBridge);
-        // Properties may be mutated by users in the editor via the automatically created user interface
         platformOffset = 0;
         platformRigidbody;
         #transform;
@@ -520,8 +526,8 @@ var GantryGlutton;
                     this.removeEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
                     break;
                 case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
-                    // if deserialized the node is now fully reconstructed and access to all its components and children is possible
-                    this.start(_event);
+                    this.#transform = this.node.getComponent(f.ComponentTransform);
+                    GantryGlutton.addAfterPhysicsUpdateSubscriber(this);
                     break;
             }
         };
@@ -530,10 +536,6 @@ var GantryGlutton;
             oldPosition.x =
                 this.platformRigidbody.getPosition().x + this.platformOffset;
             this.#transform.mtxLocal.translation = oldPosition;
-        };
-        start = (_event) => {
-            this.#transform = this.node.getComponent(f.ComponentTransform);
-            GantryGlutton.addAfterPhysicsUpdateSubscriber(this);
         };
     }
     GantryGlutton.GantryBridge = GantryBridge;

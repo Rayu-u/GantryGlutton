@@ -115,7 +115,6 @@ declare namespace GantryGlutton {
     import f = FudgeCore;
     class Gantry extends f.ComponentScript {
         static readonly iSubclass: number;
-        message: string;
         constructor();
         hndEvent: (_event: Event) => void;
         start: (_event: Event) => void;
@@ -131,7 +130,6 @@ declare namespace GantryGlutton {
         constructor();
         hndEvent: (_event: Event) => void;
         onAfterPhysicsUpdate: () => void;
-        start: (_event: Event) => void;
     }
 }
 declare namespace GantryGlutton {

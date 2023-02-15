@@ -6,7 +6,7 @@ namespace GantryGlutton {
     // Register the script as component for use in the editor via drag&drop
     public static readonly iSubclass: number =
       f.Component.registerSubclass(GantryBridge);
-    // Properties may be mutated by users in the editor via the automatically created user interface
+
     public platformOffset: number = 0;
     public platformRigidbody: f.ComponentRigidbody;
     #transform: f.ComponentTransform;
@@ -33,8 +33,8 @@ namespace GantryGlutton {
           this.removeEventListener(f.EVENT.COMPONENT_REMOVE, this.hndEvent);
           break;
         case f.EVENT.NODE_DESERIALIZED:
-          // if deserialized the node is now fully reconstructed and access to all its components and children is possible
-          this.start(_event);
+          this.#transform = this.node.getComponent(f.ComponentTransform);
+          addAfterPhysicsUpdateSubscriber(this);
           break;
       }
     };
@@ -44,11 +44,6 @@ namespace GantryGlutton {
       oldPosition.x =
         this.platformRigidbody.getPosition().x + this.platformOffset;
       this.#transform.mtxLocal.translation = oldPosition;
-    };
-
-    public start = (_event: Event): void => {
-      this.#transform = this.node.getComponent(f.ComponentTransform);
-      addAfterPhysicsUpdateSubscriber(this);
     };
   }
 }
