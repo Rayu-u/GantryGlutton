@@ -186,8 +186,7 @@
               "Gantry": [
                 {
                   "GantryGlutton.Gantry": {
-                    "active": true,
-                    "message": "CustomComponentScript added to "
+                    "active": true
                   }
                 }
               ]
@@ -715,6 +714,46 @@
                                 "Component": {
                                   "active": true
                                 }
+                              }
+                            }
+                          ]
+                        },
+                        "children": []
+                      }
+                    },
+                    {
+                      "ƒ.Node": {
+                        "name": "ScreamSound",
+                        "active": true,
+                        "components": {
+                          "ComponentAudio": [
+                            {
+                              "ƒ.ComponentAudio": {
+                                "active": true,
+                                "idResource": "Audio|2023-02-15T21:59:27.486Z|43809",
+                                "playing": false,
+                                "loop": false,
+                                "volume": 1
+                              }
+                            }
+                          ]
+                        },
+                        "children": []
+                      }
+                    },
+                    {
+                      "ƒ.Node": {
+                        "name": "PointSound",
+                        "active": true,
+                        "components": {
+                          "ComponentAudio": [
+                            {
+                              "ƒ.ComponentAudio": {
+                                "active": true,
+                                "idResource": "Audio|2023-02-15T21:59:15.287Z|97085",
+                                "playing": false,
+                                "loop": false,
+                                "volume": 1
                               }
                             }
                           ]
@@ -1360,11 +1399,7 @@
                 {
                   "GantryGlutton.FruitManager": {
                     "active": true,
-                    "courseDelay": 10,
-                    "courseInset": 1,
-                    "fruitCourseLength": 50,
-                    "maxFruitInterval": 4,
-                    "minFruitInterval": 0
+                    "courseInset": 1
                   }
                 }
               ]
@@ -2449,6 +2484,22 @@
       ],
       "idResource": "Graph|2023-02-14T14:03:59.825Z|93867",
       "type": "Graph"
+    }
+  },
+  "Audio|2023-02-15T21:59:15.287Z|97085": {
+    "ƒ.Audio": {
+      "url": "Assets\\Sounds\\point.mp3",
+      "idResource": "Audio|2023-02-15T21:59:15.287Z|97085",
+      "name": "Assets\\Sounds\\point.mp3",
+      "type": "Audio"
+    }
+  },
+  "Audio|2023-02-15T21:59:27.486Z|43809": {
+    "ƒ.Audio": {
+      "url": "Assets\\Sounds\\scream.mp3",
+      "idResource": "Audio|2023-02-15T21:59:27.486Z|43809",
+      "name": "Assets\\Sounds\\scream.mp3",
+      "type": "Audio"
     }
   }
 }

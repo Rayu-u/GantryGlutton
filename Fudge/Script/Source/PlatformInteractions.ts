@@ -7,6 +7,7 @@ namespace GantryGlutton {
     public static readonly iSubclass: number =
       f.Component.registerSubclass(PlatformInteractions);
 
+    static readonly #screamSoundChance = 1 / 15;
     static readonly #spotPositions: f.Vector3[] = [
       new f.Vector3(0.5, 0, -0.5),
       new f.Vector3(1.5, 0, -0.5),
@@ -16,6 +17,8 @@ namespace GantryGlutton {
 
     readonly #spots: Customer[] = [null, null, null, null];
 
+    #pointSoundComponent: f.ComponentAudio;
+    #screamSoundComponent: f.ComponentAudio;
     /**
      * An array with indices that's shuffled before random iterations.
      */
@@ -55,6 +58,7 @@ namespace GantryGlutton {
         }
 
         // Customer found with correct fruit type
+        this.playPointSound();
         this.#spots[spotIndex] = null;
         customer.detach();
         break;
@@ -71,6 +75,17 @@ namespace GantryGlutton {
           this.removeEventListener(f.EVENT.COMPONENT_REMOVE, this.hndEvent);
           break;
         case f.EVENT.NODE_DESERIALIZED:
+          const audioListener = this.node.getComponent(
+            f.ComponentAudioListener
+          );
+          f.AudioManager.default.listenWith(audioListener);
+
+          this.#pointSoundComponent = this.node
+            .getChildrenByName("PointSound")[0]
+            .getComponent(f.ComponentAudio);
+          this.#screamSoundComponent = this.node
+            .getChildrenByName("ScreamSound")[0]
+            .getComponent(f.ComponentAudio);
           break;
       }
     };
@@ -94,6 +109,14 @@ namespace GantryGlutton {
         );
         customerTransform.mtxLocal.translation =
           PlatformInteractions.#spotPositions[randomSpotIndex];
+      }
+    };
+
+    private playPointSound = () => {
+      if (Math.random() < PlatformInteractions.#screamSoundChance) {
+        this.#screamSoundComponent.play(true);
+      } else {
+        this.#pointSoundComponent.play(true);
       }
     };
   }

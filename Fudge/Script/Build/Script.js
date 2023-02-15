@@ -674,6 +674,7 @@ var GantryGlutton;
     class PlatformInteractions extends f.ComponentScript {
         // Register the script as component for use in the editor via drag&drop
         static iSubclass = f.Component.registerSubclass(PlatformInteractions);
+        static #screamSoundChance = 1 / 15;
         static #spotPositions = [
             new f.Vector3(0.5, 0, -0.5),
             new f.Vector3(1.5, 0, -0.5),
@@ -681,6 +682,8 @@ var GantryGlutton;
             new f.Vector3(1.5, 0, -1.5),
         ];
         #spots = [null, null, null, null];
+        #pointSoundComponent;
+        #screamSoundComponent;
         /**
          * An array with indices that's shuffled before random iterations.
          */
@@ -710,6 +713,7 @@ var GantryGlutton;
                     continue;
                 }
                 // Customer found with correct fruit type
+                this.playPointSound();
                 this.#spots[spotIndex] = null;
                 customer.detach();
                 break;
@@ -725,6 +729,14 @@ var GantryGlutton;
                     this.removeEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
                     break;
                 case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
+                    const audioListener = this.node.getComponent(f.ComponentAudioListener);
+                    f.AudioManager.default.listenWith(audioListener);
+                    this.#pointSoundComponent = this.node
+                        .getChildrenByName("PointSound")[0]
+                        .getComponent(f.ComponentAudio);
+                    this.#screamSoundComponent = this.node
+                        .getChildrenByName("ScreamSound")[0]
+                        .getComponent(f.ComponentAudio);
                     break;
             }
         };
@@ -743,6 +755,14 @@ var GantryGlutton;
                 const customerTransform = customer.node.getComponent(f.ComponentTransform);
                 customerTransform.mtxLocal.translation =
                     PlatformInteractions.#spotPositions[randomSpotIndex];
+            }
+        };
+        playPointSound = () => {
+            if (Math.random() < PlatformInteractions.#screamSoundChance) {
+                this.#screamSoundComponent.play(true);
+            }
+            else {
+                this.#pointSoundComponent.play(true);
             }
         };
     }

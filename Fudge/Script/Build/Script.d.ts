@@ -164,6 +164,7 @@ declare namespace GantryGlutton {
         handleHitFruit: (fruitType: FruitType) => void;
         hndEvent: (_event: Event) => void;
         seatCustomers: (customers: Customer[]) => void;
+        private playPointSound;
     }
 }
 declare namespace GantryGlutton {
