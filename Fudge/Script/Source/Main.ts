@@ -17,14 +17,13 @@ namespace GantryGlutton {
     afterPhysicsUpdateSubscribers.push(subscriber);
   }
 
-  function start(_event: CustomEvent): void {
-    viewport = _event.detail;
+  const init = async () => {
+    const configResponse = await fetch("config.json");
+    const config = (await configResponse.json()) as Config;
 
-    graph = viewport.getBranch();
     let referenceCameraObject: f.Node =
       graph.getChildrenByName("CameraReference")[0];
     viewport.camera.projectCentral(undefined, 60);
-
     viewport.camera.mtxPivot = referenceCameraObject.getComponent(
       f.ComponentTransform
     ).mtxLocal;
@@ -32,7 +31,7 @@ namespace GantryGlutton {
     const fruitManager: FruitManager = graph
       .getChildrenByName("FruitManager")[0]
       .getComponent(FruitManager);
-    fruitManager.generateCourse();
+    fruitManager.generateCourse(config);
     const stage: Stage = graph
       .getChildrenByName("Stage")[0]
       .getComponent(Stage);
@@ -40,6 +39,13 @@ namespace GantryGlutton {
 
     f.Loop.addEventListener(f.EVENT.LOOP_FRAME, update);
     f.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
+  };
+
+  function start(_event: CustomEvent): void {
+    viewport = _event.detail;
+    graph = viewport.getBranch();
+
+    init();
   }
 
   function update(_event: Event): void {

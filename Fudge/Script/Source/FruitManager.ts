@@ -5,34 +5,13 @@ namespace GantryGlutton {
   export class FruitManager extends f.ComponentScript {
     // Register the script as component for use in the editor via drag&drop
     public static readonly iSubclass: number =
-    f.Component.registerSubclass(FruitManager);
-
-    /**
-     * The number of seconds until the first Fruit spawns.
-     */
-    public courseDelay: number = 1;
+      f.Component.registerSubclass(FruitManager);
 
     /**
      * The inset for how far off the stage the Fruit spawns.
      */
     public courseInset: number = 1;
 
-    /**
-     * The number of Fruits that drop per course.
-     */
-    public fruitCourseLength: number = 50;
-
-    /**
-     * The longest possible interval between Fruit spawning.
-     */
-    public maxFruitInterval: number = 1;
-
-    /**
-     * The shortest possible interval between Fruit spawning.
-     */
-    public minFruitInterval: number = 0;
-  
-    
     constructor() {
       super();
 
@@ -59,33 +38,38 @@ namespace GantryGlutton {
       }
     };
 
-    public generateCourse = () => {
+    public generateCourse = (config: Config) => {
       const fruitGraphs: Map<FruitType, f.Graph> = new Map<FruitType, f.Graph>([
-        [FruitType.Banana,<f.Graph>f.Project.getResourcesByName("Banana")[0]],
-        [FruitType.Blueberry,<f.Graph>f.Project.getResourcesByName("Blueberry")[0]],
-        [FruitType.Cherry,<f.Graph>f.Project.getResourcesByName("Cherry")[0]],
-        [FruitType.Pear,<f.Graph>f.Project.getResourcesByName("Pear")[0]],
+        [FruitType.Banana, <f.Graph>f.Project.getResourcesByName("Banana")[0]],
+        [
+          FruitType.Blueberry,
+          <f.Graph>f.Project.getResourcesByName("Blueberry")[0],
+        ],
+        [FruitType.Cherry, <f.Graph>f.Project.getResourcesByName("Cherry")[0]],
+        [FruitType.Pear, <f.Graph>f.Project.getResourcesByName("Pear")[0]],
       ]);
 
       const stageWidth: number = 10 - 2 * this.courseInset;
-      let timeFromStart = this.courseDelay;
-      for (let i = 0; i < this.fruitCourseLength; i++) {
+      let timeFromStart: number = config.courseDelay.value;
+      for (let i = 0; i < config.courseLength.value; i++) {
         const fruitFallDuration = timeFromStart;
         const randomFruitType = getRandomFruitType();
         const randomPosition: f.Vector3 = new f.Vector3(
-          (Math.random() * stageWidth) + this.courseInset,
+          Math.random() * stageWidth + this.courseInset,
           0,
           -(Math.random() * stageWidth) - this.courseInset
         );
 
-        (async () => {        
-          let fruitInstance: f.GraphInstance = await f.Project.createGraphInstance(
-            fruitGraphs.get(randomFruitType)
-          );
-          
-          const fruitTransform: f.ComponentTransform = fruitInstance.getComponent(f.ComponentTransform);
+        (async () => {
+          let fruitInstance: f.GraphInstance =
+            await f.Project.createGraphInstance(
+              fruitGraphs.get(randomFruitType)
+            );
+
+          const fruitTransform: f.ComponentTransform =
+            fruitInstance.getComponent(f.ComponentTransform);
           fruitTransform.mtxLocal.translation = randomPosition;
-          
+
           const fruitComponent: Fruit = fruitInstance.getComponent(Fruit);
           fruitComponent.supplyFallDuration(fruitFallDuration);
 
@@ -93,7 +77,8 @@ namespace GantryGlutton {
         })();
 
         timeFromStart +=
-          this.maxFruitInterval * Math.random() + this.minFruitInterval;
+          config.maxFruitInterval.value * Math.random() +
+          config.minFruitInterval.value;
       }
     };
   }

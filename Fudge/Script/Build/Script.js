@@ -362,25 +362,9 @@ var GantryGlutton;
         // Register the script as component for use in the editor via drag&drop
         static iSubclass = f.Component.registerSubclass(FruitManager);
         /**
-         * The number of seconds until the first Fruit spawns.
-         */
-        courseDelay = 1;
-        /**
          * The inset for how far off the stage the Fruit spawns.
          */
         courseInset = 1;
-        /**
-         * The number of Fruits that drop per course.
-         */
-        fruitCourseLength = 50;
-        /**
-         * The longest possible interval between Fruit spawning.
-         */
-        maxFruitInterval = 1;
-        /**
-         * The shortest possible interval between Fruit spawning.
-         */
-        minFruitInterval = 0;
         constructor() {
             super();
             // Don't start when running in editor
@@ -404,19 +388,22 @@ var GantryGlutton;
                     break;
             }
         };
-        generateCourse = () => {
+        generateCourse = (config) => {
             const fruitGraphs = new Map([
                 [GantryGlutton.FruitType.Banana, f.Project.getResourcesByName("Banana")[0]],
-                [GantryGlutton.FruitType.Blueberry, f.Project.getResourcesByName("Blueberry")[0]],
+                [
+                    GantryGlutton.FruitType.Blueberry,
+                    f.Project.getResourcesByName("Blueberry")[0],
+                ],
                 [GantryGlutton.FruitType.Cherry, f.Project.getResourcesByName("Cherry")[0]],
                 [GantryGlutton.FruitType.Pear, f.Project.getResourcesByName("Pear")[0]],
             ]);
             const stageWidth = 10 - 2 * this.courseInset;
-            let timeFromStart = this.courseDelay;
-            for (let i = 0; i < this.fruitCourseLength; i++) {
+            let timeFromStart = config.courseDelay.value;
+            for (let i = 0; i < config.courseLength.value; i++) {
                 const fruitFallDuration = timeFromStart;
                 const randomFruitType = GantryGlutton.getRandomFruitType();
-                const randomPosition = new f.Vector3((Math.random() * stageWidth) + this.courseInset, 0, -(Math.random() * stageWidth) - this.courseInset);
+                const randomPosition = new f.Vector3(Math.random() * stageWidth + this.courseInset, 0, -(Math.random() * stageWidth) - this.courseInset);
                 (async () => {
                     let fruitInstance = await f.Project.createGraphInstance(fruitGraphs.get(randomFruitType));
                     const fruitTransform = fruitInstance.getComponent(f.ComponentTransform);
@@ -426,7 +413,8 @@ var GantryGlutton;
                     GantryGlutton.graph.addChild(fruitInstance);
                 })();
                 timeFromStart +=
-                    this.maxFruitInterval * Math.random() + this.minFruitInterval;
+                    config.maxFruitInterval.value * Math.random() +
+                        config.minFruitInterval.value;
             }
         };
     }
@@ -637,22 +625,27 @@ var GantryGlutton;
         afterPhysicsUpdateSubscribers.push(subscriber);
     }
     GantryGlutton.addAfterPhysicsUpdateSubscriber = addAfterPhysicsUpdateSubscriber;
-    function start(_event) {
-        viewport = _event.detail;
-        GantryGlutton.graph = viewport.getBranch();
+    const init = async () => {
+        const configResponse = await fetch("config.json");
+        const config = (await configResponse.json());
         let referenceCameraObject = GantryGlutton.graph.getChildrenByName("CameraReference")[0];
         viewport.camera.projectCentral(undefined, 60);
         viewport.camera.mtxPivot = referenceCameraObject.getComponent(f.ComponentTransform).mtxLocal;
         const fruitManager = GantryGlutton.graph
             .getChildrenByName("FruitManager")[0]
             .getComponent(GantryGlutton.FruitManager);
-        fruitManager.generateCourse();
+        fruitManager.generateCourse(config);
         const stage = GantryGlutton.graph
             .getChildrenByName("Stage")[0]
             .getComponent(GantryGlutton.Stage);
         stage.generateStage();
         f.Loop.addEventListener("loopFrame" /* f.EVENT.LOOP_FRAME */, update);
         f.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
+    };
+    function start(_event) {
+        viewport = _event.detail;
+        GantryGlutton.graph = viewport.getBranch();
+        init();
     }
     function update(_event) {
         f.Physics.simulate(); // if physics is included and used

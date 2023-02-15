@@ -11,6 +11,19 @@ declare namespace GantryGlutton {
     }
 }
 declare namespace GantryGlutton {
+    interface ConfigField<T> {
+        description: string;
+        value: T;
+    }
+    export interface Config {
+        courseDelay: ConfigField<number>;
+        courseLength: ConfigField<number>;
+        maxFruitInterval: ConfigField<number>;
+        minFruitInterval: ConfigField<number>;
+    }
+    export {};
+}
+declare namespace GantryGlutton {
     import f = FudgeCore;
     class CustomComponentScript extends f.ComponentScript {
         static readonly iSubclass: number;
@@ -78,28 +91,12 @@ declare namespace GantryGlutton {
     class FruitManager extends f.ComponentScript {
         static readonly iSubclass: number;
         /**
-         * The number of seconds until the first Fruit spawns.
-         */
-        courseDelay: number;
-        /**
          * The inset for how far off the stage the Fruit spawns.
          */
         courseInset: number;
-        /**
-         * The number of Fruits that drop per course.
-         */
-        fruitCourseLength: number;
-        /**
-         * The longest possible interval between Fruit spawning.
-         */
-        maxFruitInterval: number;
-        /**
-         * The shortest possible interval between Fruit spawning.
-         */
-        minFruitInterval: number;
         constructor();
         hndEvent: (_event: Event) => void;
-        generateCourse: () => void;
+        generateCourse: (config: Config) => void;
     }
 }
 declare namespace GantryGlutton {

@@ -1,0 +1,18 @@
+{
+  "courseDelay": {
+    "description": "The duration from the game starts until the first fruit reaches the player.",
+    "value": 10
+  },
+  "courseLength": {
+    "description": "The number of fruits that make up the course.",
+    "value": 50
+  },
+  "maxFruitInterval": {
+    "description": "The maximum time in seconds between fruits.",
+    "value": 4
+  },
+  "minFruitInterval": {
+    "description": "The minimum time in seconds between fruits.",
+    "value": 0
+  }
+}
