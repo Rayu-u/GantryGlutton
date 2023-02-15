@@ -9,5 +9,6 @@ namespace GantryGlutton {
     courseLength: ConfigField<number>;
     maxFruitInterval: ConfigField<number>;
     minFruitInterval: ConfigField<number>;
+    queueSize: ConfigField<number>;
   }
 }

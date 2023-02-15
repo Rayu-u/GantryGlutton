@@ -35,7 +35,7 @@ namespace GantryGlutton {
     const stage: Stage = graph
       .getChildrenByName("Stage")[0]
       .getComponent(Stage);
-    stage.generateStage();
+    stage.generateStage(config);
 
     f.Loop.addEventListener(f.EVENT.LOOP_FRAME, update);
     f.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a

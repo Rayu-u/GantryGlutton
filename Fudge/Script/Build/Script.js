@@ -177,7 +177,6 @@ var GantryGlutton;
         // Register the script as component for use in the editor via drag&drop
         static iSubclass = f.Component.registerSubclass(CustomerQueue);
         static customerGraphResource;
-        static targetGroupCount = 2;
         static #groupNumberMap = [1, 1, 1, 1, 1, 1, 2, 2, 2, 3];
         /**
          * The offset between groups in local space.
@@ -188,6 +187,7 @@ var GantryGlutton;
          */
         static firstGroupOffset = new f.Vector3(0, 0, -1);
         #groups = [];
+        #targetQueueSize;
         constructor() {
             super();
             // Don't start when running in editor
@@ -198,7 +198,8 @@ var GantryGlutton;
             this.addEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
             this.addEventListener("nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */, this.hndEvent);
         }
-        generateQueue = () => {
+        generateQueue = (config) => {
+            this.#targetQueueSize = config.queueSize.value;
             this.ensureGroupCount();
         };
         // Activate the functions of this component as response to events
@@ -230,7 +231,6 @@ var GantryGlutton;
             this.#groups.shift();
             platformInteractions.seatCustomers(group.customers);
             group.node.removeChild(group.node);
-            this.updateGroupPositions();
             this.ensureGroupCount();
         };
         createGroup = async () => {
@@ -259,20 +259,21 @@ var GantryGlutton;
             return customer;
         };
         ensureGroupCount = async () => {
-            while (this.#groups.length < CustomerQueue.targetGroupCount) {
+            while (this.#groups.length < this.#targetQueueSize) {
                 const group = await this.createGroup();
                 this.#groups.push(group);
                 this.node.addChild(group.node);
-                this.updateGroupPosition(this.#groups.length - 1, true);
+                this.updateGroupPosition(group, this.#groups.length, true);
             }
+            this.updateGroupPositions();
         };
-        updateGroupPosition = (index, instant) => {
+        updateGroupPosition = (group, index, instant) => {
             const localTargetPosition = f.Vector3.SUM(CustomerQueue.firstGroupOffset, f.Vector3.SCALE(CustomerQueue.betweenGroupOffset, index));
-            this.#groups[index].moveTo(localTargetPosition, instant);
+            group.moveTo(localTargetPosition, instant);
         };
         updateGroupPositions = () => {
             for (let i = 0; i < this.#groups.length; i++) {
-                this.updateGroupPosition(i, false);
+                this.updateGroupPosition(this.#groups[i], i, false);
             }
         };
     }
@@ -638,7 +639,7 @@ var GantryGlutton;
         const stage = GantryGlutton.graph
             .getChildrenByName("Stage")[0]
             .getComponent(GantryGlutton.Stage);
-        stage.generateStage();
+        stage.generateStage(config);
         f.Loop.addEventListener("loopFrame" /* f.EVENT.LOOP_FRAME */, update);
         f.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
     };
@@ -887,9 +888,9 @@ var GantryGlutton;
             this.addEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
             this.addEventListener("nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */, this.hndEvent);
         }
-        generateStage = () => {
+        generateStage = (config) => {
             for (const customerQueue of this.#queueComponents) {
-                customerQueue.generateQueue();
+                customerQueue.generateQueue(config);
             }
         };
         // Activate the functions of this component as response to events

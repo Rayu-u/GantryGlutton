@@ -8,7 +8,6 @@ namespace GantryGlutton {
       f.Component.registerSubclass(CustomerQueue);
 
     public static customerGraphResource: f.Graph;
-    public static targetGroupCount: number = 2;
 
     static readonly #groupNumberMap: number[] = [1, 1, 1, 1, 1, 1, 2, 2, 2, 3];
 
@@ -23,6 +22,7 @@ namespace GantryGlutton {
     static readonly firstGroupOffset: f.Vector3 = new f.Vector3(0, 0, -1);
 
     #groups: Group[] = [];
+    #targetQueueSize: number;
 
     constructor() {
       super();
@@ -36,7 +36,8 @@ namespace GantryGlutton {
       this.addEventListener(f.EVENT.NODE_DESERIALIZED, this.hndEvent);
     }
 
-    public generateQueue = (): void => {
+    public generateQueue = (config: Config): void => {
+      this.#targetQueueSize = config.queueSize.value;
       this.ensureGroupCount();
     };
 
@@ -78,7 +79,6 @@ namespace GantryGlutton {
       platformInteractions.seatCustomers(group.customers);
       group.node.removeChild(group.node);
 
-      this.updateGroupPositions();
       this.ensureGroupCount();
     };
 
@@ -122,25 +122,31 @@ namespace GantryGlutton {
     };
 
     private ensureGroupCount = async (): Promise<void> => {
-      while (this.#groups.length < CustomerQueue.targetGroupCount) {
+      while (this.#groups.length < this.#targetQueueSize) {
         const group: Group = await this.createGroup();
         this.#groups.push(group);
         this.node.addChild(group.node);
-        this.updateGroupPosition(this.#groups.length - 1, true);
+        this.updateGroupPosition(group, this.#groups.length, true);
       }
+
+      this.updateGroupPositions();
     };
 
-    private updateGroupPosition = (index: number, instant: boolean): void => {
+    private updateGroupPosition = (
+      group: Group,
+      index: number,
+      instant: boolean
+    ): void => {
       const localTargetPosition = f.Vector3.SUM(
         CustomerQueue.firstGroupOffset,
         f.Vector3.SCALE(CustomerQueue.betweenGroupOffset, index)
       );
-      this.#groups[index].moveTo(localTargetPosition, instant);
+      group.moveTo(localTargetPosition, instant);
     };
 
     private updateGroupPositions = (): void => {
       for (let i = 0; i < this.#groups.length; i++) {
-        this.updateGroupPosition(i, false);
+        this.updateGroupPosition(this.#groups[i], i, false);
       }
     };
   }

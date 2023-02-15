@@ -21,9 +21,9 @@ namespace GantryGlutton {
       this.addEventListener(f.EVENT.NODE_DESERIALIZED, this.hndEvent);
     }
 
-    public generateStage = (): void => {
+    public generateStage = (config: Config): void => {
       for (const customerQueue of this.#queueComponents) {
-        customerQueue.generateQueue();
+        customerQueue.generateQueue(config);
       }
     };
 

@@ -20,6 +20,7 @@ declare namespace GantryGlutton {
         courseLength: ConfigField<number>;
         maxFruitInterval: ConfigField<number>;
         minFruitInterval: ConfigField<number>;
+        queueSize: ConfigField<number>;
     }
     export {};
 }
@@ -52,7 +53,6 @@ declare namespace GantryGlutton {
         #private;
         static readonly iSubclass: number;
         static customerGraphResource: f.Graph;
-        static targetGroupCount: number;
         /**
          * The offset between groups in local space.
          */
@@ -62,7 +62,7 @@ declare namespace GantryGlutton {
          */
         static readonly firstGroupOffset: f.Vector3;
         constructor();
-        generateQueue: () => void;
+        generateQueue: (config: Config) => void;
         hndEvent: (_event: Event) => void;
         private handlePlayerEnterPickupZone;
         private createGroup;
@@ -219,7 +219,7 @@ declare namespace GantryGlutton {
         #private;
         static readonly iSubclass: number;
         constructor();
-        generateStage: () => void;
+        generateStage: (config: Config) => void;
         hndEvent: (_event: Event) => void;
     }
 }

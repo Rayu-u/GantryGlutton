@@ -14,5 +14,9 @@
   "minFruitInterval": {
     "description": "The minimum time in seconds between fruits.",
     "value": 0
+  },
+  "queueSize": {
+    "description": "The number of customer groups in each queue.",
+    "value": 2
   }
 }
