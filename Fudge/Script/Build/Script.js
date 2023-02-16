@@ -683,6 +683,7 @@ var GantryGlutton;
         ];
         #spots = [null, null, null, null];
         #pointSoundComponent;
+        #refillSoundComponent;
         #screamSoundComponent;
         /**
          * An array with indices that's shuffled before random iterations.
@@ -734,6 +735,9 @@ var GantryGlutton;
                     this.#pointSoundComponent = this.node
                         .getChildrenByName("PointSound")[0]
                         .getComponent(f.ComponentAudio);
+                    this.#refillSoundComponent = this.node
+                        .getChildrenByName("RefillSound")[0]
+                        .getComponent(f.ComponentAudio);
                     this.#screamSoundComponent = this.node
                         .getChildrenByName("ScreamSound")[0]
                         .getComponent(f.ComponentAudio);
@@ -744,6 +748,7 @@ var GantryGlutton;
             if (this.getEmptySpots() < customers.length) {
                 return;
             }
+            this.#refillSoundComponent.play(true);
             for (const customer of customers) {
                 let randomSpotIndex;
                 do {

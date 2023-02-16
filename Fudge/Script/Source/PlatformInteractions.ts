@@ -18,7 +18,9 @@ namespace GantryGlutton {
     readonly #spots: Customer[] = [null, null, null, null];
 
     #pointSoundComponent: f.ComponentAudio;
+    #refillSoundComponent: f.ComponentAudio;
     #screamSoundComponent: f.ComponentAudio;
+
     /**
      * An array with indices that's shuffled before random iterations.
      */
@@ -83,6 +85,9 @@ namespace GantryGlutton {
           this.#pointSoundComponent = this.node
             .getChildrenByName("PointSound")[0]
             .getComponent(f.ComponentAudio);
+          this.#refillSoundComponent = this.node
+            .getChildrenByName("RefillSound")[0]
+            .getComponent(f.ComponentAudio);
           this.#screamSoundComponent = this.node
             .getChildrenByName("ScreamSound")[0]
             .getComponent(f.ComponentAudio);
@@ -94,6 +99,8 @@ namespace GantryGlutton {
       if (this.getEmptySpots() < customers.length) {
         return;
       }
+
+      this.#refillSoundComponent.play(true);
 
       for (const customer of customers) {
         let randomSpotIndex: number;

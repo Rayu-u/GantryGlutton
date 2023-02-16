@@ -158,6 +158,22 @@
       "url": "Assets\\Models\\stage__pick-up-zone.obj"
     }
   },
+  "Audio|2023-02-15T21:59:27.486Z|43809": {
+    "ƒ.Audio": {
+      "url": "Assets\\Sounds\\scream.mp3",
+      "idResource": "Audio|2023-02-15T21:59:27.486Z|43809",
+      "name": "Assets\\Sounds\\scream.mp3",
+      "type": "Audio"
+    }
+  },
+  "Audio|2023-02-15T21:59:15.287Z|97085": {
+    "ƒ.Audio": {
+      "url": "Assets\\Sounds\\point.mp3",
+      "idResource": "Audio|2023-02-15T21:59:15.287Z|97085",
+      "name": "Assets\\Sounds\\point.mp3",
+      "type": "Audio"
+    }
+  },
   "Graph|2023-02-11T14:47:26.962Z|84962": {
     "ƒ.Graph": {
       "name": "Level",
@@ -751,6 +767,26 @@
                               "ƒ.ComponentAudio": {
                                 "active": true,
                                 "idResource": "Audio|2023-02-15T21:59:15.287Z|97085",
+                                "playing": false,
+                                "loop": false,
+                                "volume": 1
+                              }
+                            }
+                          ]
+                        },
+                        "children": []
+                      }
+                    },
+                    {
+                      "ƒ.Node": {
+                        "name": "RefillSound",
+                        "active": true,
+                        "components": {
+                          "ComponentAudio": [
+                            {
+                              "ƒ.ComponentAudio": {
+                                "active": true,
+                                "idResource": "Audio|2023-02-16T17:15:44.070Z|77682",
                                 "playing": false,
                                 "loop": false,
                                 "volume": 1
@@ -2486,19 +2522,11 @@
       "type": "Graph"
     }
   },
-  "Audio|2023-02-15T21:59:15.287Z|97085": {
+  "Audio|2023-02-16T17:15:44.070Z|77682": {
     "ƒ.Audio": {
-      "url": "Assets\\Sounds\\point.mp3",
-      "idResource": "Audio|2023-02-15T21:59:15.287Z|97085",
-      "name": "Assets\\Sounds\\point.mp3",
-      "type": "Audio"
-    }
-  },
-  "Audio|2023-02-15T21:59:27.486Z|43809": {
-    "ƒ.Audio": {
-      "url": "Assets\\Sounds\\scream.mp3",
-      "idResource": "Audio|2023-02-15T21:59:27.486Z|43809",
-      "name": "Assets\\Sounds\\scream.mp3",
+      "url": "Assets\\Sounds\\refill.mp3",
+      "idResource": "Audio|2023-02-16T17:15:44.070Z|77682",
+      "name": "Assets\\Sounds\\refill.mp3",
       "type": "Audio"
     }
   }
