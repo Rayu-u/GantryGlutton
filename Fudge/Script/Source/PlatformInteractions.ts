@@ -21,6 +21,8 @@ namespace GantryGlutton {
     #refillSoundComponent: f.ComponentAudio;
     #screamSoundComponent: f.ComponentAudio;
 
+    #scoreModel: ScoreUi;
+
     /**
      * An array with indices that's shuffled before random iterations.
      */
@@ -60,9 +62,10 @@ namespace GantryGlutton {
         }
 
         // Customer found with correct fruit type
-        this.playPointSound();
         this.#spots[spotIndex] = null;
         customer.detach();
+        this.#scoreModel.score++;
+        this.playPointSound();
         break;
       }
     };
@@ -91,6 +94,8 @@ namespace GantryGlutton {
           this.#screamSoundComponent = this.node
             .getChildrenByName("ScreamSound")[0]
             .getComponent(f.ComponentAudio);
+
+          this.#scoreModel = new ScoreUi();
           break;
       }
     };

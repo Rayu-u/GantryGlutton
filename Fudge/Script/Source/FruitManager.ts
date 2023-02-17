@@ -12,6 +12,9 @@ namespace GantryGlutton {
      */
     public courseInset: number = 1;
 
+    #courseDuration: number;
+    #courseProgressUi: ProgressUi;
+
     constructor() {
       super();
 
@@ -34,6 +37,7 @@ namespace GantryGlutton {
           this.removeEventListener(f.EVENT.COMPONENT_REMOVE, this.hndEvent);
           break;
         case f.EVENT.NODE_DESERIALIZED:
+          this.#courseProgressUi = new ProgressUi();
           break;
       }
     };
@@ -80,6 +84,20 @@ namespace GantryGlutton {
           config.maxFruitInterval.value * Math.random() +
           config.minFruitInterval.value;
       }
+
+      this.#courseDuration = timeFromStart;
+      this.startProgressCounter();
+    };
+
+    private startProgressCounter = async () => {
+      let timeRemaining: number;
+      do {
+        timeRemaining = this.#courseDuration - 0.001 * f.Time.game.get();
+        this.#courseProgressUi.timeRemaining = `${timeRemaining.toFixed()}s`;
+        await new Promise((resolve) => setTimeout(resolve, 21));
+      } while (0 < timeRemaining);
+
+      this.#courseProgressUi.timeRemaining = "0s";
     };
   }
 }

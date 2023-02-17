@@ -16,7 +16,7 @@
 
 
 var ƒ = FudgeCore;
-var ƒAid = FudgeAid;
+// var ƒAid = FudgeAid;
 window.addEventListener("load", init);
 
 // show dialog for startup, user interaction required e.g. for starting audio

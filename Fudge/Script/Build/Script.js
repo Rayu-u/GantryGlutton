@@ -374,6 +374,8 @@ var GantryGlutton;
          * The inset for how far off the stage the Fruit spawns.
          */
         courseInset = 1;
+        #courseDuration;
+        #courseProgressUi;
         constructor() {
             super();
             // Don't start when running in editor
@@ -394,6 +396,7 @@ var GantryGlutton;
                     this.removeEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
                     break;
                 case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
+                    this.#courseProgressUi = new GantryGlutton.ProgressUi();
                     break;
             }
         };
@@ -425,6 +428,17 @@ var GantryGlutton;
                     config.maxFruitInterval.value * Math.random() +
                         config.minFruitInterval.value;
             }
+            this.#courseDuration = timeFromStart;
+            this.startProgressCounter();
+        };
+        startProgressCounter = async () => {
+            let timeRemaining;
+            do {
+                timeRemaining = this.#courseDuration - 0.001 * f.Time.game.get();
+                this.#courseProgressUi.timeRemaining = `${timeRemaining.toFixed()}s`;
+                await new Promise((resolve) => setTimeout(resolve, 21));
+            } while (0 < timeRemaining);
+            this.#courseProgressUi.timeRemaining = "0s";
         };
     }
     GantryGlutton.FruitManager = FruitManager;
@@ -685,6 +699,7 @@ var GantryGlutton;
         #pointSoundComponent;
         #refillSoundComponent;
         #screamSoundComponent;
+        #scoreModel;
         /**
          * An array with indices that's shuffled before random iterations.
          */
@@ -714,9 +729,10 @@ var GantryGlutton;
                     continue;
                 }
                 // Customer found with correct fruit type
-                this.playPointSound();
                 this.#spots[spotIndex] = null;
                 customer.detach();
+                this.#scoreModel.score++;
+                this.playPointSound();
                 break;
             }
         };
@@ -741,6 +757,7 @@ var GantryGlutton;
                     this.#screamSoundComponent = this.node
                         .getChildrenByName("ScreamSound")[0]
                         .getComponent(f.ComponentAudio);
+                    this.#scoreModel = new GantryGlutton.ScoreUi();
                     break;
             }
         };
@@ -904,6 +921,36 @@ var GantryGlutton;
         };
     }
     GantryGlutton.PlatformMovement = PlatformMovement;
+})(GantryGlutton || (GantryGlutton = {}));
+var GantryGlutton;
+(function (GantryGlutton) {
+    var f = FudgeCore;
+    var fui = FudgeUserInterface;
+    class ProgressUi extends f.Mutable {
+        timeRemaining;
+        constructor() {
+            super();
+            const progressDisplay = document.querySelectorAll("#progress-container")[0];
+            new fui.Controller(this, progressDisplay);
+        }
+        reduceMutator(_mutator) { }
+    }
+    GantryGlutton.ProgressUi = ProgressUi;
+})(GantryGlutton || (GantryGlutton = {}));
+var GantryGlutton;
+(function (GantryGlutton) {
+    var f = FudgeCore;
+    var fui = FudgeUserInterface;
+    class ScoreUi extends f.Mutable {
+        score = 0;
+        constructor() {
+            super();
+            const scoreDisplay = document.querySelectorAll("#score-container")[0];
+            new fui.Controller(this, scoreDisplay);
+        }
+        reduceMutator(_mutator) { }
+    }
+    GantryGlutton.ScoreUi = ScoreUi;
 })(GantryGlutton || (GantryGlutton = {}));
 var GantryGlutton;
 (function (GantryGlutton) {

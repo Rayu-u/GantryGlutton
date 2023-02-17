@@ -89,6 +89,7 @@ declare namespace GantryGlutton {
 declare namespace GantryGlutton {
     import f = FudgeCore;
     class FruitManager extends f.ComponentScript {
+        #private;
         static readonly iSubclass: number;
         /**
          * The inset for how far off the stage the Fruit spawns.
@@ -97,6 +98,7 @@ declare namespace GantryGlutton {
         constructor();
         hndEvent: (_event: Event) => void;
         generateCourse: (config: Config) => void;
+        private startProgressCounter;
     }
 }
 declare namespace GantryGlutton {
@@ -210,6 +212,22 @@ declare namespace GantryGlutton {
          */
         private getInputAsCardinalDirection;
         private update;
+    }
+}
+declare namespace GantryGlutton {
+    import f = FudgeCore;
+    class ProgressUi extends f.Mutable {
+        timeRemaining: string;
+        constructor();
+        protected reduceMutator(_mutator: f.Mutator): void;
+    }
+}
+declare namespace GantryGlutton {
+    import f = FudgeCore;
+    class ScoreUi extends f.Mutable {
+        score: number;
+        constructor();
+        protected reduceMutator(_mutator: f.Mutator): void;
     }
 }
 declare namespace GantryGlutton {
