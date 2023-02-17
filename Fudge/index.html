@@ -53,7 +53,7 @@
     <canvas class="fullscreen"></canvas>
     <div id="score-container">
       <label for="score">Score: </label>
-      <input type="text" id="score" key="score" value="0" />
+      <input type="text" id="score" key="score" value="0" readonly />
     </div>
     <div id="progress-container">
       <label for="timeRemaining">Time remaining: </label>
@@ -63,7 +63,24 @@
         key="timeRemaining"
         size="1"
         value="-"
+        readonly
       />
+    </div>
+    <div id="end-screen">
+      <div class="panel">
+        <h1>Finished!</h1>
+        <div>
+          <label for="endscreen-score"></label>
+          <input
+            type="text"
+            id="endscreen-score"
+            key="score"
+            value="0"
+            readonly
+          />
+        </div>
+        <h3>Click to play again.</h3>
+      </div>
     </div>
   </body>
 </html>

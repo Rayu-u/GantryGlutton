@@ -9,7 +9,10 @@ namespace GantryGlutton {
       super();
       const scoreDisplay: HTMLElement =
         document.querySelectorAll<HTMLElement>("#score-container")[0];
+      const endScreen: HTMLElement =
+        document.querySelectorAll<HTMLElement>("#end-screen")[0];
       new fui.Controller(this, scoreDisplay);
+      new fui.Controller(this, endScreen);
     }
 
     protected reduceMutator(_mutator: f.Mutator): void {}

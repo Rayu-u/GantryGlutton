@@ -37,4 +37,29 @@ input[type="text"] {
   background-color: transparent;
   border: none;
   font-size: 36px;
+  pointer-events: none;
+}
+
+#end-screen {
+  display: none;
+  align-items: center;
+  justify-content: center;
+
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  background: #21212180;
+}
+
+#end-screen > .panel {
+  padding: 64px;
+
+  background-color: #fafafa;
+}
+
+body.finished > #end-screen {
+  display: flex;
 }

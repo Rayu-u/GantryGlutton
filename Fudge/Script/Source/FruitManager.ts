@@ -98,6 +98,9 @@ namespace GantryGlutton {
       } while (0 < timeRemaining);
 
       this.#courseProgressUi.timeRemaining = "0s";
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      document.body.classList.add("finished");
+      document.body.addEventListener("click", () => location.reload());
     };
   }
 }

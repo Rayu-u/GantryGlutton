@@ -439,6 +439,9 @@ var GantryGlutton;
                 await new Promise((resolve) => setTimeout(resolve, 21));
             } while (0 < timeRemaining);
             this.#courseProgressUi.timeRemaining = "0s";
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            document.body.classList.add("finished");
+            document.body.addEventListener("click", () => location.reload());
         };
     }
     GantryGlutton.FruitManager = FruitManager;
@@ -946,7 +949,9 @@ var GantryGlutton;
         constructor() {
             super();
             const scoreDisplay = document.querySelectorAll("#score-container")[0];
+            const endScreen = document.querySelectorAll("#end-screen")[0];
             new fui.Controller(this, scoreDisplay);
+            new fui.Controller(this, endScreen);
         }
         reduceMutator(_mutator) { }
     }
