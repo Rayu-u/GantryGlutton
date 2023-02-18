@@ -519,9 +519,9 @@
                         }
                       }
                     ],
-                    "ComponentAudioListener": [
+                    "SimpleAudioListener": [
                       {
-                        "ƒ.ComponentAudioListener": {
+                        "GantryGlutton.SimpleAudioListener": {
                           "active": true
                         }
                       }

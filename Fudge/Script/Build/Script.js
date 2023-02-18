@@ -439,9 +439,8 @@ var GantryGlutton;
                 await new Promise((resolve) => setTimeout(resolve, 21));
             } while (0 < timeRemaining);
             this.#courseProgressUi.timeRemaining = "0s";
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-            document.body.classList.add("finished");
-            document.body.addEventListener("click", () => location.reload());
+            await new Promise((resolve) => setTimeout(resolve, 3000));
+            this.dispatchEvent(new Event("gamefinish", { bubbles: true }));
         };
     }
     GantryGlutton.FruitManager = FruitManager;
@@ -705,6 +704,11 @@ var GantryGlutton;
     function start(_event) {
         viewport = _event.detail;
         GantryGlutton.graph = viewport.getBranch();
+        // Logic when game ends.
+        GantryGlutton.graph.addEventListener("gamefinish", () => {
+            document.body.classList.add("finished");
+            document.body.addEventListener("click", () => location.reload());
+        });
         init();
     }
     function update(_event) {
@@ -781,7 +785,7 @@ var GantryGlutton;
                     this.removeEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
                     break;
                 case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
-                    const audioListener = this.node.getComponent(f.ComponentAudioListener);
+                    const audioListener = this.node.getComponent(GantryGlutton.SimpleAudioListener);
                     f.AudioManager.default.listenWith(audioListener);
                     this.#pointSoundComponent = this.node
                         .getChildrenByName("PointSound")[0]
@@ -988,6 +992,18 @@ var GantryGlutton;
         reduceMutator(_mutator) { }
     }
     GantryGlutton.ScoreUi = ScoreUi;
+})(GantryGlutton || (GantryGlutton = {}));
+var GantryGlutton;
+(function (GantryGlutton) {
+    var f = FudgeCore;
+    f.Project.registerScriptNamespace(GantryGlutton); // Register the namespace to FUDGE for serialization
+    class SimpleAudioListener extends f.ComponentAudioListener {
+        reduceMutator(_mutator) {
+            super.reduceMutator(_mutator);
+            delete _mutator.mtxPivot;
+        }
+    }
+    GantryGlutton.SimpleAudioListener = SimpleAudioListener;
 })(GantryGlutton || (GantryGlutton = {}));
 var GantryGlutton;
 (function (GantryGlutton) {

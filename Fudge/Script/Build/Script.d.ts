@@ -242,6 +242,12 @@ declare namespace GantryGlutton {
 }
 declare namespace GantryGlutton {
     import f = FudgeCore;
+    class SimpleAudioListener extends f.ComponentAudioListener {
+        protected reduceMutator(_mutator: f.Mutator): void;
+    }
+}
+declare namespace GantryGlutton {
+    import f = FudgeCore;
     class Stage extends f.ComponentScript {
         #private;
         static readonly iSubclass: number;

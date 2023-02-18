@@ -80,9 +80,7 @@ namespace GantryGlutton {
           this.removeEventListener(f.EVENT.COMPONENT_REMOVE, this.hndEvent);
           break;
         case f.EVENT.NODE_DESERIALIZED:
-          const audioListener = this.node.getComponent(
-            f.ComponentAudioListener
-          );
+          const audioListener = this.node.getComponent(SimpleAudioListener);
           f.AudioManager.default.listenWith(audioListener);
 
           this.#pointSoundComponent = this.node
