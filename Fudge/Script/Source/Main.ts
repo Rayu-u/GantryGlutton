@@ -45,6 +45,12 @@ namespace GantryGlutton {
     viewport = _event.detail;
     graph = viewport.getBranch();
 
+    // Logic when game ends.
+    graph.addEventListener("gamefinish", () => {
+      document.body.classList.add("finished");
+      document.body.addEventListener("click", () => location.reload());
+    });
+
     init();
   }
 
