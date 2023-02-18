@@ -448,6 +448,38 @@ var GantryGlutton;
 })(GantryGlutton || (GantryGlutton = {}));
 var GantryGlutton;
 (function (GantryGlutton) {
+    var f = FudgeCore;
+    class FruitMaterial extends f.ComponentMaterial {
+        fruitType;
+        constructor() {
+            super();
+            this.singleton = false;
+        }
+        getMutatorAttributeTypes(_mutator) {
+            let types = super.getMutatorAttributeTypes(_mutator);
+            if (types.fruitType) {
+                types.fruitType = GantryGlutton.FruitType;
+            }
+            return types;
+        }
+        async mutate(_mutator) {
+            if (_mutator.fruitType != undefined) {
+                _mutator.fruitType = parseInt(_mutator.fruitType);
+            }
+            await super.mutate(_mutator);
+        }
+        reduceMutator(_mutator) {
+            delete _mutator.clrPrimary;
+            delete _mutator.clrSecondary;
+            delete _mutator.mtxPivot;
+            delete _mutator.sortForAlpha;
+            delete _mutator.singleton;
+        }
+    }
+    GantryGlutton.FruitMaterial = FruitMaterial;
+})(GantryGlutton || (GantryGlutton = {}));
+var GantryGlutton;
+(function (GantryGlutton) {
     /**
      * Types of fruit.
     */

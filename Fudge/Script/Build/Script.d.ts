@@ -102,6 +102,16 @@ declare namespace GantryGlutton {
     }
 }
 declare namespace GantryGlutton {
+    import f = FudgeCore;
+    class FruitMaterial extends f.ComponentMaterial {
+        private fruitType;
+        constructor();
+        getMutatorAttributeTypes(_mutator: f.Mutator): f.MutatorAttributeTypes;
+        mutate(_mutator: f.Mutator): Promise<void>;
+        protected reduceMutator(_mutator: f.Mutator): void;
+    }
+}
+declare namespace GantryGlutton {
     /**
      * Types of fruit.
     */
